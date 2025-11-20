@@ -39,6 +39,52 @@
             gap: 16px;
         }
 
+        .hamburger-button {
+            position: sticky;
+            top: 10px;
+            left: 0;
+            align-self: flex-start;
+            z-index: 120;
+            background: #ffffff;
+            border: 1px solid #d1d1d6;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+        }
+
+        .hamburger-button span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: #111;
+            position: relative;
+        }
+
+        .hamburger-button span::before,
+        .hamburger-button span::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 20px;
+            height: 2px;
+            background: #111;
+            transition: transform var(--transition-fast);
+        }
+
+        .hamburger-button span::before { top: -6px; }
+        .hamburger-button span::after { top: 6px; }
+
+        .hamburger-button:hover {
+            background: #f9fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
         /* SIDEBAR */
 
         .sidebar {
@@ -53,6 +99,7 @@
             border: 1px solid rgba(0,0,0,0.06);
             padding: 14px 14px 10px;
             animation: slideIn 0.35s ease-out;
+            transition: transform var(--transition-fast), opacity var(--transition-fast), width var(--transition-fast), padding var(--transition-fast);
         }
 
         .sidebar-title {
@@ -68,6 +115,16 @@
             list-style: none;
             padding: 0;
             margin: 0;
+        }
+
+        .sidebar ul ul {
+            padding-left: 10px;
+            margin-top: 4px;
+        }
+
+        .sidebar ul ul a {
+            font-size: 14px;
+            padding-left: 14px;
         }
 
         .sidebar li {
@@ -136,6 +193,82 @@
             margin-bottom: 10px;
             font-weight: 600;
             color: #111;
+        }
+
+        .status-subsection {
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #fbfbfd;
+            border: 1px solid #e1e4eb;
+        }
+
+        .status-subsection h3 {
+            margin: 4px 0 10px;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .subgroup-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .idea-row,
+        .perception-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid #e1e4eb;
+        }
+
+        .idea-description,
+        .perception-description,
+        .hallucination-description-input {
+            flex: 1 1 200px;
+            min-width: 180px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid #ced0d8;
+            font-size: 15px;
+        }
+
+        .perception-columns,
+        .psychosensory-columns {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .perception-card {
+            background: #ffffff;
+            border: 1px solid #e1e4eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+
+        .perception-card h4 {
+            margin: 0 0 8px;
+            font-size: 15px;
+            color: #1c1c1e;
+        }
+
+        .attention-group {
+            background: #ffffff;
+            border: 1px solid #e1e4eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+
+        .attention-group .group-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #1c1c1e;
         }
 
         /* LABELS & FIELDS */
@@ -403,6 +536,22 @@
             padding: 6px 8px;
         }
 
+        /* COLLAPSED SIDEBAR STATE */
+
+        body.sidebar-collapsed .sidebar {
+            width: 0;
+            max-width: 0;
+            padding: 0;
+            margin: 0;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-20px);
+        }
+
+        body.sidebar-collapsed .main {
+            flex: 1 1 100%;
+        }
+
         /* ANIMATIONS */
 
         @keyframes fadeInUp {
@@ -438,17 +587,39 @@
                 width: 100%;
                 order: -1;
             }
+
+            .hamburger-button {
+                position: sticky;
+                top: 8px;
+                z-index: 130;
+            }
         }
     </style>
 </head>
 <body>
-
 <div class="layout">
+    <button class="hamburger-button" type="button" onclick="toggleSidebar()" aria-label="Скрыть или показать меню">
+        <span></span>
+    </button>
     <nav class="sidebar">
         <div class="sidebar-title">Навигация</div>
         <ul>
             <li><a href="#section-general">Общие разделы</a></li>
-            <li><a href="#section-status">Психический статус</a></li>
+            <li>
+                <a href="#section-status">Психический статус</a>
+                <ul>
+                    <li><a href="#status-consciousness">Сознание</a></li>
+                    <li><a href="#status-thinking">Мышление</a></li>
+                    <li><a href="#status-intellect">Интеллект</a></li>
+                    <li><a href="#status-perception">Обманы восприятия</a></li>
+                    <li><a href="#status-memory">Память</a></li>
+                    <li><a href="#status-mood">Настроение</a></li>
+                    <li><a href="#status-motor">Двигательная сфера</a></li>
+                    <li><a href="#status-attention">Внимание</a></li>
+                    <li><a href="#status-insight">Критика к своему заболеванию</a></li>
+                    <li><a href="#status-sleep-appetite">Сон, аппетит</a></li>
+                </ul>
+            </li>
             <li><a href="#section-diagnosis">Диагноз и рекомендации</a></li>
             <li><a href="#section-result">Сформированный текст</a></li>
         </ul>
@@ -494,429 +665,650 @@
 
         <!-- ПСИХИЧЕСКИЙ СТАТУС -->
 
-        <div class="section" id="section-status">
+                <div class="section" id="section-status">
             <h2>Психический статус</h2>
 
-            <label>Сознание:</label>
-            <select id="consciousness">
-                <option value="">— выбрать —</option>
-                <option>не помрачено</option>
-                <option>помрачено (делирий)</option>
-                <option>помрачено (онейроид)</option>
-                <option>помрачено (сумеречное)</option>
-                <option>помрачено (аменция)</option>
-            </select>
+            <div id="status-consciousness" class="status-subsection">
+                <h3>Сознание</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Сознание:</label>
+                        <select id="consciousness">
+                            <option value="">— выбрать —</option>
+                            <option>не помрачено</option>
+                            <option>помрачено (делирий)</option>
+                            <option>помрачено (онейроид)</option>
+                            <option>помрачено (сумеречное)</option>
+                            <option>помрачено (аменция)</option>
+                        </select>
+                    </div>
 
-            <!-- Поведение -->
-            <div class="multicheck-group" data-name="behavior">
-                <div class="multicheck-header" onclick="toggleMultiGroup('behavior')">
-                    <span class="multicheck-label">Поведение (можно несколько)</span>
-                    <span class="multicheck-summary" id="behavior_summary">Не выбрано</span>
+                    <div>
+                        <label>Внешний вид:</label>
+                        <select id="appearance">
+                            <option value="">— выбрать —</option>
+                            <option>опрятный</option>
+                            <option>неопрятный</option>
+                            <option>соответствует возрасту</option>
+                            <option>моложе возраста</option>
+                            <option>старше возраста</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Зрительный контакт:</label>
+                        <select id="eye_contact">
+                            <option value="">— выбрать —</option>
+                            <option>постоянный</option>
+                            <option>неустойчивый</option>
+                            <option>не устанавливает</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Установление контакта:</label>
+                        <select id="contact">
+                            <option value="">— выбрать —</option>
+                            <option>легко устанавливается</option>
+                            <option>затруднено</option>
+                            <option>не устанавливается</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="multicheck-body" id="behavior_body">
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="спокоен" onchange="updateMultiSummary('behavior')">спокоен</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="упорядочен" onchange="updateMultiSummary('behavior')">упорядочен</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив" onchange="updateMultiSummary('behavior')">суетлив</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="тревожен" onchange="updateMultiSummary('behavior')">тревожен</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="расторможен" onchange="updateMultiSummary('behavior')">расторможен</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="дурашлив" onchange="updateMultiSummary('behavior')">дурашлив</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="возбужден" onchange="updateMultiSummary('behavior')">возбужден</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="агрессивен" onchange="updateMultiSummary('behavior')">агрессивен</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="безразличен" onchange="updateMultiSummary('behavior')">безразличен</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="скован" onchange="updateMultiSummary('behavior')">скован</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="зажат" onchange="updateMultiSummary('behavior')">зажат</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="ступор" onchange="updateMultiSummary('behavior')">ступор</label>
-                    <label class="checkbox-item"><input type="checkbox" name="behavior" value="ажитация" onchange="updateMultiSummary('behavior')">ажитация</label>
+
+                <div class="multicheck-group" data-name="behavior">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('behavior')">
+                        <span class="multicheck-label">Поведение (можно несколько)</span>
+                        <span class="multicheck-summary" id="behavior_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="behavior_body">
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="спокоен" onchange="updateMultiSummary('behavior')">спокоен</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="упорядочен" onchange="updateMultiSummary('behavior')">упорядочен</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив" onchange="updateMultiSummary('behavior')">суетлив</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив с элементами негативизма" onchange="updateMultiSummary('behavior')">суетлив с элементами негативизма</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="беспокоен" onchange="updateMultiSummary('behavior')">беспокоен</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="негативизм" onchange="updateMultiSummary('behavior')">негативизм</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="груб" onchange="updateMultiSummary('behavior')">груб</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="агрессивен" onchange="updateMultiSummary('behavior')">агрессивен</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="facial_expression">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('facial_expression')">
+                        <span class="multicheck-label">Мимика (можно несколько)</span>
+                        <span class="multicheck-summary" id="facial_expression_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="facial_expression_body">
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="соответствует ситуации" onchange="updateMultiSummary('facial_expression')">соответствует ситуации</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="оживленная" onchange="updateMultiSummary('facial_expression')">оживленная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="бедная" onchange="updateMultiSummary('facial_expression')">бедная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="живость снижена" onchange="updateMultiSummary('facial_expression')">живость снижена</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="нарочитая живость" onchange="updateMultiSummary('facial_expression')">нарочитая живость</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="conversation">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('conversation')">
+                        <span class="multicheck-label">Беседует (можно несколько)</span>
+                        <span class="multicheck-summary" id="conversation_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="conversation_body">
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="по-деловому" onchange="updateMultiSummary('conversation')">по-деловому</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="косно" onchange="updateMultiSummary('conversation')">косно</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="стандартно" onchange="updateMultiSummary('conversation')">стандартно</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="с применением жаргона" onchange="updateMultiSummary('conversation')">с применением жаргона</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="answers">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('answers')">
+                        <span class="multicheck-label">На вопросы отвечает (можно несколько)</span>
+                        <span class="multicheck-summary" id="answers_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="answers_body">
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="по существу" onchange="updateMultiSummary('answers')">по существу</label>
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="скупо" onchange="updateMultiSummary('answers')">скупо</label>
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="развернуто" onchange="updateMultiSummary('answers')">развернуто</label>
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="уклончиво" onchange="updateMultiSummary('answers')">уклончиво</label>
+                    </div>
+                </div>
+
+                <label>Речь:</label>
+                <select id="speech">
+                    <option value="">— выбрать —</option>
+                    <option>нормальная</option>
+                    <option>ускоренная</option>
+                    <option>замедленная</option>
+                    <option>скандированная</option>
+                    <option>монологичная</option>
+                    <option>моногамная</option>
+                    <option>жаргон</option>
+                    <option>скандированная</option>
+                    <option>монотонная</option>
+                </select>
+            </div>
+
+            <div id="status-thinking" class="status-subsection">
+                <h3>Мышление</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Темп мышления:</label>
+                        <select id="thinking_tempo">
+                            <option value="">— выбрать —</option>
+                            <option>не нарушен</option>
+                            <option>замедлен</option>
+                            <option>ускорен</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Продуктивность мышления:</label>
+                        <select id="thinking_productivity">
+                            <option value="">— выбрать —</option>
+                            <option>сохранена</option>
+                            <option>повышена</option>
+                            <option>снижена</option>
+                            <option>нерезультативное</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Последовательность мышления:</label>
+                        <select id="thinking_sequence">
+                            <option value="">— выбрать —</option>
+                            <option>не нарушена</option>
+                            <option>нарушена</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Целенаправленность мышления:</label>
+                        <select id="thinking_goal">
+                            <option value="">— выбрать —</option>
+                            <option>целенаправленное</option>
+                            <option>нецеленаправленное</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="thinking_disorders">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('thinking_disorders')">
+                        <span class="multicheck-label">Нецеленаправленное мышление (можно несколько)</span>
+                        <span class="multicheck-summary" id="thinking_disorders_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="thinking_disorders_body">
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="паралогичное" onchange="updateMultiSummary('thinking_disorders')">паралогичное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="соскальзывающее" onchange="updateMultiSummary('thinking_disorders')">соскальзывающее</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="резонерство" onchange="updateMultiSummary('thinking_disorders')">резонерство</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="разорванное" onchange="updateMultiSummary('thinking_disorders')">разорванное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="бессвязное" onchange="updateMultiSummary('thinking_disorders')">бессвязное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="аморфное" onchange="updateMultiSummary('thinking_disorders')">аморфное</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="thinking_mobility">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('thinking_mobility')">
+                        <span class="multicheck-label">Подвижность мышления</span>
+                        <span class="multicheck-summary" id="thinking_mobility_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="thinking_mobility_body">
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="не нарушена" onchange="updateMultiSummary('thinking_mobility')">не нарушена</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="обстоятельное" onchange="updateMultiSummary('thinking_mobility')">обстоятельное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="ригидное" onchange="updateMultiSummary('thinking_mobility')">ригидное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="вязкое" onchange="updateMultiSummary('thinking_mobility')">вязкое</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="застревающее" onchange="updateMultiSummary('thinking_mobility')">застревающее</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="инертное" onchange="updateMultiSummary('thinking_mobility')">инертное</label>
+                    </div>
+                </div>
+
+                <label>Абстрагирование:</label>
+                <select id="abstraction">
+                    <option value="">— выбрать —</option>
+                    <option>доступно</option>
+                    <option>не доступно</option>
+                    <option>мышление конкретное</option>
+                </select>
+
+                <div id="ideas-block" class="status-subsection" style="margin-top: 12px;">
+                    <h3>Идеи</h3>
+                    <div class="subgroup-grid">
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="аффективно обусловленные">
+                                <span>Аффективно обусловленные</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="аффективно обусловленные" placeholder="Описание содержания идей">
+                        </div>
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="навязчивые">
+                                <span>Навязчивые</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="навязчивые" placeholder="Описание содержания идей">
+                        </div>
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="сверхценные">
+                                <span>Сверхценные</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="сверхценные" placeholder="Описание содержания идей">
+                        </div>
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="бредовые">
+                                <span>Бредовые</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="бредовые" placeholder="Описание содержания идей">
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <label>Внешний вид:</label>
-            <select id="appearance">
-                <option value="">— выбрать —</option>
-                <option>опрятен</option>
-                <option>неряшлив</option>
-                <option>неопрятен</option>
-            </select>
-
-            <!-- Мимика -->
-            <div class="multicheck-group" data-name="facial_expression">
-                <div class="multicheck-header" onclick="toggleMultiGroup('facial_expression')">
-                    <span class="multicheck-label">Мимика (можно несколько)</span>
-                    <span class="multicheck-summary" id="facial_expression_summary">Не выбрано</span>
+            <div id="status-intellect" class="status-subsection">
+                <h3>Интеллект</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Интеллект:</label>
+                        <select id="intellect">
+                            <option value="">— выбрать —</option>
+                            <option>в пределах возрастной нормы</option>
+                            <option>снижен</option>
+                            <option>не развит</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Словарный запас:</label>
+                        <select id="vocabulary">
+                            <option value="">— выбрать —</option>
+                            <option>достаточен</option>
+                            <option>ограничен пределами повседневно-бытового общения</option>
+                            <option>крайне мал</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="multicheck-body" id="facial_expression_body">
-                    <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="живая" onchange="updateMultiSummary('facial_expression')">живая</label>
-                    <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="тусклая" onchange="updateMultiSummary('facial_expression')">тусклая</label>
-                    <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="сглажена" onchange="updateMultiSummary('facial_expression')">сглажена</label>
-                    <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="маловыразительная" onchange="updateMultiSummary('facial_expression')">маловыразительная</label>
-                    <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="однообразная" onchange="updateMultiSummary('facial_expression')">однообразная</label>
-                    <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="невыразительная" onchange="updateMultiSummary('facial_expression')">невыразительная</label>
-                    <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="маскообразная" onchange="updateMultiSummary('facial_expression')">маскообразная</label>
-                </div>
-            </div>
-
-            <label>Зрительный контакт:</label>
-            <select id="eye_contact">
-                <option value="">— выбрать —</option>
-                <option>поддерживает</option>
-                <option>избегает</option>
-                <option>не устанавливает</option>
-            </select>
-
-            <label>Контакт:</label>
-            <select id="contact">
-                <option value="">— выбрать —</option>
-                <option>продуктивен</option>
-                <option>формален</option>
-                <option>малопродуктивен</option>
-                <option>непродуктивен</option>
-            </select>
-
-            <!-- Беседа -->
-            <div class="multicheck-group" data-name="conversation">
-                <div class="multicheck-header" onclick="toggleMultiGroup('conversation')">
-                    <span class="multicheck-label">Беседа (можно несколько)</span>
-                    <span class="multicheck-summary" id="conversation_summary">Не выбрано</span>
-                </div>
-                <div class="multicheck-body" id="conversation_body">
-                    <label class="checkbox-item"><input type="checkbox" name="conversation" value="беседует охотно" onchange="updateMultiSummary('conversation')">беседует охотно</label>
-                    <label class="checkbox-item"><input type="checkbox" name="conversation" value="беседует неохотно" onchange="updateMultiSummary('conversation')">беседует неохотно</label>
-                    <label class="checkbox-item"><input type="checkbox" name="conversation" value="беседует формально" onchange="updateMultiSummary('conversation')">беседует формально</label>
-                    <label class="checkbox-item"><input type="checkbox" name="conversation" value="скрытен" onchange="updateMultiSummary('conversation')">скрытен</label>
-                    <label class="checkbox-item"><input type="checkbox" name="conversation" value="лжив" onchange="updateMultiSummary('conversation')">лжив</label>
+                <div class="multicheck-group" data-name="judgment">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('judgment')">
+                        <span class="multicheck-label">Суждения (можно несколько)</span>
+                        <span class="multicheck-summary" id="judgment_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="judgment_body">
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="легковесные" onchange="updateMultiSummary('judgment')">легковесные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="поверхностные" onchange="updateMultiSummary('judgment')">поверхностные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="категоричные" onchange="updateMultiSummary('judgment')">категоричные</label>
+                    </div>
                 </div>
             </div>
 
-            <!-- Ответы -->
-            <div class="multicheck-group" data-name="answers">
-                <div class="multicheck-header" onclick="toggleMultiGroup('answers')">
-                    <span class="multicheck-label">Ответы на вопросы (можно несколько)</span>
-                    <span class="multicheck-summary" id="answers_summary">Не выбрано</span>
+            <div id="status-perception" class="status-subsection">
+                <h3>Обманы восприятия</h3>
+                <div class="perception-card">
+                    <h4>Иллюзии</h4>
+                    <div class="subgroup-grid">
+                        <div class="perception-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Физические">
+                                <span>Физические</span>
+                            </label>
+                            <input type="text" class="perception-description illusion-description" data-illusion-type="Физические" placeholder="Описание">
+                        </div>
+                        <div class="perception-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Аффективные">
+                                <span>Аффективные</span>
+                            </label>
+                            <input type="text" class="perception-description illusion-description" data-illusion-type="Аффективные" placeholder="Описание">
+                        </div>
+                        <div class="perception-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Вербальные (смысловые)">
+                                <span>Вербальные (смысловые)</span>
+                            </label>
+                            <input type="text" class="perception-description illusion-description" data-illusion-type="Вербальные (смысловые)" placeholder="Описание">
+                        </div>
+                        <div class="perception-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Парейдолические">
+                                <span>Парейдолические</span>
+                            </label>
+                            <input type="text" class="perception-description illusion-description" data-illusion-type="Парейдолические" placeholder="Описание">
+                        </div>
+                    </div>
                 </div>
-                <div class="multicheck-body" id="answers_body">
-                    <label class="checkbox-item"><input type="checkbox" name="answers" value="в плане заданного" onchange="updateMultiSummary('answers')">в плане заданного</label>
-                    <label class="checkbox-item"><input type="checkbox" name="answers" value="не всегда в плане заданного" onchange="updateMultiSummary('answers')">не всегда в плане заданного</label>
-                    <label class="checkbox-item"><input type="checkbox" name="answers" value="не в плане заданного" onchange="updateMultiSummary('answers')">не в плане заданного</label>
-                    <label class="checkbox-item"><input type="checkbox" name="answers" value="односложно" onchange="updateMultiSummary('answers')">односложно</label>
-                    <label class="checkbox-item"><input type="checkbox" name="answers" value="кратко" onchange="updateMultiSummary('answers')">кратко</label>
-                    <label class="checkbox-item"><input type="checkbox" name="answers" value="подробно" onchange="updateMultiSummary('answers')">подробно</label>
-                    <label class="checkbox-item"><input type="checkbox" name="answers" value="обстоятельно" onchange="updateMultiSummary('answers')">обстоятельно</label>
+
+                <div class="perception-card" style="margin-top: 10px;">
+                    <h4>Галлюцинации</h4>
+                    <div class="perception-columns">
+                        <div>
+                            <div class="group-title">По анализатору</div>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="слуховые" onchange="updateMultiSummary('hallucination_analyzer')">слуховые</label>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="зрительные" onchange="updateMultiSummary('hallucination_analyzer')">зрительные</label>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="обонятельные" onchange="updateMultiSummary('hallucination_analyzer')">обонятельные</label>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="вкусовые" onchange="updateMultiSummary('hallucination_analyzer')">вкусовые</label>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="тактильные" onchange="updateMultiSummary('hallucination_analyzer')">тактильные</label>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="висцеральные" onchange="updateMultiSummary('hallucination_analyzer')">висцеральные</label>
+                        </div>
+                        <div>
+                            <div class="group-title">По сложности</div>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_complexity" value="простые" onchange="updateMultiSummary('hallucination_complexity')">простые</label>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_complexity" value="сложные" onchange="updateMultiSummary('hallucination_complexity')">сложные</label>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_complexity" value="сценоподобные" onchange="updateMultiSummary('hallucination_complexity')">сценоподобные</label>
+                        </div>
+                        <div>
+                            <div class="group-title">По характеру</div>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_character" value="комментирующие" onchange="updateMultiSummary('hallucination_character')">комментирующие</label>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_character" value="императивные" onchange="updateMultiSummary('hallucination_character')">императивные</label>
+                            <label class="checkbox-item"><input type="checkbox" name="hallucination_character" value="диалогизирующие" onchange="updateMultiSummary('hallucination_character')">диалогизирующие</label>
+                        </div>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <label class="prescription-label-small">Описание</label>
+                        <input type="text" id="hallucination_description" class="hallucination-description-input" placeholder="Общий комментарий к галлюцинациям">
+                    </div>
+                </div>
+
+                <div class="perception-card" style="margin-top: 10px;">
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="perception-checkbox" id="pseudohallucinations_checkbox" data-perception-type="Псевдогаллюцинации">
+                            <span>Псевдогаллюцинации</span>
+                        </label>
+                        <input type="text" class="perception-description" data-perception-type="Псевдогаллюцинации" placeholder="Описание">
+                    </div>
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="perception-checkbox" id="hallucination_like_checkbox" data-perception-type="Галлюцинаторно-подобные переживания">
+                            <span>Галлюцинаторно-подобные переживания</span>
+                        </label>
+                        <input type="text" class="perception-description" data-perception-type="Галлюцинаторно-подобные переживания" placeholder="Описание">
+                    </div>
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="perception-checkbox" id="psychosensory_checkbox" data-perception-type="Психосенсорные расстройства">
+                            <span>Психосенсорные расстройства</span>
+                        </label>
+                        <div class="psychosensory-columns" style="width: 100%;">
+                            <div>
+                                <div class="group-title">Дереализационные</div>
+                                <label class="checkbox-item"><input type="checkbox" name="psychosensory_derealization" value="изменение яркости, контрастности" onchange="updateMultiSummary('psychosensory_derealization')">изменение яркости, контрастности</label>
+                                <label class="checkbox-item"><input type="checkbox" name="psychosensory_derealization" value="искажение размеров (макро-/микропсия)" onchange="updateMultiSummary('psychosensory_derealization')">искажение размеров (макро-/микропсия)</label>
+                                <label class="checkbox-item"><input type="checkbox" name="psychosensory_derealization" value="искажение формы (дисморфопсия)" onchange="updateMultiSummary('psychosensory_derealization')">искажение формы (дисморфопсия)</label>
+                                <label class="checkbox-item"><input type="checkbox" name="psychosensory_derealization" value="искажение расстояния/перспективы" onchange="updateMultiSummary('psychosensory_derealization')">искажение расстояния/перспективы</label>
+                            </div>
+                            <div>
+                                <div class="group-title">Аутопсихические</div>
+                                <label class="checkbox-item"><input type="checkbox" name="psychosensory_autopsychic" value="деперсонализация (изменение восприятия собственного «Я»)" onchange="updateMultiSummary('psychosensory_autopsychic')">деперсонализация (изменение восприятия собственного «Я»)</label>
+                            </div>
+                        </div>
+                        <input type="text" class="perception-description" data-perception-type="Психосенсорные расстройства" placeholder="Общее описание">
+                    </div>
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="perception-checkbox" id="synestopathies_checkbox" data-perception-type="Синестопатии">
+                            <span>Синестопатии (сенестопатии)</span>
+                        </label>
+                        <input type="text" class="perception-description" data-perception-type="Синестопатии" placeholder="Описание ощущений">
+                    </div>
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="perception-checkbox" id="psychic_automatism_checkbox" data-perception-type="Психический автоматизм">
+                            <span>Психический автоматизм (Кандинский–Клерамбо)</span>
+                        </label>
+                        <div class="perception-columns" style="width: 100%;">
+                            <label class="checkbox-item"><input type="checkbox" name="psychic_automatism" value="сенсорный автоматизм" onchange="updateMultiSummary('psychic_automatism')">сенсорный автоматизм</label>
+                            <label class="checkbox-item"><input type="checkbox" name="psychic_automatism" value="ассоциативный автоматизм" onchange="updateMultiSummary('psychic_automatism')">ассоциативный автоматизм</label>
+                            <label class="checkbox-item"><input type="checkbox" name="psychic_automatism" value="кинестетический (двигательный) автоматизм" onchange="updateMultiSummary('psychic_automatism')">кинестетический (двигательный) автоматизм</label>
+                        </div>
+                        <input type="text" class="perception-description" data-perception-type="Психический автоматизм" placeholder="Описание проявлений">
+                    </div>
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="perception-checkbox" id="functional_hallucinations_checkbox" data-perception-type="Функциональные галлюцинации">
+                            <span>Функциональные галлюцинации</span>
+                        </label>
+                        <input type="text" class="perception-description" data-perception-type="Функциональные галлюцинации" placeholder="Описание">
+                    </div>
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="perception-checkbox" id="reflex_hallucinations_checkbox" data-perception-type="Рефлекторные галлюцинации">
+                            <span>Рефлекторные галлюцинации</span>
+                        </label>
+                        <input type="text" class="perception-description" data-perception-type="Рефлекторные галлюцинации" placeholder="Описание">
+                    </div>
+                </div>
+
+                <label style="margin-top: 12px;">Обманы восприятия (свободный текст):</label>
+                <textarea id="perception" placeholder="Дополнительные комментарии"></textarea>
+            </div>
+
+            <div id="status-memory" class="status-subsection">
+                <h3>Память</h3>
+                <div class="multicheck-group" data-name="memory">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('memory')">
+                        <span class="multicheck-label">Память (можно несколько)</span>
+                        <span class="multicheck-summary" id="memory_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="memory_body">
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="в пределах возрастной нормы" onchange="updateMultiSummary('memory')">в пределах возрастной нормы</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="снижена" onchange="updateMultiSummary('memory')">снижена</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="гипомнезия" onchange="updateMultiSummary('memory')">гипомнезия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="амнезия" onchange="updateMultiSummary('memory')">амнезия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="парамнезии" onchange="updateMultiSummary('memory')">парамнезии</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="amnesia">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('amnesia')">
+                        <span class="multicheck-label">Амнезия (можно несколько)</span>
+                        <span class="multicheck-summary" id="amnesia_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="amnesia_body">
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="фиксационная" onchange="updateMultiSummary('amnesia')">фиксационная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="антероградная" onchange="updateMultiSummary('amnesia')">антероградная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="ретроградная" onchange="updateMultiSummary('amnesia')">ретроградная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="антероретроградная" onchange="updateMultiSummary('amnesia')">антероретроградная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="конградная" onchange="updateMultiSummary('amnesia')">конградная</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="paramnesia">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('paramnesia')">
+                        <span class="multicheck-label">Парамнезии (можно несколько)</span>
+                        <span class="multicheck-summary" id="paramnesia_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="paramnesia_body">
+                        <label class="checkbox-item"><input type="checkbox" name="paramnesia" value="конфабуляции" onchange="updateMultiSummary('paramnesia')">конфабуляции</label>
+                        <label class="checkbox-item"><input type="checkbox" name="paramnesia" value="псевдореминисценции" onchange="updateMultiSummary('paramnesia')">псевдореминисценции</label>
+                    </div>
                 </div>
             </div>
 
-            <label>Речь:</label>
-            <select id="speech">
-                <option value="">— выбрать —</option>
-                <option>по существу</option>
-                <option>не всегда по существу</option>
-                <option>не по существу</option>
-            </select>
-
-            <label>Мышление — темп:</label>
-            <select id="thinking_tempo">
-                <option value="">— выбрать —</option>
-                <option>нормального темпа</option>
-                <option>ускоренного темпа</option>
-                <option>замедленного темпа</option>
-            </select>
-
-            <label>Мышление — продуктивность:</label>
-            <select id="thinking_productivity">
-                <option value="">— выбрать —</option>
-                <option>продуктивное</option>
-                <option>малопродуктивное</option>
-                <option>непродуктивное</option>
-            </select>
-
-            <label>Мышление — последовательность:</label>
-            <select id="thinking_sequence">
-                <option value="">— выбрать —</option>
-                <option>последовательное</option>
-                <option>непоследовательное</option>
-            </select>
-
-            <label>Мышление — целенаправленность:</label>
-            <select id="thinking_goal">
-                <option value="">— выбрать —</option>
-                <option>целенаправленное</option>
-                <option>нецеленаправленное</option>
-            </select>
-
-            <!-- Нецеленаправленное мышление -->
-            <div class="multicheck-group" data-name="thinking_disorders">
-                <div class="multicheck-header" onclick="toggleMultiGroup('thinking_disorders')">
-                    <span class="multicheck-label">Нецеленаправленное мышление (можно несколько)</span>
-                    <span class="multicheck-summary" id="thinking_disorders_summary">Не выбрано</span>
-                </div>
-                <div class="multicheck-body" id="thinking_disorders_body">
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="паралогичное" onchange="updateMultiSummary('thinking_disorders')">паралогичное</label>
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="соскальзывающее" onchange="updateMultiSummary('thinking_disorders')">соскальзывающее</label>
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="резонерство" onchange="updateMultiSummary('thinking_disorders')">резонерство</label>
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="разорванное" onchange="updateMultiSummary('thinking_disorders')">разорванное</label>
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="бессвязное" onchange="updateMultiSummary('thinking_disorders')">бессвязное</label>
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="аморфное" onchange="updateMultiSummary('thinking_disorders')">аморфное</label>
+            <div id="status-attention" class="status-subsection">
+                <h3>Внимание</h3>
+                <div class="multicheck-group" data-name="attention">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('attention')">
+                        <span class="multicheck-label">Внимание (множественный выбор)</span>
+                        <span class="multicheck-summary" id="attention_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="attention_body">
+                        <div class="attention-group">
+                            <div class="group-title">Гипопродуктивные нарушения</div>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="снижение концентрации (рассеянность)" onchange="updateMultiSummary('attention')">снижение концентрации (рассеянность)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="истощаемость внимания" onchange="updateMultiSummary('attention')">истощаемость внимания</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="замедленность переключения внимания" onchange="updateMultiSummary('attention')">замедленность переключения внимания</label>
+                        </div>
+                        <div class="attention-group">
+                            <div class="group-title">Гиперпродуктивные нарушения</div>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="повышенная отвлекаемость / гиперподвижность внимания" onchange="updateMultiSummary('attention')">повышенная отвлекаемость / гиперподвижность внимания</label>
+                        </div>
+                        <div class="attention-group">
+                            <div class="group-title">Нарушения объёма внимания</div>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="сужение объёма внимания" onchange="updateMultiSummary('attention')">сужение объёма внимания</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="расширение объёма внимания" onchange="updateMultiSummary('attention')">расширение объёма внимания</label>
+                        </div>
+                        <div class="attention-group">
+                            <div class="group-title">Нарушения переключаемости</div>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="трудность смены фокуса" onchange="updateMultiSummary('attention')">трудность смены фокуса</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="лабильность переключения" onchange="updateMultiSummary('attention')">лабильность переключения</label>
+                        </div>
+                        <div class="attention-group">
+                            <div class="group-title">Качественные нарушения</div>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="нарушение селективности внимания" onchange="updateMultiSummary('attention')">нарушение селективности внимания</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="насильственное внимание (принудительное)" onchange="updateMultiSummary('attention')">насильственное внимание (принудительное)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="ригидность внимания" onchange="updateMultiSummary('attention')">ригидность внимания</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="сверхвнимание (гиперфиксация)" onchange="updateMultiSummary('attention')">сверхвнимание (гиперфиксация)</label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Подвижность мышления -->
-            <div class="multicheck-group" data-name="thinking_mobility">
-                <div class="multicheck-header" onclick="toggleMultiGroup('thinking_mobility')">
-                    <span class="multicheck-label">Подвижность мышления</span>
-                    <span class="multicheck-summary" id="thinking_mobility_summary">Не выбрано</span>
+            <div id="status-mood" class="status-subsection">
+                <h3>Настроение</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Настроение:</label>
+                        <select id="mood">
+                            <option value="">— выбрать —</option>
+                            <option>ровное</option>
+                            <option>сниженное</option>
+                            <option>повышенное</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Эмоциональные реакции — устойчивость:</label>
+                        <select id="emotions_stability">
+                            <option value="">— выбрать —</option>
+                            <option>устойчивые</option>
+                            <option>неустойчивые</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="multicheck-body" id="thinking_mobility_body">
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="не нарушена" onchange="updateMultiSummary('thinking_mobility')">не нарушена</label>
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="обстоятельное" onchange="updateMultiSummary('thinking_mobility')">обстоятельное</label>
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="ригидное" onchange="updateMultiSummary('thinking_mobility')">ригидное</label>
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="вязкое" onchange="updateMultiSummary('thinking_mobility')">вязкое</label>
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="застревающее" onchange="updateMultiSummary('thinking_mobility')">застревающее</label>
-                    <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="инертное" onchange="updateMultiSummary('thinking_mobility')">инертное</label>
+
+                <div class="multicheck-group" data-name="emotions">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('emotions')">
+                        <span class="multicheck-label">Эмоциональные реакции — характер (можно несколько)</span>
+                        <span class="multicheck-summary" id="emotions_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="emotions_body">
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="живые" onchange="updateMultiSummary('emotions')">живые</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="уплощенные" onchange="updateMultiSummary('emotions')">уплощенные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="выхолощенные" onchange="updateMultiSummary('emotions')">выхолощенные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="огрубленные" onchange="updateMultiSummary('emotions')">огрубленные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="тусклые" onchange="updateMultiSummary('emotions')">тусклые</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="однообразные" onchange="updateMultiSummary('emotions')">однообразные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="монотонные" onchange="updateMultiSummary('emotions')">монотонные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="неадекватные" onchange="updateMultiSummary('emotions')">неадекватные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="недостаточные" onchange="updateMultiSummary('emotions')">недостаточные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием тревоги" onchange="updateMultiSummary('emotions')">с преобладанием тревоги</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием депрессии" onchange="updateMultiSummary('emotions')">с преобладанием депрессии</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием раздражительности" onchange="updateMultiSummary('emotions')">с преобладанием раздражительности</label>
+                    </div>
                 </div>
+
+                <label>Агрессивные тенденции:</label>
+                <select id="aggression">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствуют</option>
+                    <option>в адрес окружающих</option>
+                    <option>в адрес себя (аутоагрессия)</option>
+                </select>
+
+                <label>Суицидальные мысли на момент осмотра:</label>
+                <select id="suicidal_thoughts">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствуют</option>
+                    <option>присутствуют</option>
+                </select>
+
+                <label>Суицидальные планы на момент осмотра:</label>
+                <select id="suicidal_plans">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствуют</option>
+                    <option>присутствуют</option>
+                </select>
+
+                <label>Суицидальное поведение:</label>
+                <select id="suicidal_behavior">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствует</option>
+                    <option>в анамнезе</option>
+                    <option>на момент осмотра</option>
+                </select>
+
+                <label>Контрсуицидальные факторы:</label>
+                <textarea id="contrsuicidal_factors" placeholder="семья, дети, религиозные убеждения и др."></textarea>
             </div>
 
-            <label>Абстрагирование:</label>
-            <select id="abstraction">
-                <option value="">— выбрать —</option>
-                <option>доступно</option>
-                <option>не доступно</option>
-                <option>мышление конкретное</option>
-            </select>
+            <div id="status-motor" class="status-subsection">
+                <h3>Двигательная сфера</h3>
+                <label>Волевые качества:</label>
+                <select id="will">
+                    <option value="">— выбрать —</option>
+                    <option>сохранены</option>
+                    <option>снижены</option>
+                    <option>не развиты</option>
+                </select>
 
-            <!-- Идеи -->
-            <div class="multicheck-group" data-name="ideas">
-                <div class="multicheck-header" onclick="toggleMultiGroup('ideas')">
-                    <span class="multicheck-label">Идеи (можно несколько)</span>
-                    <span class="multicheck-summary" id="ideas_summary">Не выбрано</span>
-                </div>
-                <div class="multicheck-body" id="ideas_body">
-                    <label class="checkbox-item"><input type="checkbox" name="ideas" value="навязчивые" onchange="updateMultiSummary('ideas')">навязчивые</label>
-                    <label class="checkbox-item"><input type="checkbox" name="ideas" value="сверхценные" onchange="updateMultiSummary('ideas')">сверхценные</label>
-                    <label class="checkbox-item"><input type="checkbox" name="ideas" value="бредовые" onchange="updateMultiSummary('ideas')">бредовые</label>
-                </div>
+                <label>Двигательная сфера:</label>
+                <textarea id="motor" placeholder="замедленная/ускоренная моторика, кататонические симптомы и др."></textarea>
+
+                <label>Эпилептиформные пароксизмы:</label>
+                <select id="seizures">
+                    <option value="">— выбрать —</option>
+                    <option>отрицает</option>
+                    <option>отмечались в прошлом</option>
+                    <option>наблюдаются</option>
+                </select>
             </div>
 
-            <!-- Суждения -->
-            <div class="multicheck-group" data-name="judgment">
-                <div class="multicheck-header" onclick="toggleMultiGroup('judgment')">
-                    <span class="multicheck-label">Суждения (можно несколько)</span>
-                    <span class="multicheck-summary" id="judgment_summary">Не выбрано</span>
-                </div>
-                <div class="multicheck-body" id="judgment_body">
-                    <label class="checkbox-item"><input type="checkbox" name="judgment" value="легковесные" onchange="updateMultiSummary('judgment')">легковесные</label>
-                    <label class="checkbox-item"><input type="checkbox" name="judgment" value="поверхностные" onchange="updateMultiSummary('judgment')">поверхностные</label>
-                    <label class="checkbox-item"><input type="checkbox" name="judgment" value="категоричные" onchange="updateMultiSummary('judgment')">категоричные</label>
-                </div>
+            <div id="status-insight" class="status-subsection">
+                <h3>Критика к своему заболеванию</h3>
+                <label>Чувство дистанции:</label>
+                <select id="distance">
+                    <option value="">— выбрать —</option>
+                    <option>соблюдает</option>
+                    <option>снижено</option>
+                    <option>отсутствует</option>
+                </select>
+
+                <label>Критика к своему заболеванию:</label>
+                <select id="insight">
+                    <option value="">— выбрать —</option>
+                    <option>есть</option>
+                    <option>частичная</option>
+                    <option>отсутствует</option>
+                </select>
+
+                <label>Планы на будущее:</label>
+                <textarea id="future_plans"></textarea>
             </div>
 
-            <label>Интеллект:</label>
-            <select id="intellect">
-                <option value="">— выбрать —</option>
-                <option>в пределах возрастной нормы</option>
-                <option>снижен</option>
-                <option>не развит</option>
-            </select>
-
-            <label>Словарный запас:</label>
-            <select id="vocabulary">
-                <option value="">— выбрать —</option>
-                <option>достаточен</option>
-                <option>ограничен пределами повседневно-бытового общения</option>
-                <option>крайне мал</option>
-            </select>
-
-            <label>Обманы восприятия (свободный текст):</label>
-            <textarea id="perception"></textarea>
-
-            <!-- Память -->
-            <div class="multicheck-group" data-name="memory">
-                <div class="multicheck-header" onclick="toggleMultiGroup('memory')">
-                    <span class="multicheck-label">Память (можно несколько)</span>
-                    <span class="multicheck-summary" id="memory_summary">Не выбрано</span>
+            <div id="status-sleep-appetite" class="status-subsection">
+                <h3>Сон, аппетит</h3>
+                <div class="multicheck-group" data-name="sleep">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('sleep')">
+                        <span class="multicheck-label">Сон (можно несколько)</span>
+                        <span class="multicheck-summary" id="sleep_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="sleep_body">
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="удовлетворительный" onchange="updateMultiSummary('sleep')">удовлетворительный</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="поверхностный" onchange="updateMultiSummary('sleep')">поверхностный</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="проблемы с засыпанием (>30 минут)" onchange="updateMultiSummary('sleep')">проблемы с засыпанием (&gt;30 минут)</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="частые пробуждения ночью (> 3 за ночь)" onchange="updateMultiSummary('sleep')">частые пробуждения ночью (&gt; 3 за ночь)</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="раннее пробуждение" onchange="updateMultiSummary('sleep')">раннее пробуждение</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="отсутсвие чувства отдыха после сна" onchange="updateMultiSummary('sleep')">отсутсвие чувства отдыха после сна</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="отсутствует" onchange="updateMultiSummary('sleep')">отсутствует</label>
+                    </div>
                 </div>
-                <div class="multicheck-body" id="memory_body">
-                    <label class="checkbox-item"><input type="checkbox" name="memory" value="в пределах возрастной нормы" onchange="updateMultiSummary('memory')">в пределах возрастной нормы</label>
-                    <label class="checkbox-item"><input type="checkbox" name="memory" value="снижена" onchange="updateMultiSummary('memory')">снижена</label>
-                    <label class="checkbox-item"><input type="checkbox" name="memory" value="гипомнезия" onchange="updateMultiSummary('memory')">гипомнезия</label>
-                    <label class="checkbox-item"><input type="checkbox" name="memory" value="амнезия" onchange="updateMultiSummary('memory')">амнезия</label>
-                    <label class="checkbox-item"><input type="checkbox" name="memory" value="парамнезии" onchange="updateMultiSummary('memory')">парамнезии</label>
-                </div>
+
+                <label>Аппетит:</label>
+                <select id="appetite">
+                    <option value="">— выбрать —</option>
+                    <option>в норме</option>
+                    <option>снижен</option>
+                    <option>повышен</option>
+                    <option>анорексия</option>
+                    <option>булимия</option>
+                </select>
             </div>
-
-            <!-- Амнезия -->
-            <div class="multicheck-group" data-name="amnesia">
-                <div class="multicheck-header" onclick="toggleMultiGroup('amnesia')">
-                    <span class="multicheck-label">Амнезия (можно несколько)</span>
-                    <span class="multicheck-summary" id="amnesia_summary">Не выбрано</span>
-                </div>
-                <div class="multicheck-body" id="amnesia_body">
-                    <label class="checkbox-item"><input type="checkbox" name="amnesia" value="фиксационная" onchange="updateMultiSummary('amnesia')">фиксационная</label>
-                    <label class="checkbox-item"><input type="checkbox" name="amnesia" value="антероградная" onchange="updateMultiSummary('amnesia')">антероградная</label>
-                    <label class="checkbox-item"><input type="checkbox" name="amnesia" value="ретроградная" onchange="updateMultiSummary('amnesia')">ретроградная</label>
-                    <label class="checkbox-item"><input type="checkbox" name="amnesia" value="антероретроградная" onchange="updateMultiSummary('amnesia')">антероретроградная</label>
-                    <label class="checkbox-item"><input type="checkbox" name="amnesia" value="конградная" onchange="updateMultiSummary('amnesia')">конградная</label>
-                </div>
-            </div>
-
-            <!-- Парамнезии -->
-            <div class="multicheck-group" data-name="paramnesia">
-                <div class="multicheck-header" onclick="toggleMultiGroup('paramnesia')">
-                    <span class="multicheck-label">Парамнезии (можно несколько)</span>
-                    <span class="multicheck-summary" id="paramnesia_summary">Не выбрано</span>
-                </div>
-                <div class="multicheck-body" id="paramnesia_body">
-                    <label class="checkbox-item"><input type="checkbox" name="paramnesia" value="конфабуляции" onchange="updateMultiSummary('paramnesia')">конфабуляции</label>
-                    <label class="checkbox-item"><input type="checkbox" name="paramnesia" value="псевдореминисценции" onchange="updateMultiSummary('paramnesia')">псевдореминисценции</label>
-                </div>
-            </div>
-
-            <label>Настроение:</label>
-            <select id="mood">
-                <option value="">— выбрать —</option>
-                <option>ровное</option>
-                <option>сниженное</option>
-                <option>повышенное</option>
-            </select>
-
-            <label>Эмоциональные реакции — устойчивость:</label>
-            <select id="emotions_stability">
-                <option value="">— выбрать —</option>
-                <option>устойчивые</option>
-                <option>неустойчивые</option>
-            </select>
-
-            <!-- Эмоциональные реакции -->
-            <div class="multicheck-group" data-name="emotions">
-                <div class="multicheck-header" onclick="toggleMultiGroup('emotions')">
-                    <span class="multicheck-label">Эмоциональные реакции — характер (можно несколько)</span>
-                    <span class="multicheck-summary" id="emotions_summary">Не выбрано</span>
-                </div>
-                <div class="multicheck-body" id="emotions_body">
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="живые" onchange="updateMultiSummary('emotions')">живые</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="уплощенные" onchange="updateMultiSummary('emotions')">уплощенные</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="выхолощенные" onchange="updateMultiSummary('emotions')">выхолощенные</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="огрубленные" onchange="updateMultiSummary('emotions')">огрубленные</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="тусклые" onchange="updateMultiSummary('emotions')">тусклые</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="однообразные" onchange="updateMultiSummary('emotions')">однообразные</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="монотонные" onchange="updateMultiSummary('emotions')">монотонные</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="раздражительность" onchange="updateMultiSummary('emotions')">раздражительность</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="дистимия" onchange="updateMultiSummary('emotions')">дистимия</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="дисфория" onchange="updateMultiSummary('emotions')">дисфория</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="слабодушие" onchange="updateMultiSummary('emotions')">слабодушие</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="благодушие" onchange="updateMultiSummary('emotions')">благодушие</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="эйфория" onchange="updateMultiSummary('emotions')">эйфория</label>
-                    <label class="checkbox-item"><input type="checkbox" name="emotions" value="экстаз" onchange="updateMultiSummary('emotions')">экстаз</label>
-                </div>
-            </div>
-
-            <label>Агрессивные тенденции:</label>
-            <select id="aggression">
-                <option value="">— выбрать —</option>
-                <option>нет</option>
-                <option>есть</option>
-            </select>
-
-            <label>Суицидальные мысли на момент осмотра:</label>
-            <select id="suicidal_thoughts">
-                <option value="">— выбрать —</option>
-                <option>нет</option>
-                <option>есть</option>
-            </select>
-
-            <label>Суицидальные планы на момент осмотра:</label>
-            <select id="suicidal_plans">
-                <option value="">— выбрать —</option>
-                <option>нет</option>
-                <option>есть</option>
-            </select>
-
-            <label>Суицидальное поведение:</label>
-            <select id="suicidal_behavior">
-                <option value="">— выбрать —</option>
-                <option>нет</option>
-                <option>есть</option>
-            </select>
-
-            <label>Контрсуицидальные факторы на момент осмотра:</label>
-            <select id="contrsuicidal_factors">
-                <option value="">— выбрать —</option>
-                <option>нет</option>
-                <option>незначительные</option>
-                <option>есть</option>
-            </select>
-
-            <label>Воля:</label>
-            <select id="will">
-                <option value="">— выбрать —</option>
-                <option>активен</option>
-                <option>пассивен</option>
-                <option>гиперактивен</option>
-                <option>гипобулия</option>
-                <option>абулия</option>
-            </select>
-
-            <label>Двигательная сфера (свободный текст):</label>
-            <textarea id="motor"></textarea>
-
-            <label>Чувство дистанции:</label>
-            <select id="distance">
-                <option value="">— выбрать —</option>
-                <option>сохранено</option>
-                <option>снижено</option>
-                <option>отсутствует</option>
-            </select>
-
-            <label>Критика к своему заболеванию:</label>
-            <select id="insight">
-                <option value="">— выбрать —</option>
-                <option>сохранена</option>
-                <option>формальная</option>
-                <option>снижена</option>
-                <option>отсутствует</option>
-            </select>
-
-            <label>Планы на будущее:</label>
-            <select id="future_plans">
-                <option value="">— выбрать —</option>
-                <option>носят реальный характер</option>
-                <option>нереалистичны, фантастичны</option>
-                <option>отсутствуют</option>
-            </select>
-
-            <label>Эпилептиформные пароксизмы:</label>
-            <select id="seizures">
-                <option value="">— выбрать —</option>
-                <option>нет</option>
-                <option>есть</option>
-            </select>
-
-            <!-- Сон -->
-            <div class="multicheck-group" data-name="sleep">
-                <div class="multicheck-header" onclick="toggleMultiGroup('sleep')">
-                    <span class="multicheck-label">Сон (можно несколько)</span>
-                    <span class="multicheck-summary" id="sleep_summary">Не выбрано</span>
-                </div>
-                <div class="multicheck-body" id="sleep_body">
-                    <label class="checkbox-item"><input type="checkbox" name="sleep" value="в норме" onchange="updateMultiSummary('sleep')">в норме</label>
-                    <label class="checkbox-item"><input type="checkbox" name="sleep" value="проблемы с засыпанием (>30 минут)" onchange="updateMultiSummary('sleep')">проблемы с засыпанием (&gt;30 минут)</label>
-                    <label class="checkbox-item"><input type="checkbox" name="sleep" value="частые пробуждения ночью (> 3 за ночь)" onchange="updateMultiSummary('sleep')">частые пробуждения ночью (&gt; 3 за ночь)</label>
-                    <label class="checkbox-item"><input type="checkbox" name="sleep" value="раннее пробуждение" onchange="updateMultiSummary('sleep')">раннее пробуждение</label>
-                    <label class="checkbox-item"><input type="checkbox" name="sleep" value="отсутсвие чувства отдыха после сна" onchange="updateMultiSummary('sleep')">отсутсвие чувства отдыха после сна</label>
-                    <label class="checkbox-item"><input type="checkbox" name="sleep" value="отсутствует" onchange="updateMultiSummary('sleep')">отсутствует</label>
-                </div>
-            </div>
-
-            <label>Аппетит:</label>
-            <select id="appetite">
-                <option value="">— выбрать —</option>
-                <option>в норме</option>
-                <option>снижен</option>
-                <option>повышен</option>
-                <option>анорексия</option>
-                <option>булимия</option>
-            </select>
         </div>
-
-        <!-- ДИАГНОЗ, РЕКОМЕНДАЦИИ, НАЗНАЧЕНИЯ -->
+<!-- ДИАГНОЗ, РЕКОМЕНДАЦИИ, НАЗНАЧЕНИЯ -->
 
         <div class="section" id="section-diagnosis">
             <h2>Диагноз и рекомендации</h2>
@@ -970,6 +1362,10 @@
         body.classList.toggle('open');
     }
 
+    function toggleSidebar() {
+        document.body.classList.toggle('sidebar-collapsed');
+    }
+
     function updateMultiSummary(name) {
         const summary = document.getElementById(name + '_summary');
         if (!summary) return;
@@ -981,6 +1377,112 @@
     function getCheckedTextByName(name) {
         const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
         return Array.from(checked).map(c => c.value).join(', ');
+    }
+
+    function collectIdeasText() {
+        const items = [];
+        document.querySelectorAll('.idea-checkbox').forEach(cb => {
+            if (cb.checked) {
+                const type = cb.dataset.ideaType;
+                const descInput = document.querySelector('.idea-description[data-idea-type="' + type + '"]');
+                const desc = descInput ? descInput.value.trim() : '';
+                items.push(desc ? `${type} — ${desc}` : type);
+            }
+        });
+        return items.join('; ');
+    }
+
+    function collectCheckboxDescriptions(selector) {
+        const items = [];
+        document.querySelectorAll(selector).forEach(cb => {
+            if (cb.checked) {
+                const type = cb.dataset.perceptionType;
+                const descInput = document.querySelector('.perception-description[data-perception-type="' + type + '"]');
+                const desc = descInput ? descInput.value.trim() : '';
+                items.push({ type, desc });
+            }
+        });
+        return items;
+    }
+
+    function collectIllusionsText() {
+        const illusions = [];
+        document.querySelectorAll('.illusion-checkbox').forEach(cb => {
+            if (cb.checked) {
+                const type = cb.dataset.illusionType;
+                const descInput = document.querySelector('.illusion-description[data-illusion-type="' + type + '"]');
+                const desc = descInput ? descInput.value.trim() : '';
+                illusions.push(desc ? `${type} — ${desc}` : type);
+            }
+        });
+        return illusions;
+    }
+
+    function collectHallucinationText() {
+        const analyzer = getCheckedTextByName('hallucination_analyzer');
+        const complexity = getCheckedTextByName('hallucination_complexity');
+        const character = getCheckedTextByName('hallucination_character');
+        const description = document.getElementById('hallucination_description')?.value.trim();
+
+        const parts = [];
+        if (analyzer) parts.push('по анализатору: ' + analyzer);
+        if (complexity) parts.push('по сложности: ' + complexity);
+        if (character) parts.push('по характеру: ' + character);
+        if (description) parts.push('описание — ' + description);
+
+        return parts.length ? 'галлюцинации (' + parts.join('; ') + ')' : '';
+    }
+
+    function collectPerceptionText() {
+        const parts = [];
+        const illusions = collectIllusionsText();
+        if (illusions.length) {
+            parts.push('иллюзии: ' + illusions.join('; '));
+        }
+
+        const hallucinations = collectHallucinationText();
+        if (hallucinations) {
+            parts.push(hallucinations);
+        }
+
+        const perceptionItems = collectCheckboxDescriptions('.perception-checkbox');
+        perceptionItems.forEach(item => {
+            let detailText = item.desc;
+
+            if (item.type === 'Психосенсорные расстройства') {
+                const derealization = getCheckedTextByName('psychosensory_derealization');
+                const autopsychic = getCheckedTextByName('psychosensory_autopsychic');
+                const psParts = [];
+                if (derealization) psParts.push('дереализационные — ' + derealization);
+                if (autopsychic) psParts.push('аутопсихические — ' + autopsychic);
+                if (psParts.length) {
+                    detailText = detailText ? detailText + '; ' + psParts.join('; ') : psParts.join('; ');
+                }
+            }
+
+            if (item.type === 'Психический автоматизм') {
+                const automatism = getCheckedTextByName('psychic_automatism');
+                if (automatism) {
+                    detailText = detailText ? detailText + '; ' + automatism : automatism;
+                }
+            }
+
+            if (detailText) {
+                parts.push(item.type + ' — ' + detailText);
+            } else {
+                parts.push(item.type);
+            }
+        });
+
+        const freeText = document.getElementById('perception')?.value.trim();
+        if (!parts.length && freeText) {
+            return freeText;
+        }
+        if (freeText) {
+            parts.push(freeText);
+        }
+
+        return parts.join('; ');
     }
 
     // Небольшой список часто используемых рубрик МКБ-10 (можно дополнять)
@@ -1211,15 +1713,16 @@
         const thinking_disorders = getCheckedTextByName('thinking_disorders');
         const thinking_mobility = getCheckedTextByName('thinking_mobility');
         const abstraction = document.getElementById('abstraction').value || '';
-        const ideas = getCheckedTextByName('ideas');
+        const ideas = collectIdeasText();
         const judgment = getCheckedTextByName('judgment');
         const intellect = document.getElementById('intellect').value || '';
         const vocabulary = document.getElementById('vocabulary').value || '';
 
-        const perception = document.getElementById('perception').value.trim();
+        const perceptionDetails = collectPerceptionText();
         const memory = getCheckedTextByName('memory');
         const amnesia = getCheckedTextByName('amnesia');
         const paramnesia = getCheckedTextByName('paramnesia');
+        const attention = getCheckedTextByName('attention');
 
         const mood = document.getElementById('mood').value || '';
         const emotions_stability = document.getElementById('emotions_stability').value || '';
@@ -1316,8 +1819,8 @@
             text += 'Словарный запас ' + vocabulary + '.<br>';
         }
 
-        if (perception) {
-            text += 'Обманы восприятия: ' + perception + '.<br>';
+        if (perceptionDetails) {
+            text += 'Обманы восприятия: ' + perceptionDetails + '.<br>';
         }
 
         if (memory) {
@@ -1328,6 +1831,9 @@
         }
         if (paramnesia) {
             text += 'Парамнезии: ' + paramnesia + '.<br>';
+        }
+        if (attention) {
+            text += 'Внимание: ' + attention + '.<br>';
         }
 
         let emoLine = '';
