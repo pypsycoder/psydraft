@@ -218,14 +218,19 @@
         .idea-row,
         .perception-row {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;      /* главное — не переносить на новую строку */
             align-items: center;
             gap: 10px 12px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            background: #ffffff;
-            border: 1px solid #e1e4eb;
+            padding: 8px 12px;
         }
+
+        /* Оформление рамкой только для блока обманов восприятия,
+           чтобы не сломать внешний вид других мест */
+        #status-perception .perception-row {
+            border: none;          /* убираем рамку */
+            background: none;      /* убираем белый фон */
+            padding: 8px 0;        /* минимальный отступ, чтобы строки не слипались */
+}
 
         .idea-description,
         .perception-description,
@@ -294,6 +299,16 @@
             background: #ffffff;
             box-sizing: border-box;
             transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), transform 0.1s ease;
+        }
+
+        /* Описание рядом с чекбоксом: не на всю ширину, а занимать оставшееся место */
+        .illusion-description,
+        .hallucination-description,
+        .perception-description,
+        .idea-description {
+            width: auto;           /* переопределяем width:100% */
+            flex: 1 1 220px;
+            min-width: 180px;
         }
 
         textarea {
@@ -781,7 +796,6 @@
                     <option>замедленная</option>
                     <option>скандированная</option>
                     <option>монологичная</option>
-                    <option>моногамная</option>
                     <option>жаргон</option>
                     <option>скандированная</option>
                     <option>монотонная</option>
@@ -936,146 +950,204 @@
                 </div>
             </div>
 
+            <!-- === ОБНОВЛЁННЫЙ БЛОК «ОБМАНЫ ВОСПРИЯТИЯ» === -->
             <div id="status-perception" class="status-subsection">
                 <h3>Обманы восприятия</h3>
-                <div class="perception-card">
+
+                <!-- 1. Иллюзии -->
+                <div class="perception-card" id="perception-illusions" style="margin-top: 10px;">
                     <h4>Иллюзии</h4>
-                    <div class="subgroup-grid">
-                        <div class="perception-row">
-                            <label class="checkbox-item">
-                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Физические">
-                                <span>Физические</span>
-                            </label>
-                            <input type="text" class="perception-description illusion-description" data-illusion-type="Физические" placeholder="Описание">
-                        </div>
-                        <div class="perception-row">
-                            <label class="checkbox-item">
-                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Аффективные">
-                                <span>Аффективные</span>
-                            </label>
-                            <input type="text" class="perception-description illusion-description" data-illusion-type="Аффективные" placeholder="Описание">
-                        </div>
-                        <div class="perception-row">
-                            <label class="checkbox-item">
-                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Вербальные (смысловые)">
-                                <span>Вербальные (смысловые)</span>
-                            </label>
-                            <input type="text" class="perception-description illusion-description" data-illusion-type="Вербальные (смысловые)" placeholder="Описание">
-                        </div>
-                        <div class="perception-row">
-                            <label class="checkbox-item">
-                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Парейдолические">
-                                <span>Парейдолические</span>
-                            </label>
-                            <input type="text" class="perception-description illusion-description" data-illusion-type="Парейдолические" placeholder="Описание">
-                        </div>
-                    </div>
-                </div>
 
-                <div class="perception-card" style="margin-top: 10px;">
-                    <h4>Галлюцинации</h4>
-                    <div class="perception-columns">
-                        <div>
-                            <div class="group-title">По анализатору</div>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="слуховые" onchange="updateMultiSummary('hallucination_analyzer')">слуховые</label>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="зрительные" onchange="updateMultiSummary('hallucination_analyzer')">зрительные</label>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="обонятельные" onchange="updateMultiSummary('hallucination_analyzer')">обонятельные</label>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="вкусовые" onchange="updateMultiSummary('hallucination_analyzer')">вкусовые</label>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="тактильные" onchange="updateMultiSummary('hallucination_analyzer')">тактильные</label>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_analyzer" value="висцеральные" onchange="updateMultiSummary('hallucination_analyzer')">висцеральные</label>
-                        </div>
-                        <div>
-                            <div class="group-title">По сложности</div>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_complexity" value="простые" onchange="updateMultiSummary('hallucination_complexity')">простые</label>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_complexity" value="сложные" onchange="updateMultiSummary('hallucination_complexity')">сложные</label>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_complexity" value="сценоподобные" onchange="updateMultiSummary('hallucination_complexity')">сценоподобные</label>
-                        </div>
-                        <div>
-                            <div class="group-title">По характеру</div>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_character" value="комментирующие" onchange="updateMultiSummary('hallucination_character')">комментирующие</label>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_character" value="императивные" onchange="updateMultiSummary('hallucination_character')">императивные</label>
-                            <label class="checkbox-item"><input type="checkbox" name="hallucination_character" value="диалогизирующие" onchange="updateMultiSummary('hallucination_character')">диалогизирующие</label>
-                        </div>
-                    </div>
-                    <div style="margin-top: 8px;">
-                        <label class="prescription-label-small">Описание</label>
-                        <input type="text" id="hallucination_description" class="hallucination-description-input" placeholder="Общий комментарий к галлюцинациям">
-                    </div>
-                </div>
-
-                <div class="perception-card" style="margin-top: 10px;">
                     <div class="perception-row">
                         <label class="checkbox-item">
-                            <input type="checkbox" class="perception-checkbox" id="pseudohallucinations_checkbox" data-perception-type="Псевдогаллюцинации">
+                            <input type="checkbox" class="illusion-checkbox" data-illusion-type="Физические">
+                            <span>Физические</span>
+                        </label>
+                        <input type="text"
+                               class="illusion-description"
+                               data-illusion-type="Физические"
+                               placeholder="Описание">
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="illusion-checkbox" data-illusion-type="Аффективные">
+                            <span>Аффективные</span>
+                        </label>
+                        <input type="text"
+                               class="illusion-description"
+                               data-illusion-type="Аффективные"
+                               placeholder="Описание">
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="illusion-checkbox" data-illusion-type="Вербальные (смысловые)">
+                            <span>Вербальные (смысловые)</span>
+                        </label>
+                        <input type="text"
+                               class="illusion-description"
+                               data-illusion-type="Вербальные (смысловые)"
+                               placeholder="Описание">
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="illusion-checkbox" data-illusion-type="Парейдолические">
+                            <span>Парейдолические</span>
+                        </label>
+                        <input type="text"
+                               class="illusion-description"
+                               data-illusion-type="Парейдолические"
+                               placeholder="Описание">
+                    </div>
+                </div>
+
+                <!-- 2. Галлюцинации -->
+                <div class="perception-card" id="perception-hallucinations">
+                    <h4>Галлюцинации</h4>
+
+                    <div class="perception-columns">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="слуховые">
+                            <span>Слуховые</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="зрительные">
+                            <span>Зрительные</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="обонятельные">
+                            <span>Обонятельные</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="вкусовые">
+                            <span>Вкусовые</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="тактильные">
+                            <span>Тактильные</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="висцеральные">
+                            <span>Висцеральные</span>
+                        </label>
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="hallucination-type" data-hall-type="истинные галлюцинации">
+                            <span>Истинные галлюцинации</span>
+                        </label>
+                        <input type="text"
+                               class="hallucination-description"
+                               data-hall-type="истинные галлюцинации"
+                               placeholder="Описание (например: слуховые голоса комментирующего характера)">
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="hallucination-type" data-hall-type="псевдогаллюцинации">
                             <span>Псевдогаллюцинации</span>
                         </label>
-                        <input type="text" class="perception-description" data-perception-type="Псевдогаллюцинации" placeholder="Описание">
+                        <input type="text"
+                               class="hallucination-description"
+                               data-hall-type="псевдогаллюцинации"
+                               placeholder="Описание (например: «голоса в голове»)">
                     </div>
+
                     <div class="perception-row">
                         <label class="checkbox-item">
-                            <input type="checkbox" class="perception-checkbox" id="hallucination_like_checkbox" data-perception-type="Галлюцинаторно-подобные переживания">
+                            <input type="checkbox" class="hallucination-type" data-hall-type="галлюцинаторно-подобные переживания">
                             <span>Галлюцинаторно-подобные переживания</span>
                         </label>
-                        <input type="text" class="perception-description" data-perception-type="Галлюцинаторно-подобные переживания" placeholder="Описание">
-                    </div>
-                    <div class="perception-row">
-                        <label class="checkbox-item">
-                            <input type="checkbox" class="perception-checkbox" id="psychosensory_checkbox" data-perception-type="Психосенсорные расстройства">
-                            <span>Психосенсорные расстройства</span>
-                        </label>
-                        <div class="psychosensory-columns" style="width: 100%;">
-                            <div>
-                                <div class="group-title">Дереализационные</div>
-                                <label class="checkbox-item"><input type="checkbox" name="psychosensory_derealization" value="изменение яркости, контрастности" onchange="updateMultiSummary('psychosensory_derealization')">изменение яркости, контрастности</label>
-                                <label class="checkbox-item"><input type="checkbox" name="psychosensory_derealization" value="искажение размеров (макро-/микропсия)" onchange="updateMultiSummary('psychosensory_derealization')">искажение размеров (макро-/микропсия)</label>
-                                <label class="checkbox-item"><input type="checkbox" name="psychosensory_derealization" value="искажение формы (дисморфопсия)" onchange="updateMultiSummary('psychosensory_derealization')">искажение формы (дисморфопсия)</label>
-                                <label class="checkbox-item"><input type="checkbox" name="psychosensory_derealization" value="искажение расстояния/перспективы" onchange="updateMultiSummary('psychosensory_derealization')">искажение расстояния/перспективы</label>
-                            </div>
-                            <div>
-                                <div class="group-title">Аутопсихические</div>
-                                <label class="checkbox-item"><input type="checkbox" name="psychosensory_autopsychic" value="деперсонализация (изменение восприятия собственного «Я»)" onchange="updateMultiSummary('psychosensory_autopsychic')">деперсонализация (изменение восприятия собственного «Я»)</label>
-                            </div>
-                        </div>
-                        <input type="text" class="perception-description" data-perception-type="Психосенсорные расстройства" placeholder="Общее описание">
-                    </div>
-                    <div class="perception-row">
-                        <label class="checkbox-item">
-                            <input type="checkbox" class="perception-checkbox" id="synestopathies_checkbox" data-perception-type="Синестопатии">
-                            <span>Синестопатии (сенестопатии)</span>
-                        </label>
-                        <input type="text" class="perception-description" data-perception-type="Синестопатии" placeholder="Описание ощущений">
-                    </div>
-                    <div class="perception-row">
-                        <label class="checkbox-item">
-                            <input type="checkbox" class="perception-checkbox" id="psychic_automatism_checkbox" data-perception-type="Психический автоматизм">
-                            <span>Психический автоматизм (Кандинский–Клерамбо)</span>
-                        </label>
-                        <div class="perception-columns" style="width: 100%;">
-                            <label class="checkbox-item"><input type="checkbox" name="psychic_automatism" value="сенсорный автоматизм" onchange="updateMultiSummary('psychic_automatism')">сенсорный автоматизм</label>
-                            <label class="checkbox-item"><input type="checkbox" name="psychic_automatism" value="ассоциативный автоматизм" onchange="updateMultiSummary('psychic_automatism')">ассоциативный автоматизм</label>
-                            <label class="checkbox-item"><input type="checkbox" name="psychic_automatism" value="кинестетический (двигательный) автоматизм" onchange="updateMultiSummary('psychic_automatism')">кинестетический (двигательный) автоматизм</label>
-                        </div>
-                        <input type="text" class="perception-description" data-perception-type="Психический автоматизм" placeholder="Описание проявлений">
-                    </div>
-                    <div class="perception-row">
-                        <label class="checkbox-item">
-                            <input type="checkbox" class="perception-checkbox" id="functional_hallucinations_checkbox" data-perception-type="Функциональные галлюцинации">
-                            <span>Функциональные галлюцинации</span>
-                        </label>
-                        <input type="text" class="perception-description" data-perception-type="Функциональные галлюцинации" placeholder="Описание">
-                    </div>
-                    <div class="perception-row">
-                        <label class="checkbox-item">
-                            <input type="checkbox" class="perception-checkbox" id="reflex_hallucinations_checkbox" data-perception-type="Рефлекторные галлюцинации">
-                            <span>Рефлекторные галлюцинации</span>
-                        </label>
-                        <input type="text" class="perception-description" data-perception-type="Рефлекторные галлюцинации" placeholder="Описание">
+                        <input type="text"
+                               class="hallucination-description"
+                               data-hall-type="галлюцинаторно-подобные переживания"
+                               placeholder="Описание">
                     </div>
                 </div>
 
+                <!-- 3. Психосенсорные расстройства -->
+                <div class="perception-card" id="perception-psychosensory">
+                    <h4>Психосенсорные расстройства</h4>
+
+                    <div class="psychosensory-columns">
+                        <div>
+                            <div class="group-title">Дереализационные</div>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychosensory_derealization"
+                                       value="изменение яркости, контрастности">
+                                <span>Изменение яркости, контрастности</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychosensory_derealization"
+                                       value="искажение размеров (макро-/микропсия)">
+                                <span>Искажение размеров (макро-/микропсия)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychosensory_derealization"
+                                       value="искажение формы (дисморфопсия)">
+                                <span>Искажение формы (дисморфопсия)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychosensory_derealization"
+                                       value="искажение расстояния/перспективы">
+                                <span>Искажение расстояния/перспективы</span>
+                            </label>
+                        </div>
+
+                        <div>
+                            <div class="group-title">Аутопсихические</div>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychosensory_autopsychic"
+                                       value="деперсонализация (изменение восприятия собственного «Я»)">
+                                <span>Деперсонализация</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="perception-row" style="margin-top: 8px;">
+                        <input type="text"
+                               id="psychosensory_description"
+                               class="perception-description"
+                               placeholder="Свободное описание психосенсорных расстройств">
+                    </div>
+                </div>
+
+                <!-- 4. Психические автоматизмы -->
+                <div class="perception-card" id="perception-automatism">
+                    <h4>Психические автоматизмы</h4>
+
+                    <div class="perception-columns">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="psychic_automatism" value="сенсорный автоматизм">
+                            <span>Сенсорный автоматизм</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="psychic_automatism" value="ассоциативный автоматизм">
+                            <span>Ассоциативный автоматизм</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="psychic_automatism" value="кинестетический (двигательный) автоматизм">
+                            <span>Кинестетический (двигательный) автоматизм</span>
+                        </label>
+                    </div>
+
+                    <div class="perception-row" style="margin-top: 8px;">
+                        <input type="text"
+                               id="psychic_automatism_description"
+                               class="perception-description"
+                               placeholder="Описание переживаний автоматизма">
+                    </div>
+                </div>
+
+                <!-- Свободный текст -->
                 <label style="margin-top: 12px;">Обманы восприятия (свободный текст):</label>
                 <textarea id="perception" placeholder="Дополнительные комментарии"></textarea>
             </div>
+
+
 
             <div id="status-memory" class="status-subsection">
                 <h3>Память</h3>
@@ -1322,7 +1394,7 @@
                 Кликните по варианту ниже, чтобы добавить его в поле диагноза.
             </p>
 
-            <label>Диагноз (шифры F по МКБ-10):</label>
+            <label>Диагноз (шифры МКБ-10):</label>
             <textarea id="diagnosis"></textarea>
 
             <label>Рекомендации:</label>
@@ -1418,62 +1490,75 @@
         return illusions;
     }
 
+
     function collectHallucinationText() {
         const analyzer = getCheckedTextByName('hallucination_analyzer');
-        const complexity = getCheckedTextByName('hallucination_complexity');
-        const character = getCheckedTextByName('hallucination_character');
-        const description = document.getElementById('hallucination_description')?.value.trim();
-
-        const parts = [];
-        if (analyzer) parts.push('по анализатору: ' + analyzer);
-        if (complexity) parts.push('по сложности: ' + complexity);
-        if (character) parts.push('по характеру: ' + character);
-        if (description) parts.push('описание — ' + description);
-
-        return parts.length ? 'галлюцинации (' + parts.join('; ') + ')' : '';
+        const items = [];
+        // Истинные, псевдо, галлюцинаторно-подобные
+        document.querySelectorAll('.hallucination-type').forEach(cb => {
+            if (cb.checked) {
+                const type = cb.dataset.hallType;
+                const descInput = document.querySelector(
+                    '.hallucination-description[data-hall-type="' + type + '"]'
+                );
+                const desc = descInput ? descInput.value.trim() : '';
+                items.push(desc ? `${type} — ${desc}` : type);
+            }
+        });
+        const resultParts = [];
+        if (analyzer) {
+            resultParts.push("по анализатору: " + analyzer);
+        }
+        if (items.length) {
+            resultParts.push(items.join("; "));
+        }
+        if (!resultParts.length) return "";
+        return "галлюцинации (" + resultParts.join("; ") + ")";
     }
 
     function collectPerceptionText() {
         const parts = [];
+
+        // Иллюзии
         const illusions = collectIllusionsText();
         if (illusions.length) {
             parts.push('иллюзии: ' + illusions.join('; '));
         }
 
+        // Галлюцинации
         const hallucinations = collectHallucinationText();
         if (hallucinations) {
             parts.push(hallucinations);
         }
 
-        const perceptionItems = collectCheckboxDescriptions('.perception-checkbox');
-        perceptionItems.forEach(item => {
-            let detailText = item.desc;
+        // Психосенсорные расстройства
+        const dereal = getCheckedTextByName('psychosensory_derealization');
+        const autopsychic = getCheckedTextByName('psychosensory_autopsychic');
+        const psychoDesc = document.getElementById('psychosensory_description')?.value.trim();
 
-            if (item.type === 'Психосенсорные расстройства') {
-                const derealization = getCheckedTextByName('psychosensory_derealization');
-                const autopsychic = getCheckedTextByName('psychosensory_autopsychic');
-                const psParts = [];
-                if (derealization) psParts.push('дереализационные — ' + derealization);
-                if (autopsychic) psParts.push('аутопсихические — ' + autopsychic);
-                if (psParts.length) {
-                    detailText = detailText ? detailText + '; ' + psParts.join('; ') : psParts.join('; ');
-                }
+        if (dereal || autopsychic || psychoDesc) {
+            const psParts = [];
+            if (dereal) psParts.push('дереализационные — ' + dereal);
+            if (autopsychic) psParts.push('аутопсихические — ' + autopsychic);
+            if (psychoDesc) psParts.push(psychoDesc);
+
+            parts.push('психосенсорные расстройства: ' + psParts.join('; '));
+        }
+
+        // Психические автоматизмы
+        const automatism = getCheckedTextByName('psychic_automatism');
+        const automatismDesc = document.getElementById('psychic_automatism_description')?.value.trim();
+
+        if (automatism || automatismDesc) {
+            let aText = '';
+            if (automatism) aText += automatism;
+            if (automatismDesc) {
+                aText += (aText ? '; ' : '') + automatismDesc;
             }
+            parts.push('психические автоматизмы: ' + aText);
+        }
 
-            if (item.type === 'Психический автоматизм') {
-                const automatism = getCheckedTextByName('psychic_automatism');
-                if (automatism) {
-                    detailText = detailText ? detailText + '; ' + automatism : automatism;
-                }
-            }
-
-            if (detailText) {
-                parts.push(item.type + ' — ' + detailText);
-            } else {
-                parts.push(item.type);
-            }
-        });
-
+        // Свободный текст
         const freeText = document.getElementById('perception')?.value.trim();
         if (!parts.length && freeText) {
             return freeText;
@@ -1484,6 +1569,7 @@
 
         return parts.join('; ');
     }
+
 
     // Небольшой список часто используемых рубрик МКБ-10 (можно дополнять)
     const icd10 = [
