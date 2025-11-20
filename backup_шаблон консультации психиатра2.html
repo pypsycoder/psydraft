@@ -39,52 +39,6 @@
             gap: 16px;
         }
 
-        .hamburger-button {
-            position: sticky;
-            top: 10px;
-            left: 0;
-            align-self: flex-start;
-            z-index: 120;
-            background: #ffffff;
-            border: 1px solid #d1d1d6;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-            border-radius: 12px;
-            width: 42px;
-            height: 42px;
-            display: grid;
-            place-items: center;
-            cursor: pointer;
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
-        }
-
-        .hamburger-button span {
-            display: block;
-            width: 20px;
-            height: 2px;
-            background: #111;
-            position: relative;
-        }
-
-        .hamburger-button span::before,
-        .hamburger-button span::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            width: 20px;
-            height: 2px;
-            background: #111;
-            transition: transform var(--transition-fast);
-        }
-
-        .hamburger-button span::before { top: -6px; }
-        .hamburger-button span::after { top: 6px; }
-
-        .hamburger-button:hover {
-            background: #f9fafc;
-            transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
-        }
-
         /* SIDEBAR */
 
         .sidebar {
@@ -100,6 +54,33 @@
             padding: 14px 14px 10px;
             animation: slideIn 0.35s ease-out;
             transition: transform var(--transition-fast), opacity var(--transition-fast), width var(--transition-fast), padding var(--transition-fast);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-toggle {
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 8px;
+            transition: background var(--transition-fast), transform 0.1s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(0,0,0,0.05);
+            transform: translateY(-1px);
+        }
+
+        .sidebar-toggle:active {
+            transform: translateY(0);
         }
 
         .sidebar-title {
@@ -402,8 +383,62 @@
             margin: 0;
         }
 
-        input[type="number"] { 
+        input[type="number"] {
             -moz-appearance: textfield;
+        }
+
+        .rec-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 12px 0 20px;
+        }
+
+        @media (max-width: 800px) {
+            .rec-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .rec-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px 14px;
+            border: 1px solid #e2e3e7;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .rec-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .rec-title input[type="checkbox"] {
+            accent-color: var(--accent);
+        }
+
+        .rec-modes {
+            margin: 4px 0 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 16px;
+            font-size: 14px;
+        }
+
+        .rec-modes input[type="radio"] {
+            accent-color: var(--accent);
+        }
+
+        .rec-text {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 15px;
+            border: 1px solid #ededed;
+            display: none;
         }
 
         /* RECOMMENDATIONS LIBRARY */
@@ -776,22 +811,21 @@
                 width: 100%;
                 order: -1;
             }
-
-            .hamburger-button {
-                position: sticky;
-                top: 8px;
-                z-index: 130;
-            }
         }
     </style>
 </head>
 <body>
 <div class="layout">
-    <button class="hamburger-button" type="button" onclick="toggleSidebar()" aria-label="Скрыть или показать меню">
-        <span></span>
-    </button>
     <nav class="sidebar">
-        <div class="sidebar-title">Навигация</div>
+        <div class="sidebar-header">
+            <button type="button"
+                    class="sidebar-toggle"
+                    onclick="toggleSidebar()"
+                    aria-label="Свернуть или развернуть навигацию">
+                ☰
+            </button>
+            <div class="sidebar-title">Навигация</div>
+        </div>
         <ul>
             <li><a href="#section-general">Общие разделы</a></li>
             <li>
@@ -1583,6 +1617,13 @@
                     <button type="button" class="btn-secondary" id="collect-recommendations-button">Собрать рекомендации в поле ниже</button>
                 </div>
             </div>
+
+            <h3 style="margin-top: 12px;">Библиотека рекомендаций</h3>
+            <p class="small-note">
+                Отметьте нужные рекомендации и выберите формат текста (коротко или полно).
+                Сейчас это только заготовка — текст ниже пока не подставляется автоматически в итоговое заключение.
+            </p>
+            <div id="recommendation-cards" class="rec-grid"></div>
 
             <label>Рекомендации:</label>
             <textarea id="recommendations">1. Соблюдение режима сна и бодрствования
@@ -2541,7 +2582,103 @@
         sel.removeAllRanges();
     }
 
+    const recommendationsLibrary = [
+        {
+            id: 'sleep',
+            title: 'Режим сна',
+            short: 'Наладить график сна с соблюдением постоянного времени засыпания и пробуждения.',
+            full: 'Рекомендовано регуляризировать цикл сна: ложиться и вставать в одно и то же время, исключить длительные дневные сны, за 2–3 часа до сна избегать кофеина, гаджетов и тяжёлой пищи.'
+        },
+        {
+            id: 'activity',
+            title: 'Физическая активность',
+            short: 'Лёгкая ежедневная физическая активность при отсутствии соматических противопоказаний.',
+            full: 'Рекомендована регулярная умеренная физическая активность (ходьба, ЛФК, растяжка) не менее 20–30 минут в день при отсутствии соматических противопоказаний; нагрузку увеличивать постепенно.'
+        },
+        {
+            id: 'psychoeducation',
+            title: 'Психообразование',
+            short: 'Провести психообразовательную беседу о природе болезни и лечении.',
+            full: 'Рекомендуется психообразовательная беседа: обсудить с пациентом особенности состояния, факторы обострения и ремиссии, принципы фармако- и психотерапии, важность приверженности лечению.'
+        }
+    ];
+
+    function initRecommendationCards() {
+        const container = document.getElementById('recommendation-cards');
+        if (!container || !Array.isArray(recommendationsLibrary)) return;
+
+        recommendationsLibrary.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'rec-card';
+
+            card.innerHTML = `
+            <label class="rec-title">
+                <input type="checkbox" class="rec-toggle" data-rec-id="${item.id}">
+                <span>${item.title}</span>
+            </label>
+            <div class="rec-modes" data-rec-id="${item.id}">
+                <label><input type="radio" name="rec-${item.id}-mode" value="short" disabled> Коротко</label>
+                <label><input type="radio" name="rec-${item.id}-mode" value="full" disabled> Полно</label>
+            </div>
+            <div class="rec-text" id="rec-text-${item.id}"></div>
+        `;
+
+            container.appendChild(card);
+        });
+
+        container.addEventListener('change', function (event) {
+            const target = event.target;
+            if (!target) return;
+
+            // Toggle checkbox
+            if (target.classList.contains('rec-toggle')) {
+                const id = target.getAttribute('data-rec-id');
+                const modes = container.querySelector(`.rec-modes[data-rec-id="${id}"]`);
+                const textBlock = document.getElementById(`rec-text-${id}`);
+                if (!modes || !textBlock) return;
+
+                const radios = modes.querySelectorAll('input[type="radio"]');
+                if (target.checked) {
+                    radios.forEach(r => r.disabled = false);
+                    textBlock.style.display = 'block';
+                    // по умолчанию "Коротко"
+                    const shortRadio = modes.querySelector('input[value="short"]');
+                    if (shortRadio && !shortRadio.checked) {
+                        shortRadio.checked = true;
+                        setRecText(id, 'short');
+                    }
+                } else {
+                    radios.forEach(r => {
+                        r.disabled = true;
+                        r.checked = false;
+                    });
+                    textBlock.style.display = 'none';
+                    textBlock.textContent = '';
+                }
+            }
+
+            // Toggle mode (short/full)
+            if (target.type === 'radio' && target.name.startsWith('rec-') && target.name.endsWith('-mode')) {
+                const id = target.name.replace(/^rec-/, '').replace(/-mode$/, '');
+                const mode = target.value;
+                setRecText(id, mode);
+            }
+        });
+    }
+
+    function setRecText(id, mode) {
+        const item = recommendationsLibrary.find(r => r.id === id);
+        const block = document.getElementById(`rec-text-${id}`);
+        if (!item || !block) return;
+
+        block.textContent = mode === 'full' ? item.full : item.short;
+    }
+
     initRecommendationsLibrary();
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initRecommendationCards();
+    });
 </script>
 
 </body>
