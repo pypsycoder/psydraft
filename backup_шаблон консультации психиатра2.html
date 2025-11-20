@@ -1,0 +1,2548 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Психиатрический конструктор заключения</title>
+    <style>
+        :root {
+            --bg-main: #f2f2f7;
+            --bg-card: #ffffff;
+            --border-card: #e5e5ea;
+            --accent: #007aff;
+            --accent-soft: rgba(0,122,255,0.15);
+            --text-main: #111111;
+            --text-secondary: #6e6e73;
+            --shadow-card: 0 8px 20px rgba(0,0,0,0.05);
+            --radius-card: 14px;
+            --transition-fast: 0.2s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-main);
+            color: var(--text-main);
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        .layout {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 12px 32px;
+            display: flex;
+            gap: 16px;
+        }
+
+        .hamburger-button {
+            position: sticky;
+            top: 10px;
+            left: 0;
+            align-self: flex-start;
+            z-index: 120;
+            background: #ffffff;
+            border: 1px solid #d1d1d6;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+        }
+
+        .hamburger-button span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: #111;
+            position: relative;
+        }
+
+        .hamburger-button span::before,
+        .hamburger-button span::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 20px;
+            height: 2px;
+            background: #111;
+            transition: transform var(--transition-fast);
+        }
+
+        .hamburger-button span::before { top: -6px; }
+        .hamburger-button span::after { top: 6px; }
+
+        .hamburger-button:hover {
+            background: #f9fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 230px;
+            position: sticky;
+            top: 12px;
+            align-self: flex-start;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(16px);
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.06);
+            padding: 14px 14px 10px;
+            animation: slideIn 0.35s ease-out;
+            transition: transform var(--transition-fast), opacity var(--transition-fast), width var(--transition-fast), padding var(--transition-fast);
+        }
+
+        .sidebar-title {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul ul {
+            padding-left: 10px;
+            margin-top: 4px;
+        }
+
+        .sidebar ul ul a {
+            font-size: 14px;
+            padding-left: 14px;
+        }
+
+        .sidebar li {
+            margin-bottom: 4px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 6px 9px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 15px;
+            transition: background var(--transition-fast), color var(--transition-fast), transform 0.1s ease;
+        }
+
+        .sidebar a:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+            transform: translateX(2px);
+        }
+
+        .sidebar a:active {
+            transform: translateX(0);
+        }
+
+        /* MAIN */
+
+        .main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0 0 16px;
+            font-weight: 700;
+            color: #111;
+            text-align: left;
+        }
+
+        .page-header {
+            margin-bottom: 14px;
+        }
+
+        .small-note {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* SECTIONS (cards) */
+
+        .section {
+            background: var(--bg-card);
+            border-radius: var(--radius-card);
+            padding: 16px 18px 18px;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-card);
+            animation: fadeInUp 0.35s ease-out;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .status-subsection {
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #fbfbfd;
+            border: 1px solid #e1e4eb;
+        }
+
+        .status-subsection h3 {
+            margin: 4px 0 10px;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .subgroup-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .idea-row,
+        .perception-row {
+            display: flex;
+            flex-wrap: nowrap;      /* главное — не переносить на новую строку */
+            align-items: center;
+            gap: 10px 12px;
+            padding: 8px 12px;
+        }
+
+        /* Оформление рамкой только для блока обманов восприятия,
+           чтобы не сломать внешний вид других мест */
+        #status-perception .perception-row {
+            border: none;          /* убираем рамку */
+            background: none;      /* убираем белый фон */
+            padding: 8px 0;        /* минимальный отступ, чтобы строки не слипались */
+        }
+
+        .idea-description,
+        .perception-description,
+        .hallucination-description-input {
+            flex: 1 1 200px;
+            min-width: 180px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid #ced0d8;
+            font-size: 15px;
+        }
+
+        .perception-columns,
+        .psychosensory-columns {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .perception-card {
+            background: #ffffff;
+            border: 1px solid #e1e4eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+
+        .perception-card h4 {
+            margin: 0 0 8px;
+            font-size: 15px;
+            color: #1c1c1e;
+        }
+
+        .perception-group {
+            border: 1px solid #e1e4eb;
+            border-radius: 12px;
+            background: #ffffff;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .perception-group summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 8px 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .perception-group summary::marker {
+            content: "";
+        }
+
+        .perception-group[open] {
+            box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+        }
+
+        .perception-summary::before {
+            content: "▸";
+            display: inline-block;
+            transition: transform 0.2s ease;
+            font-size: 12px;
+            color: #8e8e93;
+        }
+
+        .perception-group[open] .perception-summary::before {
+            transform: rotate(90deg);
+        }
+
+        .perception-inner {
+            padding: 6px 12px 12px;
+            border-top: 1px solid #e1e4eb;
+        }
+
+        .perception-row {
+            margin-top: 6px;
+        }
+
+        .perception-row-inline {
+            display: grid;
+            grid-template-columns: minmax(0, 230px) 1fr;
+            gap: 6px 12px;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .perception-columns-analyzer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 4px 12px;
+            margin-bottom: 8px;
+        }
+
+        .attention-group {
+            background: #ffffff;
+            border: 1px solid #e1e4eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+
+        .attention-group .group-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #1c1c1e;
+        }
+
+        /* LABELS & FIELDS */
+
+        label {
+            font-weight: 600;
+            margin-top: 12px;
+            display: block;
+            color: #1c1c1e;
+        }
+
+        textarea,
+        select,
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            font-family: inherit;
+            font-size: 16px;
+            padding: 8px 10px;
+            margin-top: 6px;
+            border-radius: 10px;
+            border: 1px solid #ced0d8;
+            background: #ffffff;
+            box-sizing: border-box;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), transform 0.1s ease;
+        }
+
+        /* Описание рядом с чекбоксом: не на всю ширину, а занимать оставшееся место */
+        .illusion-description,
+        .hallucination-description,
+        .perception-description,
+        .idea-description {
+            width: auto;           /* переопределяем width:100% */
+            flex: 1 1 220px;
+            min-width: 180px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 48px;
+        }
+
+        textarea:focus,
+        select:focus,
+        input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px var(--accent-soft);
+            background: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        select {
+            appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, #999 50%), linear-gradient(135deg, #999 50%, transparent 50%);
+            background-position: calc(100% - 14px) calc(50% - 3px), calc(100% - 9px) calc(50% - 3px);
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] { 
+            -moz-appearance: textfield;
+        }
+
+        /* RECOMMENDATIONS LIBRARY */
+
+        .section-like-block {
+            background: #ffffff;
+            border: 1px solid var(--border-card);
+            border-radius: 14px;
+            box-shadow: var(--shadow-card);
+            padding: 14px 14px 12px;
+            margin-top: 16px;
+        }
+
+        .library-top {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .library-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: #111;
+        }
+
+        .library-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-chip {
+            border: 1px solid #d1d1d6;
+            background: #f5f5f7;
+            color: #1c1c1e;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .filter-chip.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 6px 12px rgba(0, 122, 255, 0.18);
+        }
+
+        .recommendations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .recommendation-item {
+            border: 1px solid #e1e4eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #fafafa;
+        }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .recommendation-title {
+            font-weight: 700;
+            color: #111;
+        }
+
+        .recommendation-texts {
+            color: #3a3a3c;
+            font-size: 15px;
+            display: grid;
+            gap: 4px;
+        }
+
+        .recommendation-mode {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .recommendation-mode label {
+            margin: 0;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #1c1c1e;
+        }
+
+        .library-footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid #e5e5ea;
+        }
+
+        .selected-count {
+            font-weight: 600;
+            color: #1c1c1e;
+        }
+
+        /* MULTI-CHECK GROUPS */
+
+        .multicheck-group {
+            margin-top: 10px;
+        }
+
+        .multicheck-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid #ced0d8;
+            background: #ffffff;
+            cursor: pointer;
+            transition: background var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), transform 0.1s ease;
+        }
+
+        .multicheck-header:hover {
+            background: #f9fafc;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .multicheck-label {
+            font-weight: 600;
+            color: #1c1c1e;
+            font-size: 15px;
+        }
+
+        .multicheck-summary {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-left: 10px;
+            text-align: right;
+        }
+
+        .multicheck-body {
+            margin-top: 6px;
+            border-radius: 10px;
+            border: 1px solid #e1e4eb;
+            background: #fbfbfd;
+            padding: 8px 10px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 4px 12px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-4px);
+            transition: max-height 0.25s ease, opacity 0.22s ease, transform 0.25s ease;
+        }
+
+        .multicheck-body.open {
+            max-height: 260px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .checkbox-item {
+            font-size: 15px;
+            color: #1c1c1e;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        /* BUTTONS */
+
+        .buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 18px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            background: var(--accent);
+            color: white;
+            transition: background var(--transition-fast), transform 0.1s ease, box-shadow var(--transition-fast);
+            box-shadow: 0 6px 14px rgba(0,122,255,0.35);
+        }
+
+        button:hover {
+            background: #0063d1;
+            box-shadow: 0 8px 18px rgba(0,122,255,0.45);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0,122,255,0.35);
+        }
+
+        .btn-secondary {
+            background: #e5e5ea;
+            color: #111;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d1d6;
+            box-shadow: none;
+        }
+
+        /* RESULT AREA */
+
+        #result-container {
+            border-radius: var(--radius-card);
+            padding: 10px 12px;
+            background: #ffffff;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.06);
+            border: 1px solid #d1d1d6;
+            min-height: 260px;
+        }
+
+        #result {
+            min-height: 240px;
+            outline: none;
+            font-family: inherit;
+            font-size: 16px;
+            white-space: pre-wrap;
+        }
+
+        #result b, #result strong {
+            font-weight: 600;
+        }
+
+        /* PRESCRIPTIONS */
+
+        .prescriptions-controls {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .prescription-item {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #fafafa;
+            border: 1px solid #e1e4eb;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            animation: fadeInUp 0.25s ease-out;
+        }
+
+        .prescription-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            margin-top: 6px;
+        }
+
+        .prescription-row > div {
+            flex: 1 1 160px;
+            min-width: 140px;
+        }
+
+        .prescription-label-small {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .time-dose-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .time-dose-row input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            accent-color: var(--accent);
+        }
+
+        .time-dose-row input[type="number"] {
+            width: 72px;
+            padding: 4px 6px;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+
+        .prescription-comment {
+            margin-top: 6px;
+        }
+
+        .prescription-comment input {
+            font-size: 14px;
+            padding: 6px 8px;
+        }
+
+        /* COLLAPSED SIDEBAR STATE */
+
+        body.sidebar-collapsed .sidebar {
+            width: 0;
+            max-width: 0;
+            padding: 0;
+            margin: 0;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-20px);
+        }
+
+        body.sidebar-collapsed .main {
+            flex: 1 1 100%;
+        }
+
+        /* ANIMATIONS */
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+            .layout {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: static;
+                width: 100%;
+                order: -1;
+            }
+
+            .hamburger-button {
+                position: sticky;
+                top: 8px;
+                z-index: 130;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <button class="hamburger-button" type="button" onclick="toggleSidebar()" aria-label="Скрыть или показать меню">
+        <span></span>
+    </button>
+    <nav class="sidebar">
+        <div class="sidebar-title">Навигация</div>
+        <ul>
+            <li><a href="#section-general">Общие разделы</a></li>
+            <li>
+                <a href="#section-status">Психический статус</a>
+                <ul>
+                    <li><a href="#status-consciousness">Сознание</a></li>
+                    <li><a href="#status-thinking">Мышление</a></li>
+                    <li><a href="#status-intellect">Интеллект</a></li>
+                    <li><a href="#status-perception">Обманы восприятия</a></li>
+                    <li><a href="#status-memory">Память</a></li>
+                    <li><a href="#status-mood">Настроение</a></li>
+                    <li><a href="#status-motor">Двигательная сфера</a></li>
+                    <li><a href="#status-attention">Внимание</a></li>
+                    <li><a href="#status-insight">Критика к своему заболеванию</a></li>
+                    <li><a href="#status-sleep-appetite">Сон, аппетит</a></li>
+                </ul>
+            </li>
+            <li><a href="#section-diagnosis">Диагноз и рекомендации</a></li>
+            <li><a href="#section-result">Сформированный текст</a></li>
+        </ul>
+    </nav>
+
+    <div class="main">
+        <div class="page-header">
+            <h1>Конструктор заключения психиатра</h1>
+            <p class="small-note">
+                Заполни поля ниже, затем нажми <b>«Сформировать текст»</b>. Готовый текст появится внизу — его можно скопировать в историю/Word.
+            </p>
+        </div>
+
+        <!-- ОБЩИЕ РАЗДЕЛЫ -->
+
+        <div class="section" id="section-general">
+            <h2>Общие разделы</h2>
+
+            <label>Жалобы:</label>
+            <textarea id="complaints"></textarea>
+
+            <label>Анамнез заболевания:</label>
+            <textarea id="anamnesis"></textarea>
+
+            <label>Состояние на учете в ПНД и наркологическом диспансере:</label>
+            <textarea id="dispensary_status"></textarea>
+
+            <label>Лечение в ПНД и наркологическом диспансере:</label>
+            <textarea id="dispensary_treatment"></textarea>
+
+            <label>Считает себя больным в течение (дней):</label>
+            <input type="number" id="ill_days" min="0" placeholder="например, 30">
+
+            <label>Самостоятельное лечение:</label>
+            <textarea id="self_treatment"></textarea>
+
+            <label>Динамика заболевания:</label>
+            <textarea id="dynamics"></textarea>
+
+            <label>Анамнез жизни:</label>
+            <textarea id="life_history"></textarea>
+        </div>
+
+        <!-- ПСИХИЧЕСКИЙ СТАТУС -->
+
+                <div class="section" id="section-status">
+            <h2>Психический статус</h2>
+
+            <div id="status-consciousness" class="status-subsection">
+                <h3>Сознание</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Сознание:</label>
+                        <select id="consciousness">
+                            <option value="">— выбрать —</option>
+                            <option>не помрачено</option>
+                            <option>помрачено (делирий)</option>
+                            <option>помрачено (онейроид)</option>
+                            <option>помрачено (сумеречное)</option>
+                            <option>помрачено (аменция)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Внешний вид:</label>
+                        <select id="appearance">
+                            <option value="">— выбрать —</option>
+                            <option>опрятный</option>
+                            <option>неопрятный</option>
+                            <option>соответствует возрасту</option>
+                            <option>моложе возраста</option>
+                            <option>старше возраста</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Зрительный контакт:</label>
+                        <select id="eye_contact">
+                            <option value="">— выбрать —</option>
+                            <option>постоянный</option>
+                            <option>неустойчивый</option>
+                            <option>не устанавливает</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Установление контакта:</label>
+                        <select id="contact">
+                            <option value="">— выбрать —</option>
+                            <option>легко устанавливается</option>
+                            <option>затруднено</option>
+                            <option>не устанавливается</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="behavior">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('behavior')">
+                        <span class="multicheck-label">Поведение (можно несколько)</span>
+                        <span class="multicheck-summary" id="behavior_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="behavior_body">
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="спокоен" onchange="updateMultiSummary('behavior')">спокоен</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="упорядочен" onchange="updateMultiSummary('behavior')">упорядочен</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив" onchange="updateMultiSummary('behavior')">суетлив</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив с элементами негативизма" onchange="updateMultiSummary('behavior')">суетлив с элементами негативизма</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="беспокоен" onchange="updateMultiSummary('behavior')">беспокоен</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="негативизм" onchange="updateMultiSummary('behavior')">негативизм</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="груб" onchange="updateMultiSummary('behavior')">груб</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="агрессивен" onchange="updateMultiSummary('behavior')">агрессивен</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="facial_expression">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('facial_expression')">
+                        <span class="multicheck-label">Мимика (можно несколько)</span>
+                        <span class="multicheck-summary" id="facial_expression_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="facial_expression_body">
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="соответствует ситуации" onchange="updateMultiSummary('facial_expression')">соответствует ситуации</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="оживленная" onchange="updateMultiSummary('facial_expression')">оживленная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="бедная" onchange="updateMultiSummary('facial_expression')">бедная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="живость снижена" onchange="updateMultiSummary('facial_expression')">живость снижена</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="нарочитая живость" onchange="updateMultiSummary('facial_expression')">нарочитая живость</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="conversation">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('conversation')">
+                        <span class="multicheck-label">Беседует (можно несколько)</span>
+                        <span class="multicheck-summary" id="conversation_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="conversation_body">
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="по-деловому" onchange="updateMultiSummary('conversation')">по-деловому</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="косно" onchange="updateMultiSummary('conversation')">косно</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="стандартно" onchange="updateMultiSummary('conversation')">стандартно</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="с применением жаргона" onchange="updateMultiSummary('conversation')">с применением жаргона</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="answers">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('answers')">
+                        <span class="multicheck-label">На вопросы отвечает (можно несколько)</span>
+                        <span class="multicheck-summary" id="answers_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="answers_body">
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="по существу" onchange="updateMultiSummary('answers')">по существу</label>
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="скупо" onchange="updateMultiSummary('answers')">скупо</label>
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="развернуто" onchange="updateMultiSummary('answers')">развернуто</label>
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="уклончиво" onchange="updateMultiSummary('answers')">уклончиво</label>
+                    </div>
+                </div>
+
+                <label>Речь:</label>
+                <select id="speech">
+                    <option value="">— выбрать —</option>
+                    <option>нормальная</option>
+                    <option>ускоренная</option>
+                    <option>замедленная</option>
+                    <option>скандированная</option>
+                    <option>монологичная</option>
+                    <option>жаргон</option>
+                    <option>скандированная</option>
+                    <option>монотонная</option>
+                </select>
+            </div>
+
+            <div id="status-thinking" class="status-subsection">
+                <h3>Мышление</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Темп мышления:</label>
+                        <select id="thinking_tempo">
+                            <option value="">— выбрать —</option>
+                            <option>не нарушен</option>
+                            <option>замедлен</option>
+                            <option>ускорен</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Продуктивность мышления:</label>
+                        <select id="thinking_productivity">
+                            <option value="">— выбрать —</option>
+                            <option>сохранена</option>
+                            <option>повышена</option>
+                            <option>снижена</option>
+                            <option>нерезультативное</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Последовательность мышления:</label>
+                        <select id="thinking_sequence">
+                            <option value="">— выбрать —</option>
+                            <option>не нарушена</option>
+                            <option>нарушена</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Целенаправленность мышления:</label>
+                        <select id="thinking_goal">
+                            <option value="">— выбрать —</option>
+                            <option>целенаправленное</option>
+                            <option>нецеленаправленное</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="thinking_disorders">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('thinking_disorders')">
+                        <span class="multicheck-label">Нецеленаправленное мышление (можно несколько)</span>
+                        <span class="multicheck-summary" id="thinking_disorders_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="thinking_disorders_body">
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="паралогичное" onchange="updateMultiSummary('thinking_disorders')">паралогичное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="соскальзывающее" onchange="updateMultiSummary('thinking_disorders')">соскальзывающее</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="резонерство" onchange="updateMultiSummary('thinking_disorders')">резонерство</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="разорванное" onchange="updateMultiSummary('thinking_disorders')">разорванное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="бессвязное" onchange="updateMultiSummary('thinking_disorders')">бессвязное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="аморфное" onchange="updateMultiSummary('thinking_disorders')">аморфное</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="thinking_mobility">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('thinking_mobility')">
+                        <span class="multicheck-label">Подвижность мышления</span>
+                        <span class="multicheck-summary" id="thinking_mobility_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="thinking_mobility_body">
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="не нарушена" onchange="updateMultiSummary('thinking_mobility')">не нарушена</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="обстоятельное" onchange="updateMultiSummary('thinking_mobility')">обстоятельное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="ригидное" onchange="updateMultiSummary('thinking_mobility')">ригидное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="вязкое" onchange="updateMultiSummary('thinking_mobility')">вязкое</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="застревающее" onchange="updateMultiSummary('thinking_mobility')">застревающее</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="инертное" onchange="updateMultiSummary('thinking_mobility')">инертное</label>
+                    </div>
+                </div>
+
+                <label>Абстрагирование:</label>
+                <select id="abstraction">
+                    <option value="">— выбрать —</option>
+                    <option>доступно</option>
+                    <option>не доступно</option>
+                    <option>мышление конкретное</option>
+                </select>
+
+                <div id="ideas-block" class="status-subsection" style="margin-top: 12px;">
+                    <h3>Идеи</h3>
+                    <div class="subgroup-grid">
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="аффективно обусловленные">
+                                <span>Аффективно обусловленные</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="аффективно обусловленные" placeholder="Описание содержания идей">
+                        </div>
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="навязчивые">
+                                <span>Навязчивые</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="навязчивые" placeholder="Описание содержания идей">
+                        </div>
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="сверхценные">
+                                <span>Сверхценные</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="сверхценные" placeholder="Описание содержания идей">
+                        </div>
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="бредовые">
+                                <span>Бредовые</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="бредовые" placeholder="Описание содержания идей">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="status-intellect" class="status-subsection">
+                <h3>Интеллект</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Интеллект:</label>
+                        <select id="intellect">
+                            <option value="">— выбрать —</option>
+                            <option>в пределах возрастной нормы</option>
+                            <option>снижен</option>
+                            <option>не развит</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Словарный запас:</label>
+                        <select id="vocabulary">
+                            <option value="">— выбрать —</option>
+                            <option>достаточен</option>
+                            <option>ограничен пределами повседневно-бытового общения</option>
+                            <option>крайне мал</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="multicheck-group" data-name="judgment">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('judgment')">
+                        <span class="multicheck-label">Суждения (можно несколько)</span>
+                        <span class="multicheck-summary" id="judgment_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="judgment_body">
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="легковесные" onchange="updateMultiSummary('judgment')">легковесные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="поверхностные" onchange="updateMultiSummary('judgment')">поверхностные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="категоричные" onchange="updateMultiSummary('judgment')">категоричные</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === ОБНОВЛЁННЫЙ БЛОК «ОБМАНЫ ВОСПРИЯТИЯ» === -->
+            <div id="status-perception" class="status-subsection">
+                <h3>Обманы восприятия</h3>
+
+                @-- Иллюзии --
+                <details class="perception-group" id="illusions_group">
+                    <summary class="perception-summary">Иллюзии</summary>
+                    <div class="perception-inner">
+                        <div class="perception-row-inline">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Физические">
+                                <span>Физические</span>
+                            </label>
+                            <input type="text"
+                                   class="perception-description illusion-description"
+                                   data-illusion-type="Физические"
+                                   placeholder="Краткое описание (если нужно)">
+                        </div>
+
+                        <div class="perception-row-inline">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Аффективные">
+                                <span>Аффективные</span>
+                            </label>
+                            <input type="text"
+                                   class="perception-description illusion-description"
+                                   data-illusion-type="Аффективные"
+                                   placeholder="Краткое описание">
+                        </div>
+
+                        <div class="perception-row-inline">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Вербальные (смысловые)">
+                                <span>Вербальные (смысловые)</span>
+                            </label>
+                            <input type="text"
+                                   class="perception-description illusion-description"
+                                   data-illusion-type="Вербальные (смысловые)"
+                                   placeholder="Краткое описание">
+                        </div>
+
+                        <div class="perception-row-inline">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Парейдолические">
+                                <span>Парейдолические</span>
+                            </label>
+                            <input type="text"
+                                   class="perception-description illusion-description"
+                                   data-illusion-type="Парейдолические"
+                                   placeholder="Краткое описание">
+                        </div>
+                    </div>
+                </details>
+
+                @-- Галлюцинации --
+                <details class="perception-group" id="hallucinations_group">
+                    <summary class="perception-summary">Галлюцинации</summary>
+                    <div class="perception-inner">
+                        <div class="perception-columns-analyzer">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="hallucination_analyzer" value="слуховые">
+                                Слуховые
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="hallucination_analyzer" value="зрительные">
+                                Зрительные
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="hallucination_analyzer" value="обонятельные">
+                                Обонятельные
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="hallucination_analyzer" value="вкусовые">
+                                Вкусовые
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="hallucination_analyzer" value="тактильные">
+                                Тактильные
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="hallucination_analyzer" value="висцеральные">
+                                Висцеральные
+                            </label>
+                        </div>
+
+                        <div class="perception-row-inline">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="hall-type-checkbox" data-hall-type="Истинные галлюцинации">
+                                <span>Истинные галлюцинации</span>
+                            </label>
+                            <input type="text"
+                                   class="perception-description hall-type-description"
+                                   data-hall-type="Истинные галлюцинации"
+                                   placeholder="Например: слуховые голоса комментирующего характера">
+                        </div>
+
+                        <div class="perception-row-inline">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="hall-type-checkbox" data-hall-type="Псевдогаллюцинации">
+                                <span>Псевдогаллюцинации</span>
+                            </label>
+                            <input type="text"
+                                   class="perception-description hall-type-description"
+                                   data-hall-type="Псевдогаллюцинации"
+                                   placeholder="Например: «голоса в голове»">
+                        </div>
+
+                        <div class="perception-row-inline">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="hall-type-checkbox" data-hall-type="Галлюцинаторно-подобные переживания">
+                                <span>Галлюцинаторно-подобные переживания</span>
+                            </label>
+                            <input type="text"
+                                   class="perception-description hall-type-description"
+                                   data-hall-type="Галлюцинаторно-подобные переживания"
+                                   placeholder="Например: яркие, но критически осознаваемые образы">
+                        </div>
+                    </div>
+                </details>
+
+                @-- Психосенсорные расстройства --
+                <details class="perception-group" id="psychosensory_group">
+                    <summary class="perception-summary">Психосенсорные расстройства</summary>
+                    <div class="perception-inner">
+                        <div class="psychosensory-columns">
+                            <div>
+                                <div class="group-title">Дереализационные</div>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="psychosensory_derealization"
+                                           value="изменение яркости, контрастности">
+                                    Изменение яркости, контрастности
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="psychosensory_derealization"
+                                           value="искажение размеров (макро-/микропсия)">
+                                    Искажение размеров (макро-/микропсия)
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="psychosensory_derealization"
+                                           value="искажение формы (дисморфопсия)">
+                                    Искажение формы (дисморфопсия)
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="psychosensory_derealization"
+                                           value="искажение расстояния/перспективы">
+                                    Искажение расстояния/перспективы
+                                </label>
+                            </div>
+                            <div>
+                                <div class="group-title">Аутопсихические</div>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="psychosensory_autopsychic"
+                                           value="деперсонализация (изменение восприятия собственного «Я»)">
+                                    Деперсонализация (изменение восприятия собственного «Я»)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="perception-row">
+                            <input type="text"
+                                   id="psychosensory_description"
+                                   class="perception-description"
+                                   placeholder="Свободное описание психосенсорных расстройств">
+                        </div>
+                    </div>
+                </details>
+
+                @-- Психические автоматизмы --
+                <details class="perception-group" id="psychic_automatism_group">
+                    <summary class="perception-summary">Психические автоматизмы</summary>
+                    <div class="perception-inner">
+                        <div class="perception-columns">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychic_automatism" value="сенсорный автоматизм">
+                                Сенсорный автоматизм
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychic_automatism" value="ассоциативный автоматизм">
+                                Ассоциативный автоматизм
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychic_automatism"
+                                       value="кинестетический (двигательный) автоматизм">
+                                Кинестетический (двигательный) автоматизм
+                            </label>
+                        </div>
+                        <div class="perception-row">
+                            <input type="text"
+                                   id="psychic_automatism_description"
+                                   class="perception-description"
+                                   placeholder="Описание (например: влияние соседей на мысли через микроволновку)">
+                        </div>
+                    </div>
+                </details>
+
+                <label style="margin-top: 12px;">Обманы восприятия (свободный текст):</label>
+                <textarea id="perception" placeholder="Дополнительные комментарии"></textarea>
+            </div>
+
+
+
+            <div id="status-memory" class="status-subsection">
+                <h3>Память</h3>
+                <div class="multicheck-group" data-name="memory">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('memory')">
+                        <span class="multicheck-label">Память (можно несколько)</span>
+                        <span class="multicheck-summary" id="memory_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="memory_body">
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="в пределах возрастной нормы" onchange="updateMultiSummary('memory')">в пределах возрастной нормы</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="снижена" onchange="updateMultiSummary('memory')">снижена</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="гипомнезия" onchange="updateMultiSummary('memory')">гипомнезия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="амнезия" onchange="updateMultiSummary('memory')">амнезия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="парамнезии" onchange="updateMultiSummary('memory')">парамнезии</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="amnesia">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('amnesia')">
+                        <span class="multicheck-label">Амнезия (можно несколько)</span>
+                        <span class="multicheck-summary" id="amnesia_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="amnesia_body">
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="фиксационная" onchange="updateMultiSummary('amnesia')">фиксационная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="антероградная" onchange="updateMultiSummary('amnesia')">антероградная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="ретроградная" onchange="updateMultiSummary('amnesia')">ретроградная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="антероретроградная" onchange="updateMultiSummary('amnesia')">антероретроградная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="конградная" onchange="updateMultiSummary('amnesia')">конградная</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="paramnesia">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('paramnesia')">
+                        <span class="multicheck-label">Парамнезии (можно несколько)</span>
+                        <span class="multicheck-summary" id="paramnesia_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="paramnesia_body">
+                        <label class="checkbox-item"><input type="checkbox" name="paramnesia" value="конфабуляции" onchange="updateMultiSummary('paramnesia')">конфабуляции</label>
+                        <label class="checkbox-item"><input type="checkbox" name="paramnesia" value="псевдореминисценции" onchange="updateMultiSummary('paramnesia')">псевдореминисценции</label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="status-attention" class="status-subsection">
+                <h3>Внимание</h3>
+                <div class="multicheck-group" data-name="attention">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('attention')">
+                        <span class="multicheck-label">Внимание (множественный выбор)</span>
+                        <span class="multicheck-summary" id="attention_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="attention_body">
+                        <div class="attention-group">
+                            <div class="group-title">Гипопродуктивные нарушения</div>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="снижение концентрации (рассеянность)" onchange="updateMultiSummary('attention')">снижение концентрации (рассеянность)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="истощаемость внимания" onchange="updateMultiSummary('attention')">истощаемость внимания</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="замедленность переключения внимания" onchange="updateMultiSummary('attention')">замедленность переключения внимания</label>
+                        </div>
+                        <div class="attention-group">
+                            <div class="group-title">Гиперпродуктивные нарушения</div>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="повышенная отвлекаемость / гиперподвижность внимания" onchange="updateMultiSummary('attention')">повышенная отвлекаемость / гиперподвижность внимания</label>
+                        </div>
+                        <div class="attention-group">
+                            <div class="group-title">Нарушения объёма внимания</div>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="сужение объёма внимания" onchange="updateMultiSummary('attention')">сужение объёма внимания</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="расширение объёма внимания" onchange="updateMultiSummary('attention')">расширение объёма внимания</label>
+                        </div>
+                        <div class="attention-group">
+                            <div class="group-title">Нарушения переключаемости</div>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="трудность смены фокуса" onchange="updateMultiSummary('attention')">трудность смены фокуса</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="лабильность переключения" onchange="updateMultiSummary('attention')">лабильность переключения</label>
+                        </div>
+                        <div class="attention-group">
+                            <div class="group-title">Качественные нарушения</div>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="нарушение селективности внимания" onchange="updateMultiSummary('attention')">нарушение селективности внимания</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="насильственное внимание (принудительное)" onchange="updateMultiSummary('attention')">насильственное внимание (принудительное)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="ригидность внимания" onchange="updateMultiSummary('attention')">ригидность внимания</label>
+                            <label class="checkbox-item"><input type="checkbox" name="attention" value="сверхвнимание (гиперфиксация)" onchange="updateMultiSummary('attention')">сверхвнимание (гиперфиксация)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="status-mood" class="status-subsection">
+                <h3>Настроение</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Настроение:</label>
+                        <select id="mood">
+                            <option value="">— выбрать —</option>
+                            <option>ровное</option>
+                            <option>сниженное</option>
+                            <option>повышенное</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Эмоциональные реакции — устойчивость:</label>
+                        <select id="emotions_stability">
+                            <option value="">— выбрать —</option>
+                            <option>устойчивые</option>
+                            <option>неустойчивые</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="emotions">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('emotions')">
+                        <span class="multicheck-label">Эмоциональные реакции — характер (можно несколько)</span>
+                        <span class="multicheck-summary" id="emotions_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="emotions_body">
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="живые" onchange="updateMultiSummary('emotions')">живые</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="уплощенные" onchange="updateMultiSummary('emotions')">уплощенные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="выхолощенные" onchange="updateMultiSummary('emotions')">выхолощенные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="огрубленные" onchange="updateMultiSummary('emotions')">огрубленные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="тусклые" onchange="updateMultiSummary('emotions')">тусклые</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="однообразные" onchange="updateMultiSummary('emotions')">однообразные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="монотонные" onchange="updateMultiSummary('emotions')">монотонные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="неадекватные" onchange="updateMultiSummary('emotions')">неадекватные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="недостаточные" onchange="updateMultiSummary('emotions')">недостаточные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием тревоги" onchange="updateMultiSummary('emotions')">с преобладанием тревоги</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием депрессии" onchange="updateMultiSummary('emotions')">с преобладанием депрессии</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием раздражительности" onchange="updateMultiSummary('emotions')">с преобладанием раздражительности</label>
+                    </div>
+                </div>
+
+                <label>Агрессивные тенденции:</label>
+                <select id="aggression">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствуют</option>
+                    <option>в адрес окружающих</option>
+                    <option>в адрес себя (аутоагрессия)</option>
+                </select>
+
+                <label>Суицидальные мысли на момент осмотра:</label>
+                <select id="suicidal_thoughts">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствуют</option>
+                    <option>присутствуют</option>
+                </select>
+
+                <label>Суицидальные планы на момент осмотра:</label>
+                <select id="suicidal_plans">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствуют</option>
+                    <option>присутствуют</option>
+                </select>
+
+                <label>Суицидальное поведение:</label>
+                <select id="suicidal_behavior">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствует</option>
+                    <option>в анамнезе</option>
+                    <option>на момент осмотра</option>
+                </select>
+
+                <label>Контрсуицидальные факторы:</label>
+                <textarea id="contrsuicidal_factors" placeholder="семья, дети, религиозные убеждения и др."></textarea>
+            </div>
+
+            <div id="status-motor" class="status-subsection">
+                <h3>Двигательная сфера</h3>
+                <label>Волевые качества:</label>
+                <select id="will">
+                    <option value="">— выбрать —</option>
+                    <option>сохранены</option>
+                    <option>снижены</option>
+                    <option>не развиты</option>
+                </select>
+
+                <label>Двигательная сфера:</label>
+                <textarea id="motor" placeholder="замедленная/ускоренная моторика, кататонические симптомы и др."></textarea>
+
+                <label>Эпилептиформные пароксизмы:</label>
+                <select id="seizures">
+                    <option value="">— выбрать —</option>
+                    <option>отрицает</option>
+                    <option>отмечались в прошлом</option>
+                    <option>наблюдаются</option>
+                </select>
+            </div>
+
+            <div id="status-insight" class="status-subsection">
+                <h3>Критика к своему заболеванию</h3>
+                <label>Чувство дистанции:</label>
+                <select id="distance">
+                    <option value="">— выбрать —</option>
+                    <option>соблюдает</option>
+                    <option>снижено</option>
+                    <option>отсутствует</option>
+                </select>
+
+                <label>Критика к своему заболеванию:</label>
+                <select id="insight">
+                    <option value="">— выбрать —</option>
+                    <option>есть</option>
+                    <option>частичная</option>
+                    <option>отсутствует</option>
+                </select>
+
+                <label>Планы на будущее:</label>
+                <textarea id="future_plans"></textarea>
+            </div>
+
+            <div id="status-sleep-appetite" class="status-subsection">
+                <h3>Сон, аппетит</h3>
+                <div class="multicheck-group" data-name="sleep">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('sleep')">
+                        <span class="multicheck-label">Сон (можно несколько)</span>
+                        <span class="multicheck-summary" id="sleep_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="sleep_body">
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="удовлетворительный" onchange="updateMultiSummary('sleep')">удовлетворительный</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="поверхностный" onchange="updateMultiSummary('sleep')">поверхностный</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="проблемы с засыпанием (>30 минут)" onchange="updateMultiSummary('sleep')">проблемы с засыпанием (&gt;30 минут)</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="частые пробуждения ночью (> 3 за ночь)" onchange="updateMultiSummary('sleep')">частые пробуждения ночью (&gt; 3 за ночь)</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="раннее пробуждение" onchange="updateMultiSummary('sleep')">раннее пробуждение</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="отсутсвие чувства отдыха после сна" onchange="updateMultiSummary('sleep')">отсутсвие чувства отдыха после сна</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="отсутствует" onchange="updateMultiSummary('sleep')">отсутствует</label>
+                    </div>
+                </div>
+
+                <label>Аппетит:</label>
+                <select id="appetite">
+                    <option value="">— выбрать —</option>
+                    <option>в норме</option>
+                    <option>снижен</option>
+                    <option>повышен</option>
+                    <option>анорексия</option>
+                    <option>булимия</option>
+                </select>
+            </div>
+        </div>
+<!-- ДИАГНОЗ, РЕКОМЕНДАЦИИ, НАЗНАЧЕНИЯ -->
+
+        <div class="section" id="section-diagnosis">
+            <h2>Диагноз и рекомендации</h2>
+
+            <label>Поиск диагноза по МКБ-10:</label>
+            <input type="text" id="icd_search"
+                   placeholder="Начните вводить, например: депрессивный, шизофрения, F32..."
+                   oninput="searchICD()">
+            <div id="icd_results" class="icd-results"></div>
+            <p class="small-note">
+                Кликните по варианту ниже, чтобы добавить его в поле диагноза.
+            </p>
+
+            <label>Диагноз (шифры МКБ-10):</label>
+            <textarea id="diagnosis"></textarea>
+
+            <div class="section-like-block" id="recommendations-library">
+                <div class="library-top">
+                    <div class="library-title">Библиотека рекомендаций</div>
+                    <div class="library-filters" id="recommendations-filters"></div>
+                </div>
+                <div class="recommendations-list" id="recommendations-list"></div>
+                <div class="library-footer">
+                    <div class="selected-count">Выбрано рекомендаций: <span id="recommendations-selected-count">0</span></div>
+                    <button type="button" class="btn-secondary" id="collect-recommendations-button">Собрать рекомендации в поле ниже</button>
+                </div>
+            </div>
+
+            <label>Рекомендации:</label>
+            <textarea id="recommendations">1. Соблюдение режима сна и бодрствования
+2. Умеренная физическая активность
+3. Повторное посещение психиатра через ___ дней
+4. </textarea>
+
+            <label>Назначения:</label>
+            <div class="prescriptions-controls">
+                <button type="button" class="btn-secondary" onclick="addPrescription()">Добавить препарат</button>
+                <button type="button" class="btn-secondary" onclick="removeLastPrescription()">Удалить последний</button>
+            </div>
+            <div id="prescriptions_list"></div>
+        </div>
+
+        <!-- КНОПКИ И РЕЗУЛЬТАТ -->
+
+        <div class="buttons">
+            <button type="button" onclick="generateText()">Сформировать текст</button>
+            <button type="button" class="btn-secondary" onclick="copyResult()">Скопировать результат</button>
+        </div>
+
+        <div class="section" id="section-result">
+            <h2>Сформированный текст</h2>
+            <div id="result-container">
+                <div id="result" contenteditable="true"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const RECOMMENDATIONS_LIBRARY = [
+        {
+            id: 'rec_sleep_schedule',
+            group: 'general',
+            title: 'Режим сна и бодрствования',
+            short: 'Соблюдать регулярный режим сна',
+            full: 'Соблюдать регулярный режим сна и бодрствования: укладываться и просыпаться в одно и то же время, избегать дневного сна более 30 минут, ограничивать использование гаджетов за 1–2 часа до сна, формировать спокойный ритуал засыпания.'
+        },
+        {
+            id: 'rec_activity',
+            group: 'general',
+            title: 'Умеренная физическая активность',
+            short: 'Ежедневная умеренная активность',
+            full: 'Рекомендована регулярная умеренная физическая активность не менее 30 минут в день (ходьба, ЛФК, растяжка, плавание) с учётом соматического состояния.'
+        },
+        {
+            id: 'rec_caffeine_limit',
+            group: 'general',
+            title: 'Ограничение кофеина',
+            short: 'Ограничить кофеин после 14:00',
+            full: 'Ограничить употребление кофе, чая, энергетиков и других стимуляторов, особенно во второй половине дня, поскольку они могут усиливать тревогу и нарушать сон.'
+        },
+        {
+            id: 'rec_no_alcohol',
+            group: 'general',
+            title: 'Исключение алкоголя и ПАВ',
+            short: 'Исключить алкоголь и ПАВ',
+            full: 'Полностью исключить употребление алкоголя и немедицинское употребление психоактивных веществ, так как они ухудшают течение заболевания и снижают эффективность назначенной терапии.'
+        },
+        {
+            id: 'rec_med_adherence',
+            group: 'general',
+            title: 'Соблюдение медикаментозной терапии',
+            short: 'Принимать препараты по схеме',
+            full: 'Принимать препараты строго по назначенной схеме, не изменять дозировку и не отменять лекарства самостоятельно. При появлении побочных эффектов не прекращать приём, а обратиться к врачу для коррекции терапии.'
+        },
+        {
+            id: 'rec_psychiatrist_followup',
+            group: 'general',
+            title: 'Наблюдение у психиатра',
+            short: 'Регулярное наблюдение у психиатра',
+            full: 'Регулярно наблюдаться у психиатра для контроля динамики состояния, переносимости терапии и своевременной коррекции лечения. Повторный визит рекомендуется через ___ дней или раньше при ухудшении состояния.'
+        },
+        {
+            id: 'rec_day_structure',
+            group: 'general',
+            title: 'Структурирование дня',
+            short: 'Структурировать день и активность',
+            full: 'Структурировать день: планировать посильную активность, чередовать нагрузку и отдых, избегать длительной пассивности и чрезмерных перегрузок.'
+        },
+        {
+            id: 'rec_stress_management',
+            group: 'general',
+            title: 'Работа со стрессом',
+            short: 'Осваивать техники управления стрессом',
+            full: 'Осваивать техники управления стрессом: дыхательные упражнения, мышечная релаксация, простые когнитивные техники, снижение воздействия провоцирующих факторов.'
+        },
+        {
+            id: 'rec_psychoeducation',
+            group: 'general',
+            title: 'Психообразование',
+            short: 'Психообразование пациента (и семьи)',
+            full: 'Рекомендовано психообразование пациента и, при согласии, его близких: обсуждение природы заболевания, возможной симптоматики, принципов лечения и признаков, требующих повторного обращения к врачу.'
+        },
+        {
+            id: 'rec_psychotherapy',
+            group: 'general',
+            title: 'Психотерапия',
+            short: 'Рассмотреть психотерапию',
+            full: 'Рассмотреть возможность индивидуальной или групповой психотерапии (когнитивно-поведенческой, поддерживающей и др.) с учётом запроса пациента и доступности специалистов.'
+        },
+        {
+            id: 'rec_family_support',
+            group: 'general',
+            title: 'Поддержка близких',
+            short: 'Привлечь поддержку семьи',
+            full: 'Привлечь поддержку семьи и значимых близких: обсуждать состояние, совместно планировать помощь, информировать их о признаках возможного ухудшения.'
+        },
+        {
+            id: 'rec_crisis_plan',
+            group: 'general',
+            title: 'Кризисный план',
+            short: 'Составить кризисный план',
+            full: 'Составить кризисный план: при выраженном ухудшении состояния, усилении тревоги или появлении суицидальных мыслей и намерений незамедлительно обращаться за медицинской помощью (к дежурному психиатру, в ПНД, в службу скорой помощи), по возможности информировать близких, исключить доступ к потенциально опасным предметам и веществам.'
+        },
+        {
+            id: 'rec_self_monitoring',
+            group: 'general',
+            title: 'Самонаблюдение',
+            short: 'Вести дневник самочувствия',
+            full: 'Вести краткий дневник самочувствия: отмечать настроение, тревогу, качество сна, приём препаратов и значимые события для более точного обсуждения динамики на приёме.'
+        },
+        {
+            id: 'rec_work_rest',
+            group: 'general',
+            title: 'Режим труда и отдыха',
+            short: 'Оптимизировать режим работы и отдыха',
+            full: 'Оптимизировать режим труда и отдыха: по возможности избегать ночных смен, переработок и хронического недосыпания; при необходимости обсуждать с работодателем временное снижение нагрузки.'
+        },
+        {
+            id: 'rec_anxiety_management',
+            group: 'anxiety',
+            title: 'Работа с тревогой',
+            short: 'Осваивать техники снижения тревоги',
+            full: 'Рекомендовано освоение техник снижения тревоги: медленное диафрагмальное дыхание, мышечная релаксация, техники переключения внимания, ведение дневника тревоги.'
+        },
+        {
+            id: 'rec_stimulant_limit',
+            group: 'anxiety',
+            title: 'Ограничение стимуляторов',
+            short: 'Сократить кофеин и никотин',
+            full: 'Сократить употребление кофеина, никотина и других стимуляторов, так как они могут усиливать тревожные симптомы и нарушать сон.'
+        },
+        {
+            id: 'rec_activity_depression',
+            group: 'depression',
+            title: 'Повышение активности',
+            short: 'Поддерживать умеренную активность',
+            full: 'Поддерживать умеренную ежедневную активность: включать посильные дела, прогулки, постепенно расширять круг активности с учётом самочувствия.'
+        },
+        {
+            id: 'rec_psychotherapy_depression',
+            group: 'depression',
+            title: 'Психотерапия при депрессии',
+            short: 'Психотерапия при депрессии',
+            full: 'Рассмотреть когнитивно-поведенческую или межличностную психотерапию для работы с негативными убеждениями, сниженной активностью и нарушенной самооценкой.'
+        },
+        {
+            id: 'rec_antipsychotic_control',
+            group: 'psychosis',
+            title: 'Контроль антипсихотической терапии',
+            short: 'Не пропускать антипсихотики',
+            full: 'Строго соблюдать антипсихотическую терапию: не пропускать приём, не менять дозировку и не отменять препарат самостоятельно.'
+        },
+        {
+            id: 'rec_psychosis_safety',
+            group: 'psychosis',
+            title: 'Безопасность при психозе',
+            short: 'Соблюдать меры безопасности',
+            full: 'При выраженных психотических симптомах избегать управления транспортом, работы с потенциально опасными механизмами и ситуаций с высоким риском травм.'
+        },
+        {
+            id: 'rec_psychosis_support',
+            group: 'psychosis',
+            title: 'Поддержка близких при психозе',
+            short: 'Информировать близких о признаках ухудшения',
+            full: 'Информировать близких о признаках возможного ухудшения (усиление галлюцинаций, бредовых идей, снижение критики, нарастание возбудимости) и просить их о наблюдении и своевременном обращении за помощью при необходимости.'
+        },
+        {
+            id: 'rec_sleep_hygiene',
+            group: 'sleep',
+            title: 'Гигиена сна',
+            short: 'Гигиена сна',
+            full: 'Соблюдать гигиену сна: ограничивать использование экранов за 1–2 часа до сна, проветривать комнату, избегать тяжёлой пищи и интенсивной нагрузки вечером.'
+        },
+        {
+            id: 'rec_day_sleep_limit',
+            group: 'sleep',
+            title: 'Ограничение дневного сна',
+            short: 'Исключить дневной сон',
+            full: 'Избегать дневного сна или ограничивать его продолжительность до 20–30 минут, чтобы не ухудшать ночной сон.'
+        },
+        {
+            id: 'rec_sleep_relaxation',
+            group: 'sleep',
+            title: 'Релаксация перед сном',
+            short: 'Релаксация перед сном',
+            full: 'Использовать перед сном расслабляющие процедуры: дыхательные упражнения, лёгкую растяжку, тёплый душ или ванну.'
+        },
+        {
+            id: 'rec_substance_stop',
+            group: 'substance',
+            title: 'Отказ от алкоголя и ПАВ',
+            short: 'Полный отказ от алкоголя и ПАВ',
+            full: 'Рекомендован полный отказ от употребления алкоголя и немедицинского употребления психоактивных веществ; при трудностях — консультация нарколога или специализированной службы.'
+        },
+        {
+            id: 'rec_evening_plan',
+            group: 'substance',
+            title: 'Структурирование времени при зависимости',
+            short: 'Структурировать вечернее время',
+            full: 'Структурировать особенно вечернее время, заранее планировать занятость, чтобы снизить риск употребления алкоголя или других веществ.'
+        },
+        {
+            id: 'rec_nutrition',
+            group: 'extra',
+            title: 'Питание',
+            short: 'Сбалансированное питание',
+            full: 'Сохранять регулярное и сбалансированное питание, избегать больших перерывов между приёмами пищи и переедания, особенно вечером.'
+        },
+        {
+            id: 'rec_screen_time',
+            group: 'extra',
+            title: 'Ограничение экранного времени',
+            short: 'Снизить время за экранами',
+            full: 'По возможности снизить общее время за экранами (телефон, компьютер, телевизор), особенно перед сном.'
+        },
+        {
+            id: 'rec_social_activity',
+            group: 'extra',
+            title: 'Социальная активность',
+            short: 'Поддерживать социальные контакты',
+            full: 'Поддерживать посильный уровень общения с близкими и знакомыми, избегая длительной социальной изоляции.'
+        }
+    ];
+
+    const RECOMMENDATION_GROUP_LABELS = {
+        all: 'Все',
+        general: 'Общие',
+        anxiety: 'Тревога',
+        depression: 'Депрессия',
+        psychosis: 'Психоз',
+        sleep: 'Сон',
+        substance: 'Алкоголь/ПАВ',
+        extra: 'Дополнительно'
+    };
+
+    let currentRecommendationFilter = 'all';
+    const recommendationSelections = {};
+    function toggleMultiGroup(name) {
+        const body = document.getElementById(name + '_body');
+        if (!body) return;
+        body.classList.toggle('open');
+    }
+
+    function toggleSidebar() {
+        document.body.classList.toggle('sidebar-collapsed');
+    }
+
+    function updateMultiSummary(name) {
+        const summary = document.getElementById(name + '_summary');
+        if (!summary) return;
+        const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
+        const values = Array.from(checked).map(c => c.value);
+        summary.textContent = values.length ? values.join(', ') : 'Не выбрано';
+    }
+
+    function getCheckedTextByName(name) {
+        const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
+        return Array.from(checked).map(c => c.value).join(', ');
+    }
+
+    function getRecommendationPreview(text) {
+        const words = text.split(' ').filter(Boolean);
+        const preview = words.slice(0, 3).join(' ');
+        return words.length > 3 ? preview + '…' : preview;
+    }
+
+    function renderRecommendationFilters() {
+        const container = document.getElementById('recommendations-filters');
+        if (!container) return;
+        container.innerHTML = '';
+
+        Object.entries(RECOMMENDATION_GROUP_LABELS).forEach(([key, label]) => {
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'filter-chip' + (currentRecommendationFilter === key ? ' active' : '');
+            chip.textContent = label;
+            chip.addEventListener('click', () => {
+                currentRecommendationFilter = key;
+                renderRecommendationFilters();
+                renderRecommendationsList();
+            });
+            container.appendChild(chip);
+        });
+    }
+
+    function renderRecommendationsList() {
+        const list = document.getElementById('recommendations-list');
+        if (!list) return;
+        list.innerHTML = '';
+
+        const filtered = RECOMMENDATIONS_LIBRARY.filter(item =>
+            currentRecommendationFilter === 'all' || item.group === currentRecommendationFilter
+        );
+
+        filtered.forEach(item => {
+            if (!recommendationSelections[item.id]) {
+                recommendationSelections[item.id] = { selected: false, mode: 'short' };
+            }
+            const state = recommendationSelections[item.id];
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'recommendation-item';
+
+            const header = document.createElement('div');
+            header.className = 'recommendation-header';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = state.selected;
+            checkbox.addEventListener('change', () => {
+                recommendationSelections[item.id].selected = checkbox.checked;
+                updateSelectedCount();
+            });
+
+            const title = document.createElement('span');
+            title.className = 'recommendation-title';
+            title.textContent = item.title;
+
+            header.appendChild(checkbox);
+            header.appendChild(title);
+
+            const texts = document.createElement('div');
+            texts.className = 'recommendation-texts';
+
+            const shortLine = document.createElement('div');
+            const shortLabel = document.createElement('strong');
+            shortLabel.textContent = 'Коротко: ';
+            shortLine.appendChild(shortLabel);
+            shortLine.append(document.createTextNode(item.short));
+
+            const fullLine = document.createElement('div');
+            const fullLabel = document.createElement('strong');
+            fullLabel.textContent = 'Полный: ';
+            fullLine.appendChild(fullLabel);
+            fullLine.append(document.createTextNode(getRecommendationPreview(item.full)));
+
+            texts.appendChild(shortLine);
+            texts.appendChild(fullLine);
+
+            const mode = document.createElement('div');
+            mode.className = 'recommendation-mode';
+
+            const shortMode = document.createElement('label');
+            const shortRadio = document.createElement('input');
+            shortRadio.type = 'radio';
+            shortRadio.name = 'mode_' + item.id;
+            shortRadio.value = 'short';
+            shortRadio.checked = state.mode === 'short';
+            shortRadio.addEventListener('change', () => {
+                recommendationSelections[item.id].mode = 'short';
+            });
+            shortMode.appendChild(shortRadio);
+            shortMode.append(document.createTextNode('Коротко'));
+
+            const fullMode = document.createElement('label');
+            const fullRadio = document.createElement('input');
+            fullRadio.type = 'radio';
+            fullRadio.name = 'mode_' + item.id;
+            fullRadio.value = 'full';
+            fullRadio.checked = state.mode === 'full';
+            fullRadio.addEventListener('change', () => {
+                recommendationSelections[item.id].mode = 'full';
+            });
+            fullMode.appendChild(fullRadio);
+            fullMode.append(document.createTextNode('Полный'));
+
+            mode.appendChild(shortMode);
+            mode.appendChild(fullMode);
+
+            wrapper.appendChild(header);
+            wrapper.appendChild(texts);
+            wrapper.appendChild(mode);
+
+            list.appendChild(wrapper);
+        });
+
+        updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+        const counter = document.getElementById('recommendations-selected-count');
+        if (!counter) return;
+        const count = Object.values(recommendationSelections).filter(item => item.selected).length;
+        counter.textContent = count;
+    }
+
+    function collectSelectedRecommendations() {
+        const selectedTexts = [];
+
+        RECOMMENDATIONS_LIBRARY.forEach(item => {
+            const state = recommendationSelections[item.id];
+            if (state?.selected) {
+                selectedTexts.push(state.mode === 'full' ? item.full : item.short);
+            }
+        });
+
+        const textarea = document.getElementById('recommendations');
+        if (!textarea) return;
+        const formatted = selectedTexts.map((text, index) => `${index + 1}. ${text}`).join('\n');
+        textarea.value = formatted;
+    }
+
+    function initRecommendationsLibrary() {
+        renderRecommendationFilters();
+        renderRecommendationsList();
+        const collectBtn = document.getElementById('collect-recommendations-button');
+        if (collectBtn) {
+            collectBtn.addEventListener('click', collectSelectedRecommendations);
+        }
+    }
+
+    function collectIdeasText() {
+        const items = [];
+        document.querySelectorAll('.idea-checkbox').forEach(cb => {
+            if (cb.checked) {
+                const type = cb.dataset.ideaType;
+                const descInput = document.querySelector('.idea-description[data-idea-type="' + type + '"]');
+                const desc = descInput ? descInput.value.trim() : '';
+                items.push(desc ? `${type} — ${desc}` : type);
+            }
+        });
+        return items.join('; ');
+    }
+
+    function collectCheckboxDescriptions(selector) {
+        const items = [];
+        document.querySelectorAll(selector).forEach(cb => {
+            if (cb.checked) {
+                const type = cb.dataset.perceptionType;
+                const descInput = document.querySelector('.perception-description[data-perception-type="' + type + '"]');
+                const desc = descInput ? descInput.value.trim() : '';
+                items.push({ type, desc });
+            }
+        });
+        return items;
+    }
+
+    function collectIllusionsText() {
+        const illusions = [];
+        document.querySelectorAll('.illusion-checkbox').forEach(cb => {
+            if (cb.checked) {
+                const type = cb.dataset.illusionType;
+                const descInput = document.querySelector(
+                    '.illusion-description[data-illusion-type="' + type + '"]'
+                );
+                const desc = descInput ? descInput.value.trim() : '';
+                illusions.push(desc ? type + ' — ' + desc : type);
+            }
+        });
+        return illusions;
+    }
+
+    function collectHallucinationText() {
+        const analyzer = getCheckedTextByName('hallucination_analyzer');
+
+        const hallTypes = [];
+        document.querySelectorAll('.hall-type-checkbox').forEach(cb => {
+            if (cb.checked) {
+                const type = cb.dataset.hallType;
+                const descInput = document.querySelector(
+                    '.hall-type-description[data-hall-type="' + type + '"]'
+                );
+                const desc = descInput ? descInput.value.trim() : '';
+                hallTypes.push(desc ? type + ' — ' + desc : type);
+            }
+        });
+
+        const parts = [];
+        if (analyzer) parts.push('по анализатору: ' + analyzer);
+        if (hallTypes.length) parts.push(hallTypes.join('; '));
+
+        return parts.length ? 'галлюцинации (' + parts.join('; ') + ')' : '';
+    }
+
+    function collectPerceptionText() {
+        const parts = [];
+
+        // Иллюзии
+        const illusions = collectIllusionsText();
+        if (illusions.length) {
+            parts.push('иллюзии: ' + illusions.join('; '));
+        }
+
+        // Галлюцинации
+        const hallucinations = collectHallucinationText();
+        if (hallucinations) {
+            parts.push(hallucinations);
+        }
+
+        // Психосенсорные расстройства
+        const dereal = getCheckedTextByName('psychosensory_derealization');
+        const autopsych = getCheckedTextByName('psychosensory_autopsychic');
+        const psychoDesc = document.getElementById('psychosensory_description')?.value.trim();
+        if (dereal || autopsych || psychoDesc) {
+            const psParts = [];
+            if (dereal) psParts.push('дереализационные — ' + dereal);
+            if (autopsych) psParts.push('аутопсихические — ' + autopsych);
+            if (psychoDesc) psParts.push(psychoDesc);
+            parts.push('психосенсорные расстройства: ' + psParts.join('; '));
+        }
+
+        // Психические автоматизмы
+        const automatismTypes = getCheckedTextByName('psychic_automatism');
+        const automatismDesc = document.getElementById('psychic_automatism_description')?.value.trim();
+        if (automatismTypes || automatismDesc) {
+            let line = 'психические автоматизмы: ';
+            if (automatismTypes) line += automatismTypes;
+            if (automatismDesc) line += (automatismTypes ? '; ' : '') + automatismDesc;
+            parts.push(line);
+        }
+
+        // Свободный текст
+        const freeText = document.getElementById('perception')?.value.trim();
+        if (freeText) {
+            parts.push(freeText);
+        }
+
+        return parts.join('; ');
+    }
+
+
+    // Небольшой список часто используемых рубрик МКБ-10 (можно дополнять)
+    const icd10 = [
+        { code: 'F10.2', name: 'Психические и поведенческие расстройства, связанные с употреблением алкоголя, синдром зависимости' },
+        { code: 'F11.2', name: 'Психические и поведенческие расстройства, связанные с употреблением опиоидов, синдром зависимости' },
+
+        { code: 'F20.0', name: 'Шизофрения параноидная' },
+        { code: 'F20.1', name: 'Шизофрения гебефреническая' },
+        { code: 'F20.3', name: 'Шизофрения недифференцированная' },
+        { code: 'F20.6', name: 'Шизофрения простая' },
+        { code: 'F21',   name: 'Шизотипическое расстройство' },
+        { code: 'F22.0', name: 'Хроническое бредовое расстройство' },
+        { code: 'F23.1', name: 'Острый полиморфный психотический эпизод с симптомами шизофрении' },
+        { code: 'F25.0', name: 'Шизоаффективное расстройство, маниакальный тип' },
+        { code: 'F25.1', name: 'Шизоаффективное расстройство, депрессивный тип' },
+
+        { code: 'F31.0', name: 'Биполярное аффективное расстройство, текущий эпизод гипомании' },
+        { code: 'F31.1', name: 'Биполярное аффективное расстройство, текущий эпизод мании без психотических симптомов' },
+        { code: 'F31.2', name: 'Биполярное аффективное расстройство, текущий эпизод мании с психотическими симптомами' },
+        { code: 'F31.3', name: 'Биполярное аффективное расстройство, текущий эпизод умеренной или лёгкой депрессии' },
+        { code: 'F31.4', name: 'Биполярное аффективное расстройство, текущий эпизод тяжёлой депрессии без психотических симптомов' },
+
+        { code: 'F32.0', name: 'Депрессивный эпизод лёгкой степени' },
+        { code: 'F32.1', name: 'Депрессивный эпизод средней степени' },
+        { code: 'F32.2', name: 'Депрессивный эпизод тяжёлой степени без психотических симптомов' },
+        { code: 'F32.3', name: 'Депрессивный эпизод тяжёлой степени с психотическими симптомами' },
+        { code: 'F33.0', name: 'Рекуррентное депрессивное расстройство, текущий эпизод лёгкой степени' },
+        { code: 'F33.1', name: 'Рекуррентное депрессивное расстройство, текущий эпизод средней степени' },
+        { code: 'F33.2', name: 'Рекуррентное депрессивное расстройство, текущий эпизод тяжёлой степени без психотических симптомов' },
+
+        { code: 'F40.0', name: 'Агорафобия' },
+        { code: 'F40.1', name: 'Социальные фобии' },
+        { code: 'F41.0', name: 'Паническое расстройство (эпизодическая пароксизмальная тревога)' },
+        { code: 'F41.1', name: 'Генерализованное тревожное расстройство' },
+        { code: 'F41.2', name: 'Смешанное тревожное и депрессивное расстройство' },
+
+        { code: 'F42.0', name: 'Обсессивно-компульсивное расстройство с преимущественно навязчивыми мыслями или размышлениями' },
+        { code: 'F42.1', name: 'Обсессивно-компульсивное расстройство с преимущественно компульсивными действиями (навязчивые ритуалы)' },
+        { code: 'F42.2', name: 'Обсессивно-компульсивное расстройство, смешанные навязчивые мысли и действия' },
+
+        { code: 'F43.1', name: 'Посттравматическое стрессовое расстройство' },
+        { code: 'F43.2', name: 'Расстройства адаптации' },
+
+        { code: 'F60.3', name: 'Эмоционально неустойчивое расстройство личности (в т. ч. пограничное)' },
+        { code: 'F84.0', name: 'Аутизм детский' }
+        // сюда можно добавлять свои коды
+    ];
+
+    function searchICD() {
+        const query = document.getElementById('icd_search').value.trim().toLowerCase();
+        const resultsDiv = document.getElementById('icd_results');
+        resultsDiv.innerHTML = '';
+
+        if (query.length < 2) {
+            return;
+        }
+
+        const matches = icd10.filter(item =>
+            item.code.toLowerCase().includes(query) ||
+            item.name.toLowerCase().includes(query)
+        ).slice(0, 30);
+
+        if (matches.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'icd-item';
+            empty.textContent = 'Ничего не найдено';
+            resultsDiv.appendChild(empty);
+            return;
+        }
+
+        matches.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'icd-item';
+            div.textContent = item.code + ' — ' + item.name;
+
+            div.onclick = function () {
+                const diag = document.getElementById('diagnosis');
+                const line = item.code + ' ' + item.name;
+
+                if (diag.value && !diag.value.endsWith('\n')) {
+                    diag.value += '\n';
+                }
+                if (!diag.value.includes(line)) {
+                    diag.value += line;
+                }
+            };
+
+            resultsDiv.appendChild(div);
+        });
+    }
+
+    /* ДИНАМИЧЕСКИЕ НАЗНАЧЕНИЯ */
+
+    let prescriptionCounter = 0;
+
+    function addPrescription() {
+        prescriptionCounter += 1;
+        const list = document.getElementById('prescriptions_list');
+        const item = document.createElement('div');
+        item.className = 'prescription-item';
+        item.dataset.index = prescriptionCounter;
+
+        item.innerHTML = `
+            <div class="prescription-row">
+                <div>
+                    <div class="prescription-label-small">Название препарата</div>
+                    <input type="text" class="prescription-name" placeholder="например, Сертралин">
+                </div>
+                <div>
+                    <div class="prescription-label-small">В течение (дней)</div>
+                    <input type="number" class="prescription-days" min="1" placeholder="30">
+                </div>
+            </div>
+            <div class="prescription-row">
+                <div>
+                    <div class="prescription-label-small">Приём и доза (мг)</div>
+                    <div class="time-dose-row">
+                        <input type="checkbox" class="time-checkbox" data-time="утром">
+                        <span>утром</span>
+                        <input type="number" class="dose-input" data-time="утром" placeholder="мг">
+                    </div>
+                    <div class="time-dose-row">
+                        <input type="checkbox" class="time-checkbox" data-time="днём">
+                        <span>днём</span>
+                        <input type="number" class="dose-input" data-time="днём" placeholder="мг">
+                    </div>
+                    <div class="time-dose-row">
+                        <input type="checkbox" class="time-checkbox" data-time="вечером">
+                        <span>вечером</span>
+                        <input type="number" class="dose-input" data-time="вечером" placeholder="мг">
+                    </div>
+                    <div class="time-dose-row">
+                        <input type="checkbox" class="time-checkbox" data-time="на ночь">
+                        <span>на ночь</span>
+                        <input type="number" class="dose-input" data-time="на ночь" placeholder="мг">
+                    </div>
+                </div>
+            </div>
+            <div class="prescription-comment">
+                <div class="prescription-label-small">Комментарий (необязательно)</div>
+                <input type="text" class="prescription-comment-input" placeholder="например, принимать после еды">
+            </div>
+        `;
+
+        list.appendChild(item);
+    }
+
+    function removeLastPrescription() {
+        const list = document.getElementById('prescriptions_list');
+        if (list.lastElementChild) {
+            list.removeChild(list.lastElementChild);
+        }
+    }
+
+    function collectPrescriptionsText() {
+        const items = document.querySelectorAll('.prescription-item');
+        const lines = [];
+        let index = 1;
+
+        items.forEach(item => {
+            const name = item.querySelector('.prescription-name')?.value.trim();
+            const days = item.querySelector('.prescription-days')?.value.trim();
+            const timeCheckboxes = item.querySelectorAll('.time-checkbox');
+            const doses = item.querySelectorAll('.dose-input');
+            const comment = item.querySelector('.prescription-comment-input')?.value.trim();
+
+            if (!name) return;
+
+            const timeParts = [];
+            timeCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    const time = cb.getAttribute('data-time');
+                    const doseInput = item.querySelector('.dose-input[data-time="' + time + '"]');
+                    const doseVal = doseInput && doseInput.value.trim() ? doseInput.value.trim() + ' мг' : '';
+                    if (doseVal) {
+                        timeParts.push(time + ' ' + doseVal);
+                    } else {
+                        timeParts.push(time);
+                    }
+                }
+            });
+
+            let line = index + '. ' + name + '. ';
+            if (timeParts.length) {
+                line += 'Приём: ' + timeParts.join(', ') + '. ';
+            }
+            if (days) {
+                line += 'В течение ' + days + ' дней. ';
+            }
+            if (comment) {
+                line += 'Комментарий: ' + comment + '.';
+            }
+
+            lines.push(line.trim());
+            index += 1;
+        });
+
+        return lines.join('<br>');
+    }
+
+    function generateText() {
+        // Общие части
+        const complaints = document.getElementById('complaints').value.trim();
+        const anamnesis = document.getElementById('anamnesis').value.trim();
+        const dispensary_status = document.getElementById('dispensary_status').value.trim();
+        const dispensary_treatment = document.getElementById('dispensary_treatment').value.trim();
+        const ill_days = document.getElementById('ill_days').value.trim();
+        const self_treatment = document.getElementById('self_treatment').value.trim();
+        const dynamics = document.getElementById('dynamics').value.trim();
+        const life_history = document.getElementById('life_history').value.trim();
+
+        // Психстатус
+        const consciousness = document.getElementById('consciousness').value || '';
+        const behavior = getCheckedTextByName('behavior');
+        const appearance = document.getElementById('appearance').value || '';
+        const facial_expression = getCheckedTextByName('facial_expression');
+        const eye_contact = document.getElementById('eye_contact').value || '';
+        const contact = document.getElementById('contact').value || '';
+        const conversation = getCheckedTextByName('conversation');
+        const answers = getCheckedTextByName('answers');
+        const speech = document.getElementById('speech').value || '';
+
+        const thinking_tempo = document.getElementById('thinking_tempo').value || '';
+        const thinking_productivity = document.getElementById('thinking_productivity').value || '';
+        const thinking_sequence = document.getElementById('thinking_sequence').value || '';
+        const thinking_goal = document.getElementById('thinking_goal').value || '';
+        const thinking_disorders = getCheckedTextByName('thinking_disorders');
+        const thinking_mobility = getCheckedTextByName('thinking_mobility');
+        const abstraction = document.getElementById('abstraction').value || '';
+        const ideas = collectIdeasText();
+        const judgment = getCheckedTextByName('judgment');
+        const intellect = document.getElementById('intellect').value || '';
+        const vocabulary = document.getElementById('vocabulary').value || '';
+
+        const perceptionDetails = collectPerceptionText();
+        const memory = getCheckedTextByName('memory');
+        const amnesia = getCheckedTextByName('amnesia');
+        const paramnesia = getCheckedTextByName('paramnesia');
+        const attention = getCheckedTextByName('attention');
+
+        const mood = document.getElementById('mood').value || '';
+        const emotions_stability = document.getElementById('emotions_stability').value || '';
+        const emotions = getCheckedTextByName('emotions');
+        const aggression = document.getElementById('aggression').value || '';
+        const suicidal_thoughts = document.getElementById('suicidal_thoughts').value || '';
+        const suicidal_plans = document.getElementById('suicidal_plans').value || '';
+        const suicidal_behavior = document.getElementById('suicidal_behavior').value || '';
+        const contrsuicidal_factors = document.getElementById('contrsuicidal_factors').value || '';
+
+        const will = document.getElementById('will').value || '';
+        const motor = document.getElementById('motor').value.trim();
+        const distance = document.getElementById('distance').value || '';
+        const insight = document.getElementById('insight').value || '';
+        const future_plans = document.getElementById('future_plans').value || '';
+        const seizures = document.getElementById('seizures').value || '';
+        const sleep = getCheckedTextByName('sleep');
+        const appetite = document.getElementById('appetite').value || '';
+
+        const diagnosis = document.getElementById('diagnosis').value.trim();
+        const recommendations = document.getElementById('recommendations').value.trim();
+        const prescriptionsText = collectPrescriptionsText();
+
+        let text = '';
+
+        // Блоки с жирными заголовками
+        text += '<strong>Жалобы:</strong> ' + (complaints || '&nbsp;') + '<br><br>';
+        text += '<strong>Анамнез заболевания:</strong> ' + (anamnesis || '&nbsp;') + '<br><br>';
+        text += '<strong>Состояние на учете в ПНД и наркологическом диспансере:</strong> ' + (dispensary_status || '&nbsp;') + '<br>';
+        text += '<strong>Лечение в ПНД и наркологическом диспансере:</strong> ' + (dispensary_treatment || '&nbsp;') + '<br>';
+        text += '<strong>Считает себя больным в течение (дней):</strong> ' + (ill_days || '__') + '<br>';
+        text += '<strong>Самостоятельное лечение:</strong> ' + (self_treatment || '&nbsp;') + '<br>';
+        text += '<strong>Динамика заболевания:</strong> ' + (dynamics || '&nbsp;') + '<br><br>';
+        text += '<strong>Анамнез жизни:</strong> ' + (life_history || '&nbsp;') + '<br><br>';
+
+        text += '<strong>Психический статус</strong><br>';
+
+        let psLine1 = '';
+        if (consciousness) {
+            psLine1 += 'Сознание ' + consciousness + '. ';
+        }
+        if (behavior) {
+            psLine1 += 'Поведение: ' + behavior + '. ';
+        }
+        if (appearance) {
+            psLine1 += 'Внешний вид ' + appearance + '. ';
+        }
+        if (facial_expression) {
+            psLine1 += 'Мимика: ' + facial_expression + '. ';
+        }
+        if (eye_contact) {
+            psLine1 += 'Зрительный контакт ' + eye_contact + '. ';
+        }
+        if (contact) {
+            psLine1 += 'Контакт ' + contact + '. ';
+        }
+        if (conversation) {
+            psLine1 += 'Беседует: ' + conversation + '. ';
+        }
+        if (answers) {
+            psLine1 += 'На вопросы отвечает: ' + answers + '. ';
+        }
+        if (speech) {
+            psLine1 += 'Речь ' + speech + '. ';
+        }
+
+        if (psLine1) {
+            text += psLine1 + '<br>';
+        }
+
+        let thinkingParts = [];
+        if (thinking_tempo) thinkingParts.push(thinking_tempo);
+        if (thinking_productivity) thinkingParts.push(thinking_productivity);
+        if (thinking_sequence) thinkingParts.push(thinking_sequence);
+        if (thinking_goal) thinkingParts.push(thinking_goal);
+        if (thinking_disorders) thinkingParts.push('с признаками: ' + thinking_disorders);
+        if (thinking_mobility) thinkingParts.push('подвижность мышления: ' + thinking_mobility);
+        if (abstraction) thinkingParts.push('абстрагирование ' + abstraction);
+
+        if (thinkingParts.length > 0) {
+            text += 'Мышление ' + thinkingParts.join(', ') + '.<br>';
+        }
+
+        if (ideas) {
+            text += 'Идеи: ' + ideas + '.<br>';
+        }
+        if (judgment) {
+            text += 'Суждения: ' + judgment + '.<br>';
+        }
+        if (intellect) {
+            text += 'Интеллект ' + intellect + '.<br>';
+        }
+        if (vocabulary) {
+            text += 'Словарный запас ' + vocabulary + '.<br>';
+        }
+
+        if (perceptionDetails) {
+            text += 'Обманы восприятия: ' + perceptionDetails + '.<br>';
+        }
+
+        if (memory) {
+            text += 'Память: ' + memory + '.<br>';
+        }
+        if (amnesia) {
+            text += 'Амнезия: ' + amnesia + '.<br>';
+        }
+        if (paramnesia) {
+            text += 'Парамнезии: ' + paramnesia + '.<br>';
+        }
+        if (attention) {
+            text += 'Внимание: ' + attention + '.<br>';
+        }
+
+        let emoLine = '';
+        if (mood) emoLine += 'Настроение ' + mood + '. ';
+        if (emotions_stability) emoLine += 'Эмоциональные реакции ' + emotions_stability + '. ';
+        if (emotions) emoLine += 'Характер эмоциональных реакций: ' + emotions + '. ';
+        if (aggression) emoLine += 'Агрессивные тенденции: ' + aggression + '. ';
+        if (suicidal_thoughts) emoLine += 'Суицидальные мысли на момент осмотра: ' + suicidal_thoughts + '. ';
+        if (suicidal_plans) emoLine += 'Суицидальные планы на момент осмотра: ' + suicidal_plans + '. ';
+        if (suicidal_behavior) emoLine += 'Суицидальное поведение: ' + suicidal_behavior + '. ';
+        if (contrsuicidal_factors) emoLine += 'Контрсуицидальные факторы: ' + contrsuicidal_factors + '. ';
+
+        if (emoLine) {
+            text += emoLine + '<br>';
+        }
+
+        if (will) {
+            text += 'Воля: ' + will + '.<br>';
+        }
+        if (motor) {
+            text += 'Двигательная сфера: ' + motor + '.<br>';
+        }
+        if (distance) {
+            text += 'Чувство дистанции ' + distance + '.<br>';
+        }
+        if (insight) {
+            text += 'Критика к своему заболеванию ' + insight + '.<br>';
+        }
+        if (future_plans) {
+            text += 'Планы на будущее ' + future_plans + '.<br>';
+        }
+        if (seizures) {
+            text += 'Эпилептиформные пароксизмы: ' + seizures + '.<br>';
+        }
+        if (sleep) {
+            text += 'Сон: ' + sleep + '.<br>';
+        }
+        if (appetite) {
+            text += 'Аппетит ' + appetite + '.<br>';
+        }
+
+        text += '<br><strong>Диагноз и рекомендации</strong><br><br>';
+
+        // Диагноз
+        const diagnosisHtml = diagnosis ? diagnosis.replace(/\n/g, '<br>') : '&nbsp;';
+        text += '<strong>Диагноз (МКБ-10):</strong><br>' + diagnosisHtml + '<br><br>';
+
+        // Рекомендации
+        const recHtml = recommendations ? recommendations.replace(/\n/g, '<br>') : '&nbsp;';
+        text += '<strong>Рекомендации:</strong><br>' + recHtml + '<br><br>';
+
+        // Назначения
+        const prescHtml = prescriptionsText || '&nbsp;';
+        text += '<strong>Назначения:</strong><br>' + prescHtml + '<br>';
+
+        document.getElementById('result').innerHTML = text;
+    }
+
+    function copyResult() {
+        const resultDiv = document.getElementById('result');
+        const range = document.createRange();
+        range.selectNodeContents(resultDiv);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        try {
+            document.execCommand('copy');
+            alert('Текст скопирован в буфер обмена.');
+        } catch (e) {
+            alert('Не удалось скопировать автоматически. Выделите текст вручную и нажмите Ctrl+C.');
+        }
+        sel.removeAllRanges();
+    }
+
+    initRecommendationsLibrary();
+</script>
+
+</body>
+</html>
