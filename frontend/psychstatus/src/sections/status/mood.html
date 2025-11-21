@@ -1,0 +1,78 @@
+<div id="status-mood" class="status-subsection">
+                <h3>Настроение</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Настроение:</label>
+                        <select id="mood">
+                            <option value="">— выбрать —</option>
+                            <option>ровное</option>
+                            <option>сниженное</option>
+                            <option>повышенное</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Эмоциональные реакции — устойчивость:</label>
+                        <select id="emotions_stability">
+                            <option value="">— выбрать —</option>
+                            <option>устойчивые</option>
+                            <option>неустойчивые</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="emotions">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('emotions')">
+                        <span class="multicheck-label">Эмоциональные реакции — характер (можно несколько)</span>
+                        <span class="multicheck-summary" id="emotions_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="emotions_body">
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="живые" onchange="updateMultiSummary('emotions')">живые</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="уплощенные" onchange="updateMultiSummary('emotions')">уплощенные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="выхолощенные" onchange="updateMultiSummary('emotions')">выхолощенные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="огрубленные" onchange="updateMultiSummary('emotions')">огрубленные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="тусклые" onchange="updateMultiSummary('emotions')">тусклые</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="однообразные" onchange="updateMultiSummary('emotions')">однообразные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="монотонные" onchange="updateMultiSummary('emotions')">монотонные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="неадекватные" onchange="updateMultiSummary('emotions')">неадекватные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="недостаточные" onchange="updateMultiSummary('emotions')">недостаточные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием тревоги" onchange="updateMultiSummary('emotions')">с преобладанием тревоги</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием депрессии" onchange="updateMultiSummary('emotions')">с преобладанием депрессии</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием раздражительности" onchange="updateMultiSummary('emotions')">с преобладанием раздражительности</label>
+                    </div>
+                </div>
+
+                <label>Агрессивные тенденции:</label>
+                <select id="aggression">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствуют</option>
+                    <option>в адрес окружающих</option>
+                    <option>в адрес себя (аутоагрессия)</option>
+                </select>
+
+                <label>Суицидальные мысли на момент осмотра:</label>
+                <select id="suicidal_thoughts">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствуют</option>
+                    <option>присутствуют</option>
+                </select>
+
+                <label>Суицидальные планы на момент осмотра:</label>
+                <select id="suicidal_plans">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствуют</option>
+                    <option>присутствуют</option>
+                </select>
+
+                <label>Суицидальное поведение:</label>
+                <select id="suicidal_behavior">
+                    <option value="">— выбрать —</option>
+                    <option>отсутствует</option>
+                    <option>в анамнезе</option>
+                    <option>на момент осмотра</option>
+                </select>
+
+                <label>Контрсуицидальные факторы:</label>
+                <textarea id="contrsuicidal_factors" placeholder="семья, дети, религиозные убеждения и др."></textarea>
+            </div>
+
+            

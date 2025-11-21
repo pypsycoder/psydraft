@@ -1,0 +1,37 @@
+<div id="status-intellect" class="status-subsection">
+                <h3>Интеллект</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Интеллект:</label>
+                        <select id="intellect">
+                            <option value="">— выбрать —</option>
+                            <option>в пределах возрастной нормы</option>
+                            <option>снижен</option>
+                            <option>не развит</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Словарный запас:</label>
+                        <select id="vocabulary">
+                            <option value="">— выбрать —</option>
+                            <option>достаточен</option>
+                            <option>ограничен пределами повседневно-бытового общения</option>
+                            <option>крайне мал</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="multicheck-group" data-name="judgment">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('judgment')">
+                        <span class="multicheck-label">Суждения (можно несколько)</span>
+                        <span class="multicheck-summary" id="judgment_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="judgment_body">
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="легковесные" onchange="updateMultiSummary('judgment')">легковесные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="поверхностные" onchange="updateMultiSummary('judgment')">поверхностные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="категоричные" onchange="updateMultiSummary('judgment')">категоричные</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === ОБНОВЛЁННЫЙ БЛОК «ОБМАНЫ ВОСПРИЯТИЯ» === -->
+            

@@ -1,0 +1,37 @@
+.section {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    padding: 16px 18px 18px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-card);
+    animation: fadeInUp 0.35s ease-out;
+}
+
+h2 {
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #111;
+}
+
+.status-subsection {
+    margin-top: 18px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #fbfbfd;
+    border: 1px solid #e1e4eb;
+}
+
+.status-subsection h3 {
+    margin: 4px 0 10px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.subgroup-grid {
+    display: grid;
+    gap: 12px;
+}

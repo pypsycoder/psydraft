@@ -1,0 +1,32 @@
+<div id="status-sleep-appetite" class="status-subsection">
+                <h3>Сон, аппетит</h3>
+                <div class="multicheck-group" data-name="sleep">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('sleep')">
+                        <span class="multicheck-label">Сон (можно несколько)</span>
+                        <span class="multicheck-summary" id="sleep_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="sleep_body">
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="удовлетворительный" onchange="updateMultiSummary('sleep')">удовлетворительный</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="поверхностный" onchange="updateMultiSummary('sleep')">поверхностный</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="проблемы с засыпанием (>30 минут)" onchange="updateMultiSummary('sleep')">проблемы с засыпанием (&gt;30 минут)</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="частые пробуждения ночью (> 3 за ночь)" onchange="updateMultiSummary('sleep')">частые пробуждения ночью (&gt; 3 за ночь)</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="раннее пробуждение" onchange="updateMultiSummary('sleep')">раннее пробуждение</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="отсутсвие чувства отдыха после сна" onchange="updateMultiSummary('sleep')">отсутсвие чувства отдыха после сна</label>
+                        <label class="checkbox-item"><input type="checkbox" name="sleep" value="отсутствует" onchange="updateMultiSummary('sleep')">отсутствует</label>
+                    </div>
+                </div>
+
+                <label>Аппетит:</label>
+                <select id="appetite">
+                    <option value="">— выбрать —</option>
+                    <option>в норме</option>
+                    <option>снижен</option>
+                    <option>повышен</option>
+                    <option>анорексия</option>
+                    <option>булимия</option>
+                </select>
+            </div>
+        </div>
+<!-- ДИАГНОЗ, РЕКОМЕНДАЦИИ, НАЗНАЧЕНИЯ -->
+
+        

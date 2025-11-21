@@ -1,0 +1,114 @@
+<div id="status-thinking" class="status-subsection">
+                <h3>Мышление</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Темп мышления:</label>
+                        <select id="thinking_tempo">
+                            <option value="">— выбрать —</option>
+                            <option>не нарушен</option>
+                            <option>замедлен</option>
+                            <option>ускорен</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Продуктивность мышления:</label>
+                        <select id="thinking_productivity">
+                            <option value="">— выбрать —</option>
+                            <option>сохранена</option>
+                            <option>повышена</option>
+                            <option>снижена</option>
+                            <option>нерезультативное</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Последовательность мышления:</label>
+                        <select id="thinking_sequence">
+                            <option value="">— выбрать —</option>
+                            <option>не нарушена</option>
+                            <option>нарушена</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Целенаправленность мышления:</label>
+                        <select id="thinking_goal">
+                            <option value="">— выбрать —</option>
+                            <option>целенаправленное</option>
+                            <option>нецеленаправленное</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="thinking_disorders">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('thinking_disorders')">
+                        <span class="multicheck-label">Нецеленаправленное мышление (можно несколько)</span>
+                        <span class="multicheck-summary" id="thinking_disorders_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="thinking_disorders_body">
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="паралогичное" onchange="updateMultiSummary('thinking_disorders')">паралогичное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="соскальзывающее" onchange="updateMultiSummary('thinking_disorders')">соскальзывающее</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="резонерство" onchange="updateMultiSummary('thinking_disorders')">резонерство</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="разорванное" onchange="updateMultiSummary('thinking_disorders')">разорванное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="бессвязное" onchange="updateMultiSummary('thinking_disorders')">бессвязное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_disorders" value="аморфное" onchange="updateMultiSummary('thinking_disorders')">аморфное</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="thinking_mobility">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('thinking_mobility')">
+                        <span class="multicheck-label">Подвижность мышления</span>
+                        <span class="multicheck-summary" id="thinking_mobility_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="thinking_mobility_body">
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="не нарушена" onchange="updateMultiSummary('thinking_mobility')">не нарушена</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="обстоятельное" onchange="updateMultiSummary('thinking_mobility')">обстоятельное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="ригидное" onchange="updateMultiSummary('thinking_mobility')">ригидное</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="вязкое" onchange="updateMultiSummary('thinking_mobility')">вязкое</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="застревающее" onchange="updateMultiSummary('thinking_mobility')">застревающее</label>
+                        <label class="checkbox-item"><input type="checkbox" name="thinking_mobility" value="инертное" onchange="updateMultiSummary('thinking_mobility')">инертное</label>
+                    </div>
+                </div>
+
+                <label>Абстрагирование:</label>
+                <select id="abstraction">
+                    <option value="">— выбрать —</option>
+                    <option>доступно</option>
+                    <option>не доступно</option>
+                    <option>мышление конкретное</option>
+                </select>
+
+                <div id="ideas-block" class="status-subsection" style="margin-top: 12px;">
+                    <h3>Идеи</h3>
+                    <div class="subgroup-grid">
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="аффективно обусловленные">
+                                <span>Аффективно обусловленные</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="аффективно обусловленные" placeholder="Описание содержания идей">
+                        </div>
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="навязчивые">
+                                <span>Навязчивые</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="навязчивые" placeholder="Описание содержания идей">
+                        </div>
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="сверхценные">
+                                <span>Сверхценные</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="сверхценные" placeholder="Описание содержания идей">
+                        </div>
+                        <div class="idea-row">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="бредовые">
+                                <span>Бредовые</span>
+                            </label>
+                            <input type="text" class="idea-description" data-idea-type="бредовые" placeholder="Описание содержания идей">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            

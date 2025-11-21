@@ -1,0 +1,43 @@
+<div id="status-memory" class="status-subsection">
+                <h3>Память</h3>
+                <div class="multicheck-group" data-name="memory">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('memory')">
+                        <span class="multicheck-label">Память (можно несколько)</span>
+                        <span class="multicheck-summary" id="memory_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="memory_body">
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="в пределах возрастной нормы" onchange="updateMultiSummary('memory')">в пределах возрастной нормы</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="снижена" onchange="updateMultiSummary('memory')">снижена</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="гипомнезия" onchange="updateMultiSummary('memory')">гипомнезия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="амнезия" onchange="updateMultiSummary('memory')">амнезия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="memory" value="парамнезии" onchange="updateMultiSummary('memory')">парамнезии</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="amnesia">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('amnesia')">
+                        <span class="multicheck-label">Амнезия (можно несколько)</span>
+                        <span class="multicheck-summary" id="amnesia_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="amnesia_body">
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="фиксационная" onchange="updateMultiSummary('amnesia')">фиксационная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="антероградная" onchange="updateMultiSummary('amnesia')">антероградная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="ретроградная" onchange="updateMultiSummary('amnesia')">ретроградная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="антероретроградная" onchange="updateMultiSummary('amnesia')">антероретроградная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amnesia" value="конградная" onchange="updateMultiSummary('amnesia')">конградная</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="paramnesia">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('paramnesia')">
+                        <span class="multicheck-label">Парамнезии (можно несколько)</span>
+                        <span class="multicheck-summary" id="paramnesia_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="paramnesia_body">
+                        <label class="checkbox-item"><input type="checkbox" name="paramnesia" value="конфабуляции" onchange="updateMultiSummary('paramnesia')">конфабуляции</label>
+                        <label class="checkbox-item"><input type="checkbox" name="paramnesia" value="псевдореминисценции" onchange="updateMultiSummary('paramnesia')">псевдореминисценции</label>
+                    </div>
+                </div>
+            </div>
+
+            

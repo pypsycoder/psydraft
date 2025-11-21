@@ -1,0 +1,120 @@
+<div id="status-consciousness" class="status-subsection">
+                <h3>Сознание</h3>
+                <div class="subgroup-grid">
+                    <div>
+                        <label>Сознание:</label>
+                        <select id="consciousness">
+                            <option value="">— выбрать —</option>
+                            <option>не помрачено</option>
+                            <option>помрачено (делирий)</option>
+                            <option>помрачено (онейроид)</option>
+                            <option>помрачено (сумеречное)</option>
+                            <option>помрачено (аменция)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Внешний вид:</label>
+                        <select id="appearance">
+                            <option value="">— выбрать —</option>
+                            <option>опрятный</option>
+                            <option>неопрятный</option>
+                            <option>соответствует возрасту</option>
+                            <option>моложе возраста</option>
+                            <option>старше возраста</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Зрительный контакт:</label>
+                        <select id="eye_contact">
+                            <option value="">— выбрать —</option>
+                            <option>постоянный</option>
+                            <option>неустойчивый</option>
+                            <option>не устанавливает</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Установление контакта:</label>
+                        <select id="contact">
+                            <option value="">— выбрать —</option>
+                            <option>легко устанавливается</option>
+                            <option>затруднено</option>
+                            <option>не устанавливается</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="behavior">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('behavior')">
+                        <span class="multicheck-label">Поведение (можно несколько)</span>
+                        <span class="multicheck-summary" id="behavior_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="behavior_body">
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="спокоен" onchange="updateMultiSummary('behavior')">спокоен</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="упорядочен" onchange="updateMultiSummary('behavior')">упорядочен</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив" onchange="updateMultiSummary('behavior')">суетлив</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив с элементами негативизма" onchange="updateMultiSummary('behavior')">суетлив с элементами негативизма</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="беспокоен" onchange="updateMultiSummary('behavior')">беспокоен</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="негативизм" onchange="updateMultiSummary('behavior')">негативизм</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="груб" onchange="updateMultiSummary('behavior')">груб</label>
+                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="агрессивен" onchange="updateMultiSummary('behavior')">агрессивен</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="facial_expression">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('facial_expression')">
+                        <span class="multicheck-label">Мимика (можно несколько)</span>
+                        <span class="multicheck-summary" id="facial_expression_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="facial_expression_body">
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="соответствует ситуации" onchange="updateMultiSummary('facial_expression')">соответствует ситуации</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="оживленная" onchange="updateMultiSummary('facial_expression')">оживленная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="бедная" onchange="updateMultiSummary('facial_expression')">бедная</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="живость снижена" onchange="updateMultiSummary('facial_expression')">живость снижена</label>
+                        <label class="checkbox-item"><input type="checkbox" name="facial_expression" value="нарочитая живость" onchange="updateMultiSummary('facial_expression')">нарочитая живость</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="conversation">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('conversation')">
+                        <span class="multicheck-label">Беседует (можно несколько)</span>
+                        <span class="multicheck-summary" id="conversation_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="conversation_body">
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="по-деловому" onchange="updateMultiSummary('conversation')">по-деловому</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="косно" onchange="updateMultiSummary('conversation')">косно</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="стандартно" onchange="updateMultiSummary('conversation')">стандартно</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="с применением жаргона" onchange="updateMultiSummary('conversation')">с применением жаргона</label>
+                    </div>
+                </div>
+
+                <div class="multicheck-group" data-name="answers">
+                    <div class="multicheck-header" onclick="toggleMultiGroup('answers')">
+                        <span class="multicheck-label">На вопросы отвечает (можно несколько)</span>
+                        <span class="multicheck-summary" id="answers_summary">Не выбрано</span>
+                    </div>
+                    <div class="multicheck-body" id="answers_body">
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="по существу" onchange="updateMultiSummary('answers')">по существу</label>
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="скупо" onchange="updateMultiSummary('answers')">скупо</label>
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="развернуто" onchange="updateMultiSummary('answers')">развернуто</label>
+                        <label class="checkbox-item"><input type="checkbox" name="answers" value="уклончиво" onchange="updateMultiSummary('answers')">уклончиво</label>
+                    </div>
+                </div>
+
+                <label>Речь:</label>
+                <select id="speech">
+                    <option value="">— выбрать —</option>
+                    <option>нормальная</option>
+                    <option>ускоренная</option>
+                    <option>замедленная</option>
+                    <option>скандированная</option>
+                    <option>монологичная</option>
+                    <option>жаргон</option>
+                    <option>скандированная</option>
+                    <option>монотонная</option>
+                </select>
+            </div>
+
+            
