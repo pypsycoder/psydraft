@@ -1,18 +1,10 @@
-<!-- =============================== -->
-<!--   БЛОК ДИАГНОЗА                 -->
-<!-- =============================== -->
+<label for="icd_search">Поиск диагноза по МКБ-10:</label>
+<input id="icd_search"
+       type="text"
+       placeholder="Начните вводить..."
+       oninput="searchICD()">
 
-<div class="section-card">
-    <h2 class="section-title">🩺 Диагноз</h2>
+<div id="icd_results" class="icd-results"></div>
 
-    <label for="icd_search">Поиск диагноза по МКБ-10:</label>
-    <input id="icd_search"
-           type="text"
-           placeholder="Начните вводить..."
-           oninput="searchICD()">
-
-    <div id="icd_results" class="icd-results"></div>
-
-    <label for="diagnosis">Диагноз (шифры МКБ-10):</label>
-    <textarea id="diagnosis"></textarea>
-</div>
+<label for="diagnosis">Диагноз (шифры МКБ-10):</label>
+<textarea id="diagnosis"></textarea>

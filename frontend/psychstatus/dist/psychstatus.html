@@ -5,7 +5,7 @@
     <title>Психиатрический конструктор заключения</title>
 
   <style>
-    :root {
+:root {
     --bg-main: #f2f2f7;
     --bg-card: #ffffff;
     --border-card: #e5e5ea;
@@ -32,7 +32,7 @@ body {
     line-height: 1.5;
 }
 
-    /* ================== LAYOUT ================== */
+/* ================== LAYOUT ================== */
 
 .layout {
     max-width: 1200px;
@@ -273,6 +273,31 @@ h1 {
     color: var(--text-secondary);
 }
 
+.section {
+    margin-bottom: 28px;
+}
+.section > h2 {
+    margin: 0 0 10px;
+    padding: 8px 14px;
+    font-size: 20px;
+    font-weight: 700;
+    border-radius: 12px;
+    background: #f2f3f5;
+    color: #1f2937;
+}
+.section-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 14px 16px;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.05),
+        0 10px 20px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 /* ================== MOBILE ================== */
 
 @media (max-width: 900px) {
@@ -314,7 +339,7 @@ h1 {
     }
 }
 
-    /* Apple Health inspired theme accents */
+/* Apple Health inspired theme accents */
 .page-footer {
     text-align: center;
     padding: 16px;
@@ -322,7 +347,7 @@ h1 {
     font-size: 14px;
 }
 
-    .section {
+.section {
     background: var(--bg-card);
     border-radius: var(--radius-card);
     padding: 16px 18px 18px;
@@ -360,7 +385,7 @@ h2 {
     gap: 12px;
 }
 
-    label {
+label {
     font-weight: 600;
     margin-top: 12px;
     display: block;
@@ -466,7 +491,7 @@ button:active {
     box-shadow: none;
 }
 
-    .checkbox-item {
+.checkbox-item {
     font-size: 15px;
     color: #1c1c1e;
     display: flex;
@@ -482,7 +507,7 @@ button:active {
     cursor: pointer;
 }
 
-    .multicheck-group {
+.multicheck-group {
     margin-top: 10px;
 }
 
@@ -538,7 +563,7 @@ button:active {
     transform: translateY(0);
 }
 
-    .idea-row,
+.idea-row,
 .perception-row {
     display: flex;
     flex-wrap: nowrap;
@@ -660,7 +685,7 @@ button:active {
     color: #1c1c1e;
 }
 
-    #result-container {
+#result-container {
     border-radius: var(--radius-card);
     padding: 10px 12px;
     background: #ffffff;
@@ -681,7 +706,7 @@ button:active {
     font-weight: 600;
 }
 
-    @keyframes fadeInUp {
+@keyframes fadeInUp {
     from {
         opacity: 0;
         transform: translateY(6px);
@@ -703,7 +728,7 @@ button:active {
     }
 }
 
-    /* ===== СЕТКА КАРТОЧЕК ===== */
+/* ===== СЕТКА КАРТОЧЕК ===== */
 
 .rec-grid {
     display: grid !important;
@@ -801,6 +826,72 @@ button:active {
     color: #fff;
     font-size: 14px;
     cursor: pointer;
+}
+
+.prescriptions-controls {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.prescription-item {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fafafa;
+    border: 1px solid #e1e4eb;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    animation: fadeInUp 0.25s ease-out;
+}
+
+.prescription-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin-top: 6px;
+}
+
+.prescription-row > div {
+    flex: 1 1 160px;
+    min-width: 140px;
+}
+
+.prescription-label-small {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.time-dose-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.time-dose-row input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+}
+
+.time-dose-row input[type="number"] {
+    width: 72px;
+    padding: 4px 6px;
+    font-size: 14px;
+    border-radius: 8px;
+}
+
+.prescription-comment {
+    margin-top: 6px;
+}
+
+.prescription-comment input {
+    font-size: 14px;
+    padding: 6px 8px;
 }
 
   </style>
@@ -901,39 +992,39 @@ button:active {
 
 
       <div class="section" id="section-general">
-            <h2>📋 Общие разделы</h2>
+        <h2>📋 Общие разделы</h2>
+        <div class="section-card">
+          <label>Жалобы:</label>
+<textarea id="complaints"></textarea>
 
-            <label>Жалобы:</label>
-            <textarea id="complaints"></textarea>
+<label>Анамнез заболевания:</label>
+<textarea id="anamnesis"></textarea>
 
-            <label>Анамнез заболевания:</label>
-            <textarea id="anamnesis"></textarea>
+<label>Состояние на учете в ПНД и наркологическом диспансере:</label>
+<textarea id="dispensary_status"></textarea>
 
-            <label>Состояние на учете в ПНД и наркологическом диспансере:</label>
-            <textarea id="dispensary_status"></textarea>
+<label>Лечение в ПНД и наркологическом диспансере:</label>
+<textarea id="dispensary_treatment"></textarea>
 
-            <label>Лечение в ПНД и наркологическом диспансере:</label>
-            <textarea id="dispensary_treatment"></textarea>
+<label>Считает себя больным в течение (дней):</label>
+<input type="number" id="ill_days" min="0" placeholder="например, 30">
 
-            <label>Считает себя больным в течение (дней):</label>
-            <input type="number" id="ill_days" min="0" placeholder="например, 30">
+<label>Самостоятельное лечение:</label>
+<textarea id="self_treatment"></textarea>
 
-            <label>Самостоятельное лечение:</label>
-            <textarea id="self_treatment"></textarea>
+<label>Динамика заболевания:</label>
+<textarea id="dynamics"></textarea>
 
-            <label>Динамика заболевания:</label>
-            <textarea id="dynamics"></textarea>
+<label>Анамнез жизни:</label>
+<textarea id="life_history"></textarea>
 
-            <label>Анамнез жизни:</label>
-            <textarea id="life_history"></textarea>
         </div>
+      </div>
 
-
-      <!-- Блок психического статуса -->
       <div class="section" id="section-status">
-    <h2>Психический статус</h2>
-
-    <div id="status-consciousness" class="status-subsection">
+        <h2>🧠 Психический статус</h2>
+        <div class="section-card">
+          <div id="status-consciousness" class="status-subsection">
                 <h3>🧠 Сознание</h3>
                 <div class="subgroup-grid">
                     <div>
@@ -1054,7 +1145,7 @@ button:active {
 
             
 
-    <div id="status-thinking" class="status-subsection">
+<div id="status-thinking" class="status-subsection">
                 <h3>💭 Мышление</h3>
                 <div class="subgroup-grid">
                     <div>
@@ -1169,7 +1260,7 @@ button:active {
 
             
 
-    <div id="status-intellect" class="status-subsection">
+<div id="status-intellect" class="status-subsection">
                 <h3>📚 Интеллект</h3>
                 <div class="subgroup-grid">
                     <div>
@@ -1207,7 +1298,7 @@ button:active {
             <!-- === ОБНОВЛЁННЫЙ БЛОК «ОБМАНЫ ВОСПРИЯТИЯ» === -->
             
 
-    <div id="status-perception" class="status-subsection">
+<div id="status-perception" class="status-subsection">
                 <h3>👁️ Обманы восприятия</h3>
 
                 <!-- Иллюзии -->
@@ -1408,7 +1499,7 @@ button:active {
 
             
 
-    <div id="status-memory" class="status-subsection">
+<div id="status-memory" class="status-subsection">
                 <h3>🧩 Память</h3>
                 <div class="multicheck-group" data-name="memory">
                     <div class="multicheck-header" onclick="toggleMultiGroup('memory')">
@@ -1452,7 +1543,7 @@ button:active {
 
             
 
-    <div id="status-attention" class="status-subsection">
+<div id="status-attention" class="status-subsection">
                 <h3>🎯 Внимание</h3>
                 <div class="multicheck-group" data-name="attention">
                     <div class="multicheck-header" onclick="toggleMultiGroup('attention')">
@@ -1493,7 +1584,7 @@ button:active {
 
             
 
-    <div id="status-mood" class="status-subsection">
+<div id="status-mood" class="status-subsection">
                 <h3>🙂 Настроение</h3>
                 <div class="subgroup-grid">
                     <div>
@@ -1572,7 +1663,7 @@ button:active {
 
             
 
-    <div id="status-motor" class="status-subsection">
+<div id="status-motor" class="status-subsection">
                 <h3>🏃 Двигательная сфера</h3>
                 <label>Волевые качества:</label>
                 <select id="will">
@@ -1596,7 +1687,7 @@ button:active {
 
             
 
-    <div id="status-insight" class="status-subsection">
+<div id="status-insight" class="status-subsection">
                 <h3>🔍 Критика к своему заболеванию</h3>
                 <label>Чувство дистанции:</label>
                 <select id="distance">
@@ -1620,7 +1711,7 @@ button:active {
 
             
 
-    <div id="status-sleep-appetite" class="status-subsection">
+<div id="status-sleep-appetite" class="status-subsection">
                 <h3>🌙 Сон, 🍎 аппетит</h3>
                 <div class="multicheck-group" data-name="sleep">
                     <div class="multicheck-header" onclick="toggleMultiGroup('sleep')">
@@ -1653,81 +1744,84 @@ button:active {
 
         
 
-</div>
 
+        </div>
+      </div>
 
-      <!-- Диагноз, рекомендации, назначения, результат -->
-      <!-- =============================== -->
-<!--   БЛОК ДИАГНОЗА                 -->
-<!-- =============================== -->
+      <div class="section" id="section-diagnosis">
+        <h2>🩺 Диагноз</h2>
+        <div class="section-card">
+          <label for="icd_search">Поиск диагноза по МКБ-10:</label>
+<input id="icd_search"
+       type="text"
+       placeholder="Начните вводить..."
+       oninput="searchICD()">
 
-<div class="section-card">
-    <h2 class="section-title">🩺 Диагноз</h2>
+<div id="icd_results" class="icd-results"></div>
 
-    <label for="icd_search">Поиск диагноза по МКБ-10:</label>
-    <input id="icd_search"
-           type="text"
-           placeholder="Начните вводить..."
-           oninput="searchICD()">
+<label for="diagnosis">Диагноз (шифры МКБ-10):</label>
+<textarea id="diagnosis"></textarea>
 
-    <div id="icd_results" class="icd-results"></div>
-
-    <label for="diagnosis">Диагноз (шифры МКБ-10):</label>
-    <textarea id="diagnosis"></textarea>
-</div>
+        </div>
+      </div>
 
       <div class="section" id="section-recommendations">
-    <h2>🖋️️ Рекомендации</h2>
+        <h2>🖋️️ Рекомендации</h2>
+        <div class="section-card">
+          <div class="library-top">
+    <div class="small-note">
+        Отметьте нужные рекомендации, выберите вариант
+        <b>«Коротко»</b> или <b>«Полно»</b> — текст появится в карточке ниже.
+    </div>
 
-     <div class="section-card">
-        <div class="library-top">
-            <div class="small-note">
-                Отметьте нужные рекомендации, выберите вариант
-                <b>«Коротко»</b> или <b>«Полно»</b> — текст появится в карточке ниже.
-            </div>
-
-            <div class="selected-count">
-                Выбрано рекомендаций:
-                <span id="recommendations-selected-count">0</span>
-            </div>
-        </div>
-        <div id="group-filters" class="group-filters"></div>
-
-        <!-- СЮДА JS РИСУЕТ КАРТОЧКИ -->
-        <div class="rec-grid" id="recommendation-cards"></div>
-
-        <div class="library-footer">
-            <button type="button" id="collect-recommendations-button">
-                Собрать рекомендации в поле ниже
-            </button>
-        </div>
-
-        <label for="recommendations">Итоговый список рекомендаций:</label>
-        <textarea id="recommendations"></textarea>
+    <div class="selected-count">
+        Выбрано рекомендаций:
+        <span id="recommendations-selected-count">0</span>
     </div>
 </div>
+<div id="group-filters" class="group-filters"></div>
+
+<!-- СЮДА JS РИСУЕТ КАРТОЧКИ -->
+<div class="rec-grid" id="recommendation-cards"></div>
+
+<div class="library-footer">
+    <button type="button" id="collect-recommendations-button">
+        Собрать рекомендации в поле ниже
+    </button>
+</div>
+
+<label for="recommendations">Итоговый список рекомендаций:</label>
+<textarea id="recommendations"></textarea>
+
+        </div>
+      </div>
 
       <div class="section" id="section-prescriptions">
-    <h2>℞ Назначения</h2>
-    <div class="prescriptions-controls">
-        <button type="button" class="btn-secondary" onclick="addPrescription()">Добавить препарат</button>
-        <button type="button" class="btn-secondary" onclick="removeLastPrescription()">Удалить последний</button>
-    </div>
-    <div id="prescriptions_list"></div>
+        <h2>℞ Назначения</h2>
+        <div class="section-card">
+          <div class="prescriptions-controls">
+    <button type="button" class="btn-secondary" onclick="addPrescription()">Добавить препарат</button>
+    <button type="button" class="btn-secondary" onclick="removeLastPrescription()">Удалить последний</button>
 </div>
+<div id="prescriptions_list"></div>
 
-      <div class="buttons">
+        </div>
+      </div>
+
+      <div class="section" id="section-result">
+        <h2>✅ Итог</h2>
+        <div class="section-card">
+          <div class="buttons">
     <button type="button" onclick="generateText()">Сформировать текст</button>
     <button type="button" class="btn-secondary" onclick="copyResult()">Скопировать результат</button>
 </div>
 
-<div class="section" id="section-result">
-    <h2>Сформированный текст</h2>
-    <div id="result-container">
-        <div id="result" contenteditable="true"></div>
-    </div>
+<div id="result-container">
+    <div id="result" contenteditable="true"></div>
 </div>
 
+        </div>
+      </div>
 
     </div>
   </div>
@@ -1767,16 +1861,16 @@ button:active {
 
 
   <script>
-    // TODO: DOM helpers
+// TODO: DOM helpers
 
-    // TODO: text helpers
+// TODO: text helpers
 
 
-    const FORM_SCHEMA = {};
+const FORM_SCHEMA = {};
 
-    const DEFAULT_STATE = {};
+const DEFAULT_STATE = {};
 
-    function loadState() {
+function loadState() {
     return null;
 }
 
@@ -1785,11 +1879,11 @@ function saveState(state) {
 }
 
 
-    function toggleSidebar() {
+function toggleSidebar() {
     document.body.classList.toggle('sidebar-collapsed');
 }
 
-    function toggleMultiGroup(name) {
+function toggleMultiGroup(name) {
     const body = document.getElementById(name + '_body');
     if (!body) return;
     body.classList.toggle('open');
@@ -1808,7 +1902,7 @@ function getCheckedTextByName(name) {
     return Array.from(checked).map(c => c.value).join(', ');
 }
 
-    document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('.sidebar-link');
 
     links.forEach(link => {
@@ -1819,7 +1913,7 @@ function getCheckedTextByName(name) {
     });
 });
 
-        function collectCheckboxDescriptions(selector) {
+    function collectCheckboxDescriptions(selector) {
         const items = [];
         document.querySelectorAll(selector).forEach(cb => {
             if (cb.checked) {
@@ -1915,7 +2009,7 @@ function getCheckedTextByName(name) {
         return parts.join('; ');
     }
 
-        function collectIdeasText() {
+    function collectIdeasText() {
         const items = [];
         document.querySelectorAll('.idea-checkbox').forEach(cb => {
             if (cb.checked) {
@@ -1929,7 +2023,7 @@ function getCheckedTextByName(name) {
     }
 
 
-        // Небольшой список часто используемых рубрик МКБ-10 (можно дополнять)
+    // Небольшой список часто используемых рубрик МКБ-10 (можно дополнять)
     const icd10 = [
         { code: 'F10.2', name: 'Психические и поведенческие расстройства, связанные с употреблением алкоголя, синдром зависимости' },
         { code: 'F11.2', name: 'Психические и поведенческие расстройства, связанные с употреблением опиоидов, синдром зависимости' },
@@ -2024,7 +2118,7 @@ function getCheckedTextByName(name) {
 
 
 
-        const RECOMMENDATIONS_LIBRARY = [
+    const RECOMMENDATIONS_LIBRARY = [
         {
             id: 'rec_sleep_schedule',
             group: 'general',
@@ -2528,7 +2622,7 @@ function initRecommendationsLibrary() {
 // гарантируем инициализацию после загрузки DOM
 document.addEventListener('DOMContentLoaded', initRecommendationsLibrary);
 
-        let prescriptionCounter = 0;
+    let prescriptionCounter = 0;
 
     function addPrescription() {
         prescriptionCounter += 1;
@@ -2637,9 +2731,9 @@ document.addEventListener('DOMContentLoaded', initRecommendationsLibrary);
 
 
 
-    // TODO: report templates placeholder
+// TODO: report templates placeholder
 
-        function generateText() {
+    function generateText() {
         // Общие части
         const complaints = document.getElementById('complaints').value.trim();
         const anamnesis = document.getElementById('anamnesis').value.trim();
@@ -2863,12 +2957,12 @@ document.addEventListener('DOMContentLoaded', initRecommendationsLibrary);
         sel.removeAllRanges();
     }
 
-    function prettifyReport(html) {
+function prettifyReport(html) {
     return html;
 }
 
 
-    document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     if (typeof initRecommendationsLibrary === 'function') {
         initRecommendationsLibrary();
     }

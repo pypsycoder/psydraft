@@ -1,30 +1,24 @@
-<div class="section" id="section-recommendations">
-    <h2>🖋️️ Рекомендации</h2>
+<div class="library-top">
+    <div class="small-note">
+        Отметьте нужные рекомендации, выберите вариант
+        <b>«Коротко»</b> или <b>«Полно»</b> — текст появится в карточке ниже.
+    </div>
 
-     <div class="section-card">
-        <div class="library-top">
-            <div class="small-note">
-                Отметьте нужные рекомендации, выберите вариант
-                <b>«Коротко»</b> или <b>«Полно»</b> — текст появится в карточке ниже.
-            </div>
-
-            <div class="selected-count">
-                Выбрано рекомендаций:
-                <span id="recommendations-selected-count">0</span>
-            </div>
-        </div>
-        <div id="group-filters" class="group-filters"></div>
-
-        <!-- СЮДА JS РИСУЕТ КАРТОЧКИ -->
-        <div class="rec-grid" id="recommendation-cards"></div>
-
-        <div class="library-footer">
-            <button type="button" id="collect-recommendations-button">
-                Собрать рекомендации в поле ниже
-            </button>
-        </div>
-
-        <label for="recommendations">Итоговый список рекомендаций:</label>
-        <textarea id="recommendations"></textarea>
+    <div class="selected-count">
+        Выбрано рекомендаций:
+        <span id="recommendations-selected-count">0</span>
     </div>
 </div>
+<div id="group-filters" class="group-filters"></div>
+
+<!-- СЮДА JS РИСУЕТ КАРТОЧКИ -->
+<div class="rec-grid" id="recommendation-cards"></div>
+
+<div class="library-footer">
+    <button type="button" id="collect-recommendations-button">
+        Собрать рекомендации в поле ниже
+    </button>
+</div>
+
+<label for="recommendations">Итоговый список рекомендаций:</label>
+<textarea id="recommendations"></textarea>
