@@ -137,6 +137,35 @@ function initSuicideHistory() {
 
     const lastLabel = document.getElementById('suicide_last_description_label');
     const lastInput = document.getElementById('suicide_last_description');
+    const summary   = document.getElementById('suicide_history_summary');
+
+    function updateSuicideHistorySummary() {
+        if (!summary) return;
+
+        // Если отмечено "не отмечает" — это и выводим
+        if (noneCb && noneCb.checked) {
+            summary.textContent = 'не отмечает';
+            return;
+        }
+
+        const parts = [];
+
+        if (attemptsCb && attemptsCb.checked) {
+            parts.push('были попытки суицида');
+        }
+        if (nssiCb && nssiCb.checked) {
+            parts.push('самоповреждение без суицидального намерения');
+        }
+        if (uncertainCb && uncertainCb.checked) {
+            parts.push('затрудняется ответить');
+        }
+
+        if (parts.length === 0) {
+            summary.textContent = 'Не выбрано';
+        } else {
+            summary.textContent = parts.join(', ');
+        }
+    }
 
     function updateSuicideHistoryState(changedCb) {
         // Эксклюзивность "не отмечает"
@@ -184,6 +213,9 @@ function initSuicideHistory() {
                 lastInput.value = '';
             }
         }
+
+        // Обновляем короткое описание в заголовке
+        updateSuicideHistorySummary();
     }
 
     checkboxes.forEach(cb => {
@@ -196,7 +228,76 @@ function initSuicideHistory() {
     updateSuicideHistoryState(null);
 }
 
+// =========================================
+// Генерация текста: суицидальное поведение в анамнезе
+// =========================================
+
+function buildSuicideHistoryText() {
+    const noneCb      = document.getElementById('suicide_history_none');
+    const attemptsCb  = document.getElementById('suicide_history_attempts');
+    const nssiCb      = document.getElementById('suicide_history_nssi');
+    const uncertainCb = document.getElementById('suicide_history_uncertain');
+
+    const attemptsInput = document.getElementById('suicide_attempts_times');
+    const nssiInput     = document.getElementById('suicide_nssi_times');
+    const lastInput     = document.getElementById('suicide_last_description');
+
+    // На всякий случай — если блока нет, ничего не выводим
+    if (!noneCb && !attemptsCb && !nssiCb && !uncertainCb) {
+        return '';
+    }
+
+    // 1. Эксклюзивные варианты
+
+    if (noneCb && noneCb.checked) {
+        return 'Суицидальное поведение в анамнезе не отмечает.';
+    }
+
+    if (uncertainCb && uncertainCb.checked) {
+        return 'Относительно суицидального поведения в анамнезе затрудняется ответить.';
+    }
+
+    // 2. Попытки и НСС
+
+    const parts = [];
+
+    if (attemptsCb && attemptsCb.checked) {
+        const t = attemptsInput ? attemptsInput.value.trim() : '';
+        if (t) {
+            parts.push(`отмечает суицидальные попытки (${t} раз)`);
+        } else {
+            parts.push('отмечает суицидальные попытки');
+        }
+    }
+
+    if (nssiCb && nssiCb.checked) {
+        const n = nssiInput ? nssiInput.value.trim() : '';
+        if (n) {
+            parts.push(`отмечает эпизоды самоповреждения без суицидального намерения (${n} раз)`);
+        } else {
+            parts.push('отмечает эпизоды самоповреждения без суицидального намерения');
+        }
+    }
+
+    if (parts.length === 0) {
+        // Ничего не выбрано — ничего не добавляем в текст
+        return '';
+    }
+
+    const base = 'В анамнезе ' + parts.join('; ') + '.';
+
+    // 3. Описание последнего эпизода
+
+    const last = lastInput ? lastInput.value.trim() : '';
+    if (last) {
+        return base + ' Последний эпизод: ' + last + '.';
+    }
+
+    return base;
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
-    // ...если тут уже есть другие init-функции — просто добавляем ещё одну
     initSuicideHistory();
 });
+
