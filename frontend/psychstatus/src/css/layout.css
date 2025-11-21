@@ -1,3 +1,5 @@
+/* ================== LAYOUT ================== */
+
 .layout {
     max-width: 1200px;
     margin: 0 auto;
@@ -6,47 +8,79 @@
     gap: 16px;
 }
 
-/* SIDEBAR */
+/* ================== SIDEBAR ================== */
+
 .sidebar {
-    width: 230px;
+    width: 240px;
     position: sticky;
     top: 12px;
     align-self: flex-start;
+
     background: rgba(255,255,255,0.9);
     backdrop-filter: blur(16px);
     border-radius: 18px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     border: 1px solid rgba(0,0,0,0.06);
-    padding: 14px 14px 10px;
+
+    padding: 14px 14px 12px;
+
+    display: flex;
+    flex-direction: column;
+
     animation: slideIn 0.35s ease-out;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), width var(--transition-fast), padding var(--transition-fast);
+    transition:
+        width var(--transition-fast),
+        padding var(--transition-fast),
+        transform var(--transition-fast),
+        opacity var(--transition-fast);
 }
+
+/* Шапка: иконка сайдбара + заголовок */
 
 .sidebar-header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 8px;
 }
 
 .sidebar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
     border: none;
-    background: transparent;
-    font-size: 18px;
-    line-height: 1;
+    padding: 0;
+
+    background: var(--accent);
+    color: #fff;
     cursor: pointer;
-    padding: 2px 4px;
-    border-radius: 8px;
-    transition: background var(--transition-fast), transform 0.1s ease;
+
+    box-shadow: 0 4px 10px rgba(0,122,255,0.30);
+    transition:
+        background var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform 0.12s ease;
+}
+
+.sidebar-toggle svg {
+    width: 20px;
+    height: 20px;
+    display: block;
 }
 
 .sidebar-toggle:hover {
-    background: rgba(0,0,0,0.05);
+    background: #0063d1;
+    box-shadow: 0 6px 14px rgba(0,122,255,0.38);
     transform: translateY(-1px);
 }
 
 .sidebar-toggle:active {
     transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0,122,255,0.30);
 }
 
 .sidebar-title {
@@ -55,50 +89,134 @@
     letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--text-secondary);
-    margin-bottom: 8px;
 }
 
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+/* Навигационный список в стиле Apple Health */
 
-.sidebar ul ul {
-    padding-left: 10px;
+.sidebar-nav {
     margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.sidebar ul ul a {
-    font-size: 14px;
-    padding-left: 14px;
+.sidebar-group-title {
+    margin-top: 10px;
+    margin-bottom: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
 }
 
-.sidebar li {
-    margin-bottom: 4px;
-}
+/* Строка меню */
 
-.sidebar a {
-    display: block;
-    padding: 6px 9px;
-    border-radius: 10px;
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 12px;
+
     text-decoration: none;
-    color: var(--text-main);
-    font-size: 15px;
-    transition: background var(--transition-fast), color var(--transition-fast), transform 0.1s ease;
+    color: var(--text-primary);
+    font-size: 14px;
+
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        transform 0.08s ease;
 }
 
-.sidebar a:hover {
-    background: var(--accent-soft);
+.sidebar-link:hover {
+    background: rgba(0,0,0,0.04);
+    transform: translateX(1px);
+}
+
+/* Иконка слева */
+
+.sidebar-link-icon {
+    flex: 0 0 36px;
+    height: 36px;
+
+    border-radius: 12px;
+    background: rgba(0,122,255,0.12);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+    line-height: 1;
     color: var(--accent);
-    transform: translateX(2px);
+
+    transition: transform 0.1s ease;
 }
 
-.sidebar a:active {
-    transform: translateX(0);
+.sidebar-link:hover .sidebar-link-icon {
+    transform: scale(1.08);
 }
 
-/* MAIN */
+.sidebar-link-label {
+    white-space: nowrap;
+}
+
+/* Чтобы не было фиолетовых visited */
+
+.sidebar-link:visited {
+    color: var(--text-primary);
+}
+
+/* ===== Подсветка активной секции ===== */
+
+.sidebar-link.active {
+    background: rgba(0,122,255,0.12);
+}
+
+.sidebar-link.active .sidebar-link-icon {
+    background: rgba(0,122,255,0.22);
+    color: #fff;
+}
+
+/* ===== Свернутый режим: только иконки ===== */
+
+body.sidebar-collapsed .sidebar {
+    width: 58px;
+    padding-inline: 6px;
+}
+
+/* в свернутом режиме заголовок и подписи групп не нужны */
+body.sidebar-collapsed .sidebar-title,
+body.sidebar-collapsed .sidebar-group-title {
+    display: none;
+}
+
+/* и текст элементов скрываем, остаются только эмодзи */
+body.sidebar-collapsed .sidebar-link-label {
+    display: none;
+}
+
+body.sidebar-collapsed .sidebar-link {
+    justify-content: center;
+    padding-inline: 0;
+}
+
+/* шапка по центру в свернутом режиме */
+body.sidebar-collapsed .sidebar-header {
+    justify-content: center;
+}
+
+/* кнопку можно чуть увеличить, чтобы визуально совпадала с иконками */
+body.sidebar-collapsed .sidebar-toggle {
+    width: 36px;
+    height: 36px;
+}
+
+/* ================== MAIN ================== */
+
 .main {
     flex: 1;
     min-width: 0;
@@ -121,52 +239,43 @@ h1 {
     color: var(--text-secondary);
 }
 
-body.sidebar-collapsed .sidebar {
-    width: 0;
-    max-width: 0;
-    padding: 0;
-    margin: 0;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateX(-20px);
-}
-
-body.sidebar-collapsed .main {
-    flex: 1 1 100%;
-}
-
-.sidebar-floating-toggle {
-    position: fixed;
-    left: 16px;
-    top: 16px;
-    z-index: 1000;
-    padding: 10px 14px;
-    border-radius: 50%;
-    border: none;
-    background: var(--accent);
-    color: #fff;
-    font-size: 18px;
-    box-shadow: 0 6px 14px rgba(0,122,255,0.35);
-    cursor: pointer;
-    display: none;
-}
-
-.sidebar-floating-toggle:hover {
-    background: #0063d1;
-}
+/* ================== MOBILE ================== */
 
 @media (max-width: 900px) {
     .layout {
         flex-direction: column;
     }
+
     .sidebar {
-        position: static;
         width: 100%;
+        position: static;
         order: -1;
     }
-    .sidebar-floating-toggle {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
+
+    /* На мобилках "свернутость" не схлопывает до иконок,
+       чтобы навигация оставалась читаемой */
+    body.sidebar-collapsed .sidebar {
+        width: 100%;
+        padding-inline: 14px;
+    }
+
+    body.sidebar-collapsed .sidebar-title,
+    body.sidebar-collapsed .sidebar-group-title,
+    body.sidebar-collapsed .sidebar-link-label {
+        display: block;
+    }
+
+    body.sidebar-collapsed .sidebar-link {
+        justify-content: flex-start;
+        padding-inline: 8px;
+    }
+
+    body.sidebar-collapsed .sidebar-header {
+        justify-content: flex-start;
+    }
+
+    body.sidebar-collapsed .sidebar-toggle {
+        width: 30px;
+        height: 30px;
     }
 }

@@ -105,4 +105,3 @@
         return lines.join('<br>');
     }
 
-    function generateText() {

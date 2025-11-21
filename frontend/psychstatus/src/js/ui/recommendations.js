@@ -204,259 +204,166 @@
         }
     ];
 
-    const RECOMMENDATION_GROUP_LABELS = {
-        all: 'Все',
-        general: 'Общие',
-        anxiety: 'Тревога',
-        depression: 'Депрессия',
-        psychosis: 'Психоз',
-        sleep: 'Сон',
-        substance: 'Алкоголь/ПАВ',
-        extra: 'Дополнительно'
-    };
+// === ЛОГИКА КАРТОЧЕК РЕКОМЕНДАЦИЙ ===
 
-    let currentRecommendationFilter = 'all';
-    const recommendationSelections = {};
-    function getRecommendationPreview(text) {
-        const words = text.split(' ').filter(Boolean);
-        const preview = words.slice(0, 3).join(' ');
-        return words.length > 3 ? preview + '…' : preview;
-    }
+function initRecommendationCards() {
+    const container = document.getElementById('recommendation-cards');
+    if (!container || !Array.isArray(RECOMMENDATIONS_LIBRARY)) return;
 
-    function renderRecommendationFilters() {
-        const container = document.getElementById('recommendations-filters');
-        if (!container) return;
-        container.innerHTML = '';
+    container.innerHTML = '';
 
-        Object.entries(RECOMMENDATION_GROUP_LABELS).forEach(([key, label]) => {
-            const chip = document.createElement('button');
-            chip.type = 'button';
-            chip.className = 'filter-chip' + (currentRecommendationFilter === key ? ' active' : '');
-            chip.textContent = label;
-            chip.addEventListener('click', () => {
-                currentRecommendationFilter = key;
-                renderRecommendationFilters();
-                renderRecommendationsList();
-            });
-            container.appendChild(chip);
-        });
-    }
+    RECOMMENDATIONS_LIBRARY.forEach((item) => {
+        const card = document.createElement('div');
+        card.className = 'rec-card';
+        card.dataset.recId = item.id;
+        card.dataset.mode = 'short';
 
-    function renderRecommendationsList() {
-        const list = document.getElementById('recommendations-list');
-        if (!list) return;
-        list.innerHTML = '';
-
-        const filtered = RECOMMENDATIONS_LIBRARY.filter(item =>
-            currentRecommendationFilter === 'all' || item.group === currentRecommendationFilter
-        );
-
-        filtered.forEach(item => {
-            if (!recommendationSelections[item.id]) {
-                recommendationSelections[item.id] = { selected: false, mode: 'short' };
-            }
-            const state = recommendationSelections[item.id];
-
-            const wrapper = document.createElement('div');
-            wrapper.className = 'recommendation-item';
-
-            const header = document.createElement('div');
-            header.className = 'recommendation-header';
-
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = state.selected;
-            checkbox.addEventListener('change', () => {
-                recommendationSelections[item.id].selected = checkbox.checked;
-                updateSelectedCount();
-            });
-
-            const title = document.createElement('span');
-            title.className = 'recommendation-title';
-            title.textContent = item.title;
-
-            header.appendChild(checkbox);
-            header.appendChild(title);
-
-            const texts = document.createElement('div');
-            texts.className = 'recommendation-texts';
-
-            const shortLine = document.createElement('div');
-            const shortLabel = document.createElement('strong');
-            shortLabel.textContent = 'Коротко: ';
-            shortLine.appendChild(shortLabel);
-            shortLine.append(document.createTextNode(item.short));
-
-            const fullLine = document.createElement('div');
-            const fullLabel = document.createElement('strong');
-            fullLabel.textContent = 'Полный: ';
-            fullLine.appendChild(fullLabel);
-            fullLine.append(document.createTextNode(getRecommendationPreview(item.full)));
-
-            texts.appendChild(shortLine);
-            texts.appendChild(fullLine);
-
-            const mode = document.createElement('div');
-            mode.className = 'recommendation-mode';
-
-            const shortMode = document.createElement('label');
-            const shortRadio = document.createElement('input');
-            shortRadio.type = 'radio';
-            shortRadio.name = 'mode_' + item.id;
-            shortRadio.value = 'short';
-            shortRadio.checked = state.mode === 'short';
-            shortRadio.addEventListener('change', () => {
-                recommendationSelections[item.id].mode = 'short';
-            });
-            shortMode.appendChild(shortRadio);
-            shortMode.append(document.createTextNode('Коротко'));
-
-            const fullMode = document.createElement('label');
-            const fullRadio = document.createElement('input');
-            fullRadio.type = 'radio';
-            fullRadio.name = 'mode_' + item.id;
-            fullRadio.value = 'full';
-            fullRadio.checked = state.mode === 'full';
-            fullRadio.addEventListener('change', () => {
-                recommendationSelections[item.id].mode = 'full';
-            });
-            fullMode.appendChild(fullRadio);
-            fullMode.append(document.createTextNode('Полный'));
-
-            mode.appendChild(shortMode);
-            mode.appendChild(fullMode);
-
-            wrapper.appendChild(header);
-            wrapper.appendChild(texts);
-            wrapper.appendChild(mode);
-
-            list.appendChild(wrapper);
-        });
-
-        updateSelectedCount();
-    }
-
-    function updateSelectedCount() {
-        const counter = document.getElementById('recommendations-selected-count');
-        if (!counter) return;
-        const count = Object.values(recommendationSelections).filter(item => item.selected).length;
-        counter.textContent = count;
-    }
-
-    function collectSelectedRecommendations() {
-        const selectedTexts = [];
-
-        RECOMMENDATIONS_LIBRARY.forEach(item => {
-            const state = recommendationSelections[item.id];
-            if (state?.selected) {
-                selectedTexts.push(state.mode === 'full' ? item.full : item.short);
-            }
-        });
-
-        const textarea = document.getElementById('recommendations');
-        if (!textarea) return;
-        const formatted = selectedTexts.map((text, index) => `${index + 1}. ${text}`).join('\n');
-        textarea.value = formatted;
-    }
-
-    function initRecommendationsLibrary() {
-        renderRecommendationFilters();
-        renderRecommendationsList();
-        const collectBtn = document.getElementById('collect-recommendations-button');
-        if (collectBtn) {
-            collectBtn.addEventListener('click', collectSelectedRecommendations);
-        }
-    }
-
-    const recommendationsLibrary = [
-        {
-            id: 'sleep',
-            title: 'Режим сна',
-            short: 'Наладить график сна с соблюдением постоянного времени засыпания и пробуждения.',
-            full: 'Рекомендовано регуляризировать цикл сна: ложиться и вставать в одно и то же время, исключить длительные дневные сны, за 2–3 часа до сна избегать кофеина, гаджетов и тяжёлой пищи.'
-        },
-        {
-            id: 'activity',
-            title: 'Физическая активность',
-            short: 'Лёгкая ежедневная физическая активность при отсутствии соматических противопоказаний.',
-            full: 'Рекомендована регулярная умеренная физическая активность (ходьба, ЛФК, растяжка) не менее 20–30 минут в день при отсутствии соматических противопоказаний; нагрузку увеличивать постепенно.'
-        },
-        {
-            id: 'psychoeducation',
-            title: 'Психообразование',
-            short: 'Провести психообразовательную беседу о природе болезни и лечении.',
-            full: 'Рекомендуется психообразовательная беседа: обсудить с пациентом особенности состояния, факторы обострения и ремиссии, принципы фармако- и психотерапии, важность приверженности лечению.'
-        }
-    ];
-
-    function initRecommendationCards() {
-        const container = document.getElementById('recommendation-cards');
-        if (!container || !Array.isArray(recommendationsLibrary)) return;
-
-        recommendationsLibrary.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'rec-card';
-
-            card.innerHTML = `
+        card.innerHTML = `
             <label class="rec-title">
-                <input type="checkbox" class="rec-toggle" data-rec-id="${item.id}">
+                <input type="checkbox"
+                       class="rec-toggle"
+                       data-rec-id="${item.id}">
                 <span>${item.title}</span>
             </label>
+
             <div class="rec-modes" data-rec-id="${item.id}">
-                <label><input type="radio" name="rec-${item.id}-mode" value="short" disabled> Коротко</label>
-                <label><input type="radio" name="rec-${item.id}-mode" value="full" disabled> Полно</label>
+                <label>
+                    <input type="radio"
+                           name="rec-${item.id}-mode"
+                           value="short"
+                           disabled>
+                    Коротко
+                </label>
+                <label>
+                    <input type="radio"
+                           name="rec-${item.id}-mode"
+                           value="full"
+                           disabled>
+                    Полно
+                </label>
             </div>
-            <div class="rec-text" id="rec-text-${item.id}"></div>
+
+            <div class="rec-text"
+                 id="rec-text-${item.id}"
+                 style="display:none;"></div>
         `;
 
-            container.appendChild(card);
-        });
+        container.appendChild(card);
+    });
 
-        container.addEventListener('change', function (event) {
-            const target = event.target;
-            if (!target) return;
+    container.addEventListener('change', onRecommendationCardsChange);
+    updateSelectedCount();
+}
 
-            // Toggle checkbox
-            if (target.classList.contains('rec-toggle')) {
-                const id = target.getAttribute('data-rec-id');
-                const modes = container.querySelector(`.rec-modes[data-rec-id="${id}"]`);
-                const textBlock = document.getElementById(`rec-text-${id}`);
-                if (!modes || !textBlock) return;
+function onRecommendationCardsChange(event) {
+    const target = event.target;
+    if (!target) return;
 
-                const radios = modes.querySelectorAll('input[type="radio"]');
-                if (target.checked) {
-                    radios.forEach(r => r.disabled = false);
-                    textBlock.style.display = 'block';
-                    // по умолчанию "Коротко"
-                    const shortRadio = modes.querySelector('input[value="short"]');
-                    if (shortRadio && !shortRadio.checked) {
-                        shortRadio.checked = true;
-                        setRecText(id, 'short');
-                    }
-                } else {
-                    radios.forEach(r => {
-                        r.disabled = true;
-                        r.checked = false;
-                    });
-                    textBlock.style.display = 'none';
-                    textBlock.textContent = '';
-                }
-            }
+    const card = target.closest('.rec-card');
+    if (!card) return;
 
-            // Toggle mode (short/full)
-            if (target.type === 'radio' && target.name.startsWith('rec-') && target.name.endsWith('-mode')) {
-                const id = target.name.replace(/^rec-/, '').replace(/-mode$/, '');
-                const mode = target.value;
+    const id = card.dataset.recId;
+    const modesBlock = card.querySelector('.rec-modes');
+    const textBlock = card.querySelector('.rec-text');
+    if (!modesBlock || !textBlock) return;
+
+    const radios = modesBlock.querySelectorAll('input[type="radio"]');
+
+    // клик по чекбоксу
+    if (target.classList.contains('rec-toggle')) {
+        if (target.checked) {
+            radios.forEach((r) => { r.disabled = false; });
+
+            let mode = card.dataset.mode || 'short';
+            let radioToCheck =
+                modesBlock.querySelector(`input[value="${mode}"]`) ||
+                modesBlock.querySelector('input[value="short"]');
+
+            if (radioToCheck) {
+                radioToCheck.checked = true;
+                mode = radioToCheck.value;
+                card.dataset.mode = mode;
                 setRecText(id, mode);
             }
-        });
+
+            textBlock.style.display = 'block';
+        } else {
+            radios.forEach((r) => {
+                r.disabled = true;
+                r.checked = false;
+            });
+            textBlock.style.display = 'none';
+            textBlock.textContent = '';
+        }
+
+        updateSelectedCount();
+        return;
     }
 
-    function setRecText(id, mode) {
-        const item = recommendationsLibrary.find(r => r.id === id);
-        const block = document.getElementById(`rec-text-${id}`);
-        if (!item || !block) return;
+    // клик по радио Коротко/Полно
+    if (target.type === 'radio' &&
+        target.name.startsWith('rec-') &&
+        target.name.endsWith('-mode')) {
 
-        block.textContent = mode === 'full' ? item.full : item.short;
+        const mode = target.value;
+        card.dataset.mode = mode;
+        setRecText(id, mode);
     }
+}
 
+function setRecText(id, mode) {
+    const item = RECOMMENDATIONS_LIBRARY.find((r) => r.id === id);
+    if (!item) return;
+
+    const block = document.getElementById(`rec-text-${id}`);
+    if (!block) return;
+
+    block.textContent = mode === 'full' ? item.full : item.short;
+}
+
+function updateSelectedCount() {
+    const counter = document.getElementById('recommendations-selected-count');
+    if (!counter) return;
+
+    const count =
+        document.querySelectorAll('.rec-card .rec-toggle:checked').length;
+
+    counter.textContent = String(count);
+}
+
+function collectSelectedRecommendations() {
+    const textarea = document.getElementById('recommendations');
+    if (!textarea) return;
+
+    const cards = document.querySelectorAll('.rec-card');
+    const texts = [];
+
+    cards.forEach((card) => {
+        const checkbox = card.querySelector('.rec-toggle');
+        if (!checkbox || !checkbox.checked) return;
+
+        const id = card.dataset.recId;
+        const mode = card.dataset.mode || 'short';
+
+        const item = RECOMMENDATIONS_LIBRARY.find((r) => r.id === id);
+        if (!item) return;
+
+        const text = mode === 'full' ? item.full : item.short;
+        texts.push(`${texts.length + 1}. ${text}`);
+    });
+
+    textarea.value = texts.join('\n');
+}
+
+function initRecommendationsLibrary() {
+    initRecommendationCards();
+
+    const collectBtn =
+        document.getElementById('collect-recommendations-button');
+    if (collectBtn) {
+        collectBtn.addEventListener('click', collectSelectedRecommendations);
+    }
+}
+
+// гарантируем инициализацию
+document.addEventListener('DOMContentLoaded', initRecommendationsLibrary);

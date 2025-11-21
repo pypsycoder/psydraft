@@ -1,907 +1,657 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-      <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <title>Психиатрический конструктор заключения</title>
-
-  <style>
-    :root {
-    --bg-main: #f2f2f7;
-    --bg-card: #ffffff;
-    --border-card: #e5e5ea;
-    --accent: #007aff;
-    --accent-soft: rgba(0,122,255,0.15);
-    --text-main: #111111;
-    --text-secondary: #6e6e73;
-    --shadow-card: 0 8px 20px rgba(0,0,0,0.05);
-    --radius-card: 14px;
-    --transition-fast: 0.2s ease;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: var(--bg-main);
-    color: var(--text-main);
-    font-size: 17px;
-    line-height: 1.5;
-}
-
-    /* ================== LAYOUT ================== */
-
-.layout {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 16px 12px 32px;
-    display: flex;
-    gap: 16px;
-}
-
-/* ================== SIDEBAR ================== */
-
-.sidebar {
-    width: 240px;
-    position: sticky;
-    top: 12px;
-    align-self: flex-start;
-
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(16px);
-    border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    border: 1px solid rgba(0,0,0,0.06);
-
-    padding: 14px 14px 12px;
-
-    display: flex;
-    flex-direction: column;
-
-    animation: slideIn 0.35s ease-out;
-    transition:
-        width var(--transition-fast),
-        padding var(--transition-fast),
-        transform var(--transition-fast),
-        opacity var(--transition-fast);
-}
-
-/* Шапка: иконка сайдбара + заголовок */
-
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-}
-
-.sidebar-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 30px;
-    height: 30px;
-    border-radius: 999px;
-    border: none;
-    padding: 0;
-
-    background: var(--accent);
-    color: #fff;
-    cursor: pointer;
-
-    box-shadow: 0 4px 10px rgba(0,122,255,0.30);
-    transition:
-        background var(--transition-fast),
-        box-shadow var(--transition-fast),
-        transform 0.12s ease;
-}
-
-.sidebar-toggle svg {
-    width: 20px;
-    height: 20px;
-    display: block;
-}
-
-.sidebar-toggle:hover {
-    background: #0063d1;
-    box-shadow: 0 6px 14px rgba(0,122,255,0.38);
-    transform: translateY(-1px);
-}
-
-.sidebar-toggle:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 8px rgba(0,122,255,0.30);
-}
-
-.sidebar-title {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-}
-
-/* Навигационный список в стиле Apple Health */
-
-.sidebar-nav {
-    margin-top: 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.sidebar-group-title {
-    margin-top: 10px;
-    margin-bottom: 2px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-}
-
-/* Строка меню */
-
-.sidebar-link {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    width: 100%;
-    padding: 6px 8px;
-    border-radius: 12px;
-
-    text-decoration: none;
-    color: var(--text-primary);
-    font-size: 14px;
-
-    cursor: pointer;
-    transition:
-        background var(--transition-fast),
-        transform 0.08s ease;
-}
-
-.sidebar-link:hover {
-    background: rgba(0,0,0,0.04);
-    transform: translateX(1px);
-}
-
-/* Иконка слева */
-
-.sidebar-link-icon {
-    flex: 0 0 36px;
-    height: 36px;
-
-    border-radius: 12px;
-    background: rgba(0,122,255,0.12);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 20px;
-    line-height: 1;
-    color: var(--accent);
-
-    transition: transform 0.1s ease;
-}
-
-.sidebar-link:hover .sidebar-link-icon {
-    transform: scale(1.08);
-}
-
-.sidebar-link-label {
-    white-space: nowrap;
-}
-
-/* Чтобы не было фиолетовых visited */
-
-.sidebar-link:visited {
-    color: var(--text-primary);
-}
-
-/* ===== Подсветка активной секции ===== */
-
-.sidebar-link.active {
-    background: rgba(0,122,255,0.12);
-}
-
-.sidebar-link.active .sidebar-link-icon {
-    background: rgba(0,122,255,0.22);
-    color: #fff;
-}
-
-/* ===== Свернутый режим: только иконки ===== */
-
-body.sidebar-collapsed .sidebar {
-    width: 58px;
-    padding-inline: 6px;
-}
-
-/* в свернутом режиме заголовок и подписи групп не нужны */
-body.sidebar-collapsed .sidebar-title,
-body.sidebar-collapsed .sidebar-group-title {
-    display: none;
-}
-
-/* и текст элементов скрываем, остаются только эмодзи */
-body.sidebar-collapsed .sidebar-link-label {
-    display: none;
-}
-
-body.sidebar-collapsed .sidebar-link {
-    justify-content: center;
-    padding-inline: 0;
-}
-
-/* шапка по центру в свернутом режиме */
-body.sidebar-collapsed .sidebar-header {
-    justify-content: center;
-}
-
-/* кнопку можно чуть увеличить, чтобы визуально совпадала с иконками */
-body.sidebar-collapsed .sidebar-toggle {
-    width: 36px;
-    height: 36px;
-}
-
-/* ================== MAIN ================== */
-
-.main {
-    flex: 1;
-    min-width: 0;
-}
-
-h1 {
-    font-size: 28px;
-    margin: 0 0 16px;
-    font-weight: 700;
-    color: #111;
-    text-align: left;
-}
-
-.page-header {
-    margin-bottom: 14px;
-}
-
-.small-note {
-    font-size: 14px;
-    color: var(--text-secondary);
-}
-
-/* ================== MOBILE ================== */
-
-@media (max-width: 900px) {
-    .layout {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        position: static;
-        order: -1;
-    }
-
-    /* На мобилках "свернутость" не схлопывает до иконок,
-       чтобы навигация оставалась читаемой */
-    body.sidebar-collapsed .sidebar {
-        width: 100%;
-        padding-inline: 14px;
-    }
-
-    body.sidebar-collapsed .sidebar-title,
-    body.sidebar-collapsed .sidebar-group-title,
-    body.sidebar-collapsed .sidebar-link-label {
-        display: block;
-    }
-
-    body.sidebar-collapsed .sidebar-link {
-        justify-content: flex-start;
-        padding-inline: 8px;
-    }
-
-    body.sidebar-collapsed .sidebar-header {
-        justify-content: flex-start;
-    }
-
-    body.sidebar-collapsed .sidebar-toggle {
-        width: 30px;
-        height: 30px;
-    }
-}
-
-    /* Apple Health inspired theme accents */
-.page-footer {
-    text-align: center;
-    padding: 16px;
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
-    .section {
-    background: var(--bg-card);
-    border-radius: var(--radius-card);
-    padding: 16px 18px 18px;
-    margin-bottom: 18px;
-    box-shadow: var(--shadow-card);
-    border: 1px solid var(--border-card);
-    animation: fadeInUp 0.35s ease-out;
-}
-
-h2 {
-    font-size: 20px;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-weight: 600;
-    color: #111;
-}
-
-.status-subsection {
-    margin-top: 18px;
-    padding: 12px;
-    border-radius: 12px;
-    background: #fbfbfd;
-    border: 1px solid #e1e4eb;
-}
-
-.status-subsection h3 {
-    margin: 4px 0 10px;
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-}
-
-.subgroup-grid {
-    display: grid;
-    gap: 12px;
-}
-
-    label {
-    font-weight: 600;
-    margin-top: 12px;
-    display: block;
-    color: #1c1c1e;
-}
-
-textarea,
-select,
-input[type="text"],
-input[type="number"] {
-    width: 100%;
-    font-family: inherit;
-    font-size: 16px;
-    padding: 8px 10px;
-    margin-top: 6px;
-    border-radius: 10px;
-    border: 1px solid #ced0d8;
-    background: #ffffff;
-    box-sizing: border-box;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), transform 0.1s ease;
-}
-
-/* Описание рядом с чекбоксом: не на всю ширину, а занимать оставшееся место */
-.illusion-description,
-.hallucination-description,
-.perception-description,
-.idea-description {
-    width: auto;
-    flex: 1 1 220px;
-    min-width: 180px;
-}
-
-textarea {
-    resize: vertical;
-    min-height: 48px;
-}
-
-textarea:focus,
-select:focus,
-input:focus {
-    border-color: var(--accent);
-    outline: none;
-    box-shadow: 0 0 0 3px var(--accent-soft);
-    background: #ffffff;
-    transform: translateY(-1px);
-}
-
-select {
-    appearance: none;
-    background-image: linear-gradient(45deg, transparent 50%, #999 50%), linear-gradient(135deg, #999 50%, transparent 50%);
-    background-position: calc(100% - 14px) calc(50% - 3px), calc(100% - 9px) calc(50% - 3px);
-    background-size: 6px 6px, 6px 6px;
-    background-repeat: no-repeat;
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-
-.buttons {
-    text-align: center;
-    margin: 20px 0;
-}
-
-button {
-    padding: 10px 18px;
-    font-size: 16px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    margin-right: 10px;
-    background: var(--accent);
-    color: white;
-    transition: background var(--transition-fast), transform 0.1s ease, box-shadow var(--transition-fast);
-    box-shadow: 0 6px 14px rgba(0,122,255,0.35);
-}
-
-button:hover {
-    background: #0063d1;
-    box-shadow: 0 8px 18px rgba(0,122,255,0.45);
-    transform: translateY(-1px);
-}
-
-button:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 10px rgba(0,122,255,0.35);
-}
-
-.btn-secondary {
-    background: #e5e5ea;
-    color: #111;
-    box-shadow: none;
-}
-
-.btn-secondary:hover {
-    background: #d1d1d6;
-    box-shadow: none;
-}
-
-    .checkbox-item {
-    font-size: 15px;
-    color: #1c1c1e;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-}
-
-.checkbox-item input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--accent);
-    cursor: pointer;
-}
-
-    .multicheck-group {
-    margin-top: 10px;
-}
-
-.multicheck-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 10px;
-    border-radius: 10px;
-    border: 1px solid #ced0d8;
-    background: #ffffff;
-    cursor: pointer;
-    transition: background var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), transform 0.1s ease;
-}
-
-.multicheck-header:hover {
-    background: #f9fafc;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-.multicheck-label {
-    font-weight: 600;
-    color: #1c1c1e;
-    font-size: 15px;
-}
-
-.multicheck-summary {
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin-left: 10px;
-    text-align: right;
-}
-
-.multicheck-body {
-    margin-top: 6px;
-    border-radius: 10px;
-    border: 1px solid #e1e4eb;
-    background: #fbfbfd;
-    padding: 8px 10px;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 4px 12px;
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: max-height 0.25s ease, opacity 0.22s ease, transform 0.25s ease;
-}
-
-.multicheck-body.open {
-    max-height: 260px;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-    .idea-row,
-.perception-row {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: 10px 12px;
-    padding: 8px 12px;
-}
-
-/* Оформление рамкой только для блока обманов восприятия */
-#status-perception .perception-row {
-    border: none;
-    background: none;
-    padding: 8px 0;
-}
-
-.idea-description,
-.perception-description,
-.hallucination-description-input {
-    flex: 1 1 200px;
-    min-width: 180px;
-    padding: 8px 10px;
-    border-radius: 10px;
-    border: 1px solid #ced0d8;
-    font-size: 15px;
-}
-
-.perception-columns,
-.psychosensory-columns {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-}
-
-.perception-card {
-    background: #ffffff;
-    border: 1px solid #e1e4eb;
-    border-radius: 12px;
-    padding: 10px 12px;
-}
-
-.perception-card h4 {
-    margin: 0 0 8px;
-    font-size: 15px;
-    color: #1c1c1e;
-}
-
-.perception-group {
-    border: 1px solid #e1e4eb;
-    border-radius: 12px;
-    background: #ffffff;
-    padding: 0;
-    margin-top: 10px;
-}
-
-.perception-group summary {
-    list-style: none;
-    cursor: pointer;
-    padding: 8px 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.perception-group summary::marker {
-    content: "";
-}
-
-.perception-group[open] {
-    box-shadow: 0 6px 16px rgba(0,0,0,0.04);
-}
-
-.perception-summary::before {
-    content: "▸";
-    display: inline-block;
-    transition: transform 0.2s ease;
-    font-size: 12px;
-    color: #8e8e93;
-}
-
-.perception-group[open] .perception-summary::before {
-    transform: rotate(90deg);
-}
-
-.perception-inner {
-    padding: 6px 12px 12px;
-    border-top: 1px solid #e1e4eb;
-}
-
-.perception-row {
-    margin-top: 6px;
-}
-
-.perception-row-inline {
-    display: grid;
-    grid-template-columns: minmax(0, 230px) 1fr;
-    gap: 6px 12px;
-    align-items: center;
-    margin-top: 6px;
-}
-
-.perception-columns-analyzer {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 4px 12px;
-    margin-bottom: 8px;
-}
-
-.attention-group {
-    background: #ffffff;
-    border: 1px solid #e1e4eb;
-    border-radius: 12px;
-    padding: 10px 12px;
-}
-
-.attention-group .group-title {
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: #1c1c1e;
-}
-
-    #result-container {
-    border-radius: var(--radius-card);
-    padding: 10px 12px;
-    background: #ffffff;
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.06);
-    border: 1px solid #d1d1d6;
-    min-height: 260px;
-}
-
-#result {
-    min-height: 240px;
-    outline: none;
-    font-family: inherit;
-    font-size: 16px;
-}
-
-#result strong {
-    color: #000;
-    font-weight: 600;
-}
-
-    @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(6px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-    /* ===== СЕТКА КАРТОЧЕК ===== */
-
-.rec-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 16px !important;
-    margin: 12px 0 20px !important;
-}
-
-/* Одна колонка только на совсем узких экранах */
-@media (max-width: 600px) {
-    .rec-grid {
-        grid-template-columns: 1fr !important;
-    }
-}
-
-/* ===== КАРТОЧКА РЕКОМЕНДАЦИИ ===== */
-
-.rec-card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 12px 14px;
-    border: 1px solid rgba(0, 122, 255, 0.15);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.rec-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    font-size: 15px;
-}
-
-.rec-title input[type="checkbox"] {
-    accent-color: var(--accent);
-}
-
-.rec-modes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 16px;
-    font-size: 15px;
-    color: #555;
-}
-
-.rec-modes input[type="radio"] {
-    accent-color: var(--accent);
-}
-
-.rec-text {
-    font-size: 15px;
-    line-height: 1.45;    /* чтобы текст дышал */
-    background: #fafafa;
-    border-radius: 10px;
-    padding: 8px 10px;
-    border: 1px solid #ededed;
-    white-space: pre-wrap;
-}
-
-/* ===== ШАПКА И НИЗ БЛОКА ===== */
-
-.library-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 12px;
-    margin-bottom: 8px;
-}
-
-.library-top .small-note {
-    flex: 1;
-}
-
-.selected-count {
-    font-size: 13px;
-    color: var(--text-secondary);
-}
-
-.library-footer {
-    margin: 4px 0 10px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.library-footer button {
-    /* если у тебя уже есть общий .btn, можно убрать */
-    padding: 8px 14px;
-    border-radius: 999px;
-    border: none;
-    background: var(--accent);
-    color: #fff;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-  </style>
+    <style>
+        :root {
+            --bg-main: #f2f2f7;
+            --bg-card: #ffffff;
+            --border-card: #e5e5ea;
+            --accent: #007aff;
+            --accent-soft: rgba(0,122,255,0.15);
+            --text-main: #111111;
+            --text-secondary: #6e6e73;
+            --shadow-card: 0 8px 20px rgba(0,0,0,0.05);
+            --radius-card: 14px;
+            --transition-fast: 0.2s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-main);
+            color: var(--text-main);
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        .layout {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 12px 32px;
+            display: flex;
+            gap: 16px;
+        }
+
+        .hamburger-button {
+            position: sticky;
+            top: 10px;
+            left: 0;
+            align-self: flex-start;
+            z-index: 120;
+            background: #ffffff;
+            border: 1px solid #d1d1d6;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+        }
+
+        .hamburger-button span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: #111;
+            position: relative;
+        }
+
+        .hamburger-button span::before,
+        .hamburger-button span::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 20px;
+            height: 2px;
+            background: #111;
+            transition: transform var(--transition-fast);
+        }
+
+        .hamburger-button span::before { top: -6px; }
+        .hamburger-button span::after { top: 6px; }
+
+        .hamburger-button:hover {
+            background: #f9fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 230px;
+            position: sticky;
+            top: 12px;
+            align-self: flex-start;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(16px);
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.06);
+            padding: 14px 14px 10px;
+            animation: slideIn 0.35s ease-out;
+            transition: transform var(--transition-fast), opacity var(--transition-fast), width var(--transition-fast), padding var(--transition-fast);
+        }
+
+        .sidebar-title {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul ul {
+            padding-left: 10px;
+            margin-top: 4px;
+        }
+
+        .sidebar ul ul a {
+            font-size: 14px;
+            padding-left: 14px;
+        }
+
+        .sidebar li {
+            margin-bottom: 4px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 6px 9px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 15px;
+            transition: background var(--transition-fast), color var(--transition-fast), transform 0.1s ease;
+        }
+
+        .sidebar a:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+            transform: translateX(2px);
+        }
+
+        .sidebar a:active {
+            transform: translateX(0);
+        }
+
+        /* MAIN */
+
+        .main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0 0 16px;
+            font-weight: 700;
+            color: #111;
+            text-align: left;
+        }
+
+        .page-header {
+            margin-bottom: 14px;
+        }
+
+        .small-note {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* SECTIONS (cards) */
+
+        .section {
+            background: var(--bg-card);
+            border-radius: var(--radius-card);
+            padding: 16px 18px 18px;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-card);
+            animation: fadeInUp 0.35s ease-out;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .status-subsection {
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #fbfbfd;
+            border: 1px solid #e1e4eb;
+        }
+
+        .status-subsection h3 {
+            margin: 4px 0 10px;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .subgroup-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .idea-row,
+        .perception-row {
+            display: flex;
+            flex-wrap: nowrap;      /* главное — не переносить на новую строку */
+            align-items: center;
+            gap: 10px 12px;
+            padding: 8px 12px;
+        }
+
+        /* Оформление рамкой только для блока обманов восприятия,
+           чтобы не сломать внешний вид других мест */
+        #status-perception .perception-row {
+            border: none;          /* убираем рамку */
+            background: none;      /* убираем белый фон */
+            padding: 8px 0;        /* минимальный отступ, чтобы строки не слипались */
+}
+
+        .idea-description,
+        .perception-description,
+        .hallucination-description-input {
+            flex: 1 1 200px;
+            min-width: 180px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid #ced0d8;
+            font-size: 15px;
+        }
+
+        .perception-columns,
+        .psychosensory-columns {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .perception-card {
+            background: #ffffff;
+            border: 1px solid #e1e4eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+
+        .perception-card h4 {
+            margin: 0 0 8px;
+            font-size: 15px;
+            color: #1c1c1e;
+        }
+
+        .attention-group {
+            background: #ffffff;
+            border: 1px solid #e1e4eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+
+        .attention-group .group-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #1c1c1e;
+        }
+
+        /* LABELS & FIELDS */
+
+        label {
+            font-weight: 600;
+            margin-top: 12px;
+            display: block;
+            color: #1c1c1e;
+        }
+
+        textarea,
+        select,
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            font-family: inherit;
+            font-size: 16px;
+            padding: 8px 10px;
+            margin-top: 6px;
+            border-radius: 10px;
+            border: 1px solid #ced0d8;
+            background: #ffffff;
+            box-sizing: border-box;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), transform 0.1s ease;
+        }
+
+        /* Описание рядом с чекбоксом: не на всю ширину, а занимать оставшееся место */
+        .illusion-description,
+        .hallucination-description,
+        .perception-description,
+        .idea-description {
+            width: auto;           /* переопределяем width:100% */
+            flex: 1 1 220px;
+            min-width: 180px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 48px;
+        }
+
+        textarea:focus,
+        select:focus,
+        input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px var(--accent-soft);
+            background: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        select {
+            appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, #999 50%), linear-gradient(135deg, #999 50%, transparent 50%);
+            background-position: calc(100% - 14px) calc(50% - 3px), calc(100% - 9px) calc(50% - 3px);
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        /* MULTI-CHECK GROUPS */
+
+        .multicheck-group {
+            margin-top: 10px;
+        }
+
+        .multicheck-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid #ced0d8;
+            background: #ffffff;
+            cursor: pointer;
+            transition: background var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), transform 0.1s ease;
+        }
+
+        .multicheck-header:hover {
+            background: #f9fafc;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .multicheck-label {
+            font-weight: 600;
+            color: #1c1c1e;
+            font-size: 15px;
+        }
+
+        .multicheck-summary {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-left: 10px;
+            text-align: right;
+        }
+
+        .multicheck-body {
+            margin-top: 6px;
+            border-radius: 10px;
+            border: 1px solid #e1e4eb;
+            background: #fbfbfd;
+            padding: 8px 10px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 4px 12px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-4px);
+            transition: max-height 0.25s ease, opacity 0.22s ease, transform 0.25s ease;
+        }
+
+        .multicheck-body.open {
+            max-height: 260px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .checkbox-item {
+            font-size: 15px;
+            color: #1c1c1e;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        /* BUTTONS */
+
+        .buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 18px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            background: var(--accent);
+            color: white;
+            transition: background var(--transition-fast), transform 0.1s ease, box-shadow var(--transition-fast);
+            box-shadow: 0 6px 14px rgba(0,122,255,0.35);
+        }
+
+        button:hover {
+            background: #0063d1;
+            box-shadow: 0 8px 18px rgba(0,122,255,0.45);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0,122,255,0.35);
+        }
+
+        .btn-secondary {
+            background: #e5e5ea;
+            color: #111;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d1d6;
+            box-shadow: none;
+        }
+
+        /* RESULT AREA */
+
+        #result-container {
+            border-radius: var(--radius-card);
+            padding: 10px 12px;
+            background: #ffffff;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.06);
+            border: 1px solid #d1d1d6;
+            min-height: 260px;
+        }
+
+        #result {
+            min-height: 240px;
+            outline: none;
+            font-family: inherit;
+            font-size: 16px;
+            white-space: pre-wrap;
+        }
+
+        #result b, #result strong {
+            font-weight: 600;
+        }
+
+        /* PRESCRIPTIONS */
+
+        .prescriptions-controls {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .prescription-item {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #fafafa;
+            border: 1px solid #e1e4eb;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            animation: fadeInUp 0.25s ease-out;
+        }
+
+        .prescription-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            margin-top: 6px;
+        }
+
+        .prescription-row > div {
+            flex: 1 1 160px;
+            min-width: 140px;
+        }
+
+        .prescription-label-small {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .time-dose-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .time-dose-row input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            accent-color: var(--accent);
+        }
+
+        .time-dose-row input[type="number"] {
+            width: 72px;
+            padding: 4px 6px;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+
+        .prescription-comment {
+            margin-top: 6px;
+        }
+
+        .prescription-comment input {
+            font-size: 14px;
+            padding: 6px 8px;
+        }
+
+        /* COLLAPSED SIDEBAR STATE */
+
+        body.sidebar-collapsed .sidebar {
+            width: 0;
+            max-width: 0;
+            padding: 0;
+            margin: 0;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-20px);
+        }
+
+        body.sidebar-collapsed .main {
+            flex: 1 1 100%;
+        }
+
+        /* ANIMATIONS */
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+            .layout {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: static;
+                width: 100%;
+                order: -1;
+            }
+
+            .hamburger-button {
+                position: sticky;
+                top: 8px;
+                z-index: 130;
+            }
+        }
+    </style>
 </head>
 <body>
-
-  <div class="layout">
+<div class="layout">
+    <button class="hamburger-button" type="button" onclick="toggleSidebar()" aria-label="Скрыть или показать меню">
+        <span></span>
+    </button>
     <nav class="sidebar">
-    <div class="sidebar-header">
-        <button
-            type="button"
-            class="sidebar-toggle"
-            onclick="toggleSidebar()"
-            aria-label="Свернуть или развернуть навигацию"
-        >
-            <svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
-  <line x1="8" y1="4" x2="8" y2="20"></line>
-  <line x1="5.5" y1="8" x2="5.5" y2="8"></line>
-  <line x1="5.5" y1="12" x2="5.5" y2="12"></line>
-  <line x1="5.5" y1="16" x2="5.5" y2="16"></line>
-</svg>
-
-        </button>
-        <div class="sidebar-title">НАВИГАЦИЯ</div>
-    </div>
-
-    <div class="sidebar-nav">
-        <div class="sidebar-group-title">Жалобы и анамнез</div>
-        <a href="#section-general" class="sidebar-link">
-            <span class="sidebar-link-icon">📋</span>
-            <span class="sidebar-link-label">Общие разделы</span>
-        </a>
-
-        <div class="sidebar-group-title">Психический статус</div>
-        <a href="#status-consciousness" class="sidebar-link">
-            <span class="sidebar-link-icon">🧠</span>
-            <span class="sidebar-link-label">Сознание</span>
-        </a>
-        <a href="#status-thinking" class="sidebar-link">
-            <span class="sidebar-link-icon">💭</span>
-            <span class="sidebar-link-label">Мышление</span>
-        </a>
-        <a href="#status-intellect" class="sidebar-link">
-            <span class="sidebar-link-icon">📚</span>
-            <span class="sidebar-link-label">Интеллект</span>
-        </a>
-        <a href="#status-perception" class="sidebar-link">
-            <span class="sidebar-link-icon">👁️</span>
-            <span class="sidebar-link-label">Обманы восприятия</span>
-        </a>
-        <a href="#status-memory" class="sidebar-link">
-            <span class="sidebar-link-icon">🧩</span>
-            <span class="sidebar-link-label">Память</span>
-        </a>
-        <a href="#status-mood" class="sidebar-link">
-            <span class="sidebar-link-icon">🙂</span>
-            <span class="sidebar-link-label">Настроение</span>
-        </a>
-        <a href="#status-motor" class="sidebar-link">
-            <span class="sidebar-link-icon">🏃</span>
-            <span class="sidebar-link-label">Двигательная сфера</span>
-        </a>
-        <a href="#status-attention" class="sidebar-link">
-            <span class="sidebar-link-icon">🎯</span>
-            <span class="sidebar-link-label">Внимание</span>
-        </a>
-        <a href="#status-insight" class="sidebar-link">
-            <span class="sidebar-link-icon">🔍</span>
-            <span class="sidebar-link-label">Критика к своему заболеванию</span>
-        </a>
-        <a href="#status-sleep-appetite" class="sidebar-link">
-            <span class="sidebar-link-icon">🌙</span>
-            <span class="sidebar-link-label">Сон, аппетит</span>
-        </a>
-
-        <div class="sidebar-group-title">Итог</div>
-        <a href="#section-diagnosis" class="sidebar-link">
-            <span class="sidebar-link-icon">🩺</span>
-            <span class="sidebar-link-label">Диагноз и рекомендации</span>
-        </a>
-        <a href="#section-result" class="sidebar-link">
-            <span class="sidebar-link-icon">📝</span>
-            <span class="sidebar-link-label">Сформированный текст</span>
-        </a>
-    </div>
-</nav>
-
+        <div class="sidebar-title">Навигация</div>
+        <ul>
+            <li><a href="#section-general">Общие разделы</a></li>
+            <li>
+                <a href="#section-status">Психический статус</a>
+                <ul>
+                    <li><a href="#status-consciousness">Сознание</a></li>
+                    <li><a href="#status-thinking">Мышление</a></li>
+                    <li><a href="#status-intellect">Интеллект</a></li>
+                    <li><a href="#status-perception">Обманы восприятия</a></li>
+                    <li><a href="#status-memory">Память</a></li>
+                    <li><a href="#status-mood">Настроение</a></li>
+                    <li><a href="#status-motor">Двигательная сфера</a></li>
+                    <li><a href="#status-attention">Внимание</a></li>
+                    <li><a href="#status-insight">Критика к своему заболеванию</a></li>
+                    <li><a href="#status-sleep-appetite">Сон, аппетит</a></li>
+                </ul>
+            </li>
+            <li><a href="#section-diagnosis">Диагноз и рекомендации</a></li>
+            <li><a href="#section-result">Сформированный текст</a></li>
+        </ul>
+    </nav>
 
     <div class="main">
-      <div class="page-header">
-    <h1>Конструктор заключения психиатра</h1>
-    <p class="small-note">
-        Заполни поля ниже, затем нажми <b>«Сформировать текст»</b>. Готовый текст появится внизу — его можно скопировать в
-        историю/Word.
-    </p>
-</div>
+        <div class="page-header">
+            <h1>Конструктор заключения психиатра</h1>
+            <p class="small-note">
+                Заполни поля ниже, затем нажми <b>«Сформировать текст»</b>. Готовый текст появится внизу — его можно скопировать в историю/Word.
+            </p>
+        </div>
 
+        <!-- ОБЩИЕ РАЗДЕЛЫ -->
 
-      <div class="section" id="section-general">
-            <h2>📋 Общие разделы</h2>
+        <div class="section" id="section-general">
+            <h2>Общие разделы</h2>
 
             <label>Жалобы:</label>
             <textarea id="complaints"></textarea>
@@ -928,13 +678,13 @@ button:active {
             <textarea id="life_history"></textarea>
         </div>
 
+        <!-- ПСИХИЧЕСКИЙ СТАТУС -->
 
-      <!-- Блок психического статуса -->
-      <div class="section" id="section-status">
-    <h2>Психический статус</h2>
+                <div class="section" id="section-status">
+            <h2>Психический статус</h2>
 
-    <div id="status-consciousness" class="status-subsection">
-                <h3>🧠 Сознание</h3>
+            <div id="status-consciousness" class="status-subsection">
+                <h3>Сознание</h3>
                 <div class="subgroup-grid">
                     <div>
                         <label>Сознание:</label>
@@ -1052,10 +802,8 @@ button:active {
                 </select>
             </div>
 
-            
-
-    <div id="status-thinking" class="status-subsection">
-                <h3>💭 Мышление</h3>
+            <div id="status-thinking" class="status-subsection">
+                <h3>Мышление</h3>
                 <div class="subgroup-grid">
                     <div>
                         <label>Темп мышления:</label>
@@ -1167,10 +915,8 @@ button:active {
                 </div>
             </div>
 
-            
-
-    <div id="status-intellect" class="status-subsection">
-                <h3>📚 Интеллект</h3>
+            <div id="status-intellect" class="status-subsection">
+                <h3>Интеллект</h3>
                 <div class="subgroup-grid">
                     <div>
                         <label>Интеллект:</label>
@@ -1205,211 +951,206 @@ button:active {
             </div>
 
             <!-- === ОБНОВЛЁННЫЙ БЛОК «ОБМАНЫ ВОСПРИЯТИЯ» === -->
-            
+            <div id="status-perception" class="status-subsection">
+                <h3>Обманы восприятия</h3>
 
-    <div id="status-perception" class="status-subsection">
-                <h3>👁️ Обманы восприятия</h3>
+                <!-- 1. Иллюзии -->
+                <div class="perception-card" id="perception-illusions" style="margin-top: 10px;">
+                    <h4>Иллюзии</h4>
 
-                <!-- Иллюзии -->
-                <details class="perception-group" id="illusions_group">
-                    <summary class="perception-summary">Иллюзии</summary>
-                    <div class="perception-inner">
-                        <div class="perception-row-inline">
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="illusion-checkbox" data-illusion-type="Физические">
+                            <span>Физические</span>
+                        </label>
+                        <input type="text"
+                               class="illusion-description"
+                               data-illusion-type="Физические"
+                               placeholder="Описание">
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="illusion-checkbox" data-illusion-type="Аффективные">
+                            <span>Аффективные</span>
+                        </label>
+                        <input type="text"
+                               class="illusion-description"
+                               data-illusion-type="Аффективные"
+                               placeholder="Описание">
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="illusion-checkbox" data-illusion-type="Вербальные (смысловые)">
+                            <span>Вербальные (смысловые)</span>
+                        </label>
+                        <input type="text"
+                               class="illusion-description"
+                               data-illusion-type="Вербальные (смысловые)"
+                               placeholder="Описание">
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="illusion-checkbox" data-illusion-type="Парейдолические">
+                            <span>Парейдолические</span>
+                        </label>
+                        <input type="text"
+                               class="illusion-description"
+                               data-illusion-type="Парейдолические"
+                               placeholder="Описание">
+                    </div>
+                </div>
+
+                <!-- 2. Галлюцинации -->
+                <div class="perception-card" id="perception-hallucinations">
+                    <h4>Галлюцинации</h4>
+
+                    <div class="perception-columns">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="слуховые">
+                            <span>Слуховые</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="зрительные">
+                            <span>Зрительные</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="обонятельные">
+                            <span>Обонятельные</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="вкусовые">
+                            <span>Вкусовые</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="тактильные">
+                            <span>Тактильные</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="hallucination_analyzer" value="висцеральные">
+                            <span>Висцеральные</span>
+                        </label>
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="hallucination-type" data-hall-type="истинные галлюцинации">
+                            <span>Истинные галлюцинации</span>
+                        </label>
+                        <input type="text"
+                               class="hallucination-description"
+                               data-hall-type="истинные галлюцинации"
+                               placeholder="Описание (например: слуховые голоса комментирующего характера)">
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="hallucination-type" data-hall-type="псевдогаллюцинации">
+                            <span>Псевдогаллюцинации</span>
+                        </label>
+                        <input type="text"
+                               class="hallucination-description"
+                               data-hall-type="псевдогаллюцинации"
+                               placeholder="Описание (например: «голоса в голове»)">
+                    </div>
+
+                    <div class="perception-row">
+                        <label class="checkbox-item">
+                            <input type="checkbox" class="hallucination-type" data-hall-type="галлюцинаторно-подобные переживания">
+                            <span>Галлюцинаторно-подобные переживания</span>
+                        </label>
+                        <input type="text"
+                               class="hallucination-description"
+                               data-hall-type="галлюцинаторно-подобные переживания"
+                               placeholder="Описание">
+                    </div>
+                </div>
+
+                <!-- 3. Психосенсорные расстройства -->
+                <div class="perception-card" id="perception-psychosensory">
+                    <h4>Психосенсорные расстройства</h4>
+
+                    <div class="psychosensory-columns">
+                        <div>
+                            <div class="group-title">Дереализационные</div>
                             <label class="checkbox-item">
-                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Физические">
-                                <span>Физические</span>
+                                <input type="checkbox" name="psychosensory_derealization"
+                                       value="изменение яркости, контрастности">
+                                <span>Изменение яркости, контрастности</span>
                             </label>
-                            <input type="text"
-                                   class="perception-description illusion-description"
-                                   data-illusion-type="Физические"
-                                   placeholder="Краткое описание (если нужно)">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychosensory_derealization"
+                                       value="искажение размеров (макро-/микропсия)">
+                                <span>Искажение размеров (макро-/микропсия)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychosensory_derealization"
+                                       value="искажение формы (дисморфопсия)">
+                                <span>Искажение формы (дисморфопсия)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="psychosensory_derealization"
+                                       value="искажение расстояния/перспективы">
+                                <span>Искажение расстояния/перспективы</span>
+                            </label>
                         </div>
 
-                        <div class="perception-row-inline">
+                        <div>
+                            <div class="group-title">Аутопсихические</div>
                             <label class="checkbox-item">
-                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Аффективные">
-                                <span>Аффективные</span>
+                                <input type="checkbox" name="psychosensory_autopsychic"
+                                       value="деперсонализация (изменение восприятия собственного «Я»)">
+                                <span>Деперсонализация</span>
                             </label>
-                            <input type="text"
-                                   class="perception-description illusion-description"
-                                   data-illusion-type="Аффективные"
-                                   placeholder="Краткое описание">
-                        </div>
-
-                        <div class="perception-row-inline">
-                            <label class="checkbox-item">
-                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Вербальные (смысловые)">
-                                <span>Вербальные (смысловые)</span>
-                            </label>
-                            <input type="text"
-                                   class="perception-description illusion-description"
-                                   data-illusion-type="Вербальные (смысловые)"
-                                   placeholder="Краткое описание">
-                        </div>
-
-                        <div class="perception-row-inline">
-                            <label class="checkbox-item">
-                                <input type="checkbox" class="illusion-checkbox" data-illusion-type="Парейдолические">
-                                <span>Парейдолические</span>
-                            </label>
-                            <input type="text"
-                                   class="perception-description illusion-description"
-                                   data-illusion-type="Парейдолические"
-                                   placeholder="Краткое описание">
                         </div>
                     </div>
-                </details>
 
-                <!-- Галлюцинации -->
-                <details class="perception-group" id="hallucinations_group">
-                    <summary class="perception-summary">Галлюцинации</summary>
-                    <div class="perception-inner">
-                        <div class="perception-columns-analyzer">
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="hallucination_analyzer" value="слуховые">
-                                Слуховые
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="hallucination_analyzer" value="зрительные">
-                                Зрительные
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="hallucination_analyzer" value="обонятельные">
-                                Обонятельные
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="hallucination_analyzer" value="вкусовые">
-                                Вкусовые
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="hallucination_analyzer" value="тактильные">
-                                Тактильные
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="hallucination_analyzer" value="висцеральные">
-                                Висцеральные
-                            </label>
-                        </div>
-
-                        <div class="perception-row-inline">
-                            <label class="checkbox-item">
-                                <input type="checkbox" class="hall-type-checkbox" data-hall-type="Истинные галлюцинации">
-                                <span>Истинные галлюцинации</span>
-                            </label>
-                            <input type="text"
-                                   class="perception-description hall-type-description"
-                                   data-hall-type="Истинные галлюцинации"
-                                   placeholder="Например: слуховые голоса комментирующего характера">
-                        </div>
-
-                        <div class="perception-row-inline">
-                            <label class="checkbox-item">
-                                <input type="checkbox" class="hall-type-checkbox" data-hall-type="Псевдогаллюцинации">
-                                <span>Псевдогаллюцинации</span>
-                            </label>
-                            <input type="text"
-                                   class="perception-description hall-type-description"
-                                   data-hall-type="Псевдогаллюцинации"
-                                   placeholder="Например: «голоса в голове»">
-                        </div>
-
-                        <div class="perception-row-inline">
-                            <label class="checkbox-item">
-                                <input type="checkbox" class="hall-type-checkbox" data-hall-type="Галлюцинаторно-подобные переживания">
-                                <span>Галлюцинаторно-подобные переживания</span>
-                            </label>
-                            <input type="text"
-                                   class="perception-description hall-type-description"
-                                   data-hall-type="Галлюцинаторно-подобные переживания"
-                                   placeholder="Например: яркие, но критически осознаваемые образы">
-                        </div>
+                    <div class="perception-row" style="margin-top: 8px;">
+                        <input type="text"
+                               id="psychosensory_description"
+                               class="perception-description"
+                               placeholder="Свободное описание психосенсорных расстройств">
                     </div>
-                </details>
+                </div>
 
-                <!-- Психосенсорные расстройства -->
-                <details class="perception-group" id="psychosensory_group">
-                    <summary class="perception-summary">Психосенсорные расстройства</summary>
-                    <div class="perception-inner">
-                        <div class="psychosensory-columns">
-                            <div>
-                                <div class="group-title">Дереализационные</div>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="psychosensory_derealization"
-                                           value="изменение яркости, контрастности">
-                                    Изменение яркости, контрастности
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="psychosensory_derealization"
-                                           value="искажение размеров (макро-/микропсия)">
-                                    Искажение размеров (макро-/микропсия)
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="psychosensory_derealization"
-                                           value="искажение формы (дисморфопсия)">
-                                    Искажение формы (дисморфопсия)
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="psychosensory_derealization"
-                                           value="искажение расстояния/перспективы">
-                                    Искажение расстояния/перспективы
-                                </label>
-                            </div>
-                            <div>
-                                <div class="group-title">Аутопсихические</div>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="psychosensory_autopsychic"
-                                           value="деперсонализация (изменение восприятия собственного «Я»)">
-                                    Деперсонализация (изменение восприятия собственного «Я»)
-                                </label>
-                            </div>
-                        </div>
-                        <div class="perception-row">
-                            <input type="text"
-                                   id="psychosensory_description"
-                                   class="perception-description"
-                                   placeholder="Свободное описание психосенсорных расстройств">
-                        </div>
+                <!-- 4. Психические автоматизмы -->
+                <div class="perception-card" id="perception-automatism">
+                    <h4>Психические автоматизмы</h4>
+
+                    <div class="perception-columns">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="psychic_automatism" value="сенсорный автоматизм">
+                            <span>Сенсорный автоматизм</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="psychic_automatism" value="ассоциативный автоматизм">
+                            <span>Ассоциативный автоматизм</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="psychic_automatism" value="кинестетический (двигательный) автоматизм">
+                            <span>Кинестетический (двигательный) автоматизм</span>
+                        </label>
                     </div>
-                </details>
 
-                <!-- Психические автоматизмы -->
-                <details class="perception-group" id="psychic_automatism_group">
-                    <summary class="perception-summary">Психические автоматизмы</summary>
-                    <div class="perception-inner">
-                        <div class="perception-columns">
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="psychic_automatism" value="сенсорный автоматизм">
-                                Сенсорный автоматизм
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="psychic_automatism" value="ассоциативный автоматизм">
-                                Ассоциативный автоматизм
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="psychic_automatism"
-                                       value="кинестетический (двигательный) автоматизм">
-                                Кинестетический (двигательный) автоматизм
-                            </label>
-                        </div>
-                        <div class="perception-row">
-                            <input type="text"
-                                   id="psychic_automatism_description"
-                                   class="perception-description"
-                                   placeholder="Описание (например: влияние соседей на мысли через микроволновку)">
-                        </div>
+                    <div class="perception-row" style="margin-top: 8px;">
+                        <input type="text"
+                               id="psychic_automatism_description"
+                               class="perception-description"
+                               placeholder="Описание переживаний автоматизма">
                     </div>
-                </details>
+                </div>
 
+                <!-- Свободный текст -->
                 <label style="margin-top: 12px;">Обманы восприятия (свободный текст):</label>
                 <textarea id="perception" placeholder="Дополнительные комментарии"></textarea>
             </div>
 
 
 
-            
-
-    <div id="status-memory" class="status-subsection">
-                <h3>🧩 Память</h3>
+            <div id="status-memory" class="status-subsection">
+                <h3>Память</h3>
                 <div class="multicheck-group" data-name="memory">
                     <div class="multicheck-header" onclick="toggleMultiGroup('memory')">
                         <span class="multicheck-label">Память (можно несколько)</span>
@@ -1450,13 +1191,11 @@ button:active {
                 </div>
             </div>
 
-            
-
-    <div id="status-attention" class="status-subsection">
-                <h3>🎯 Внимание</h3>
+            <div id="status-attention" class="status-subsection">
+                <h3>Внимание</h3>
                 <div class="multicheck-group" data-name="attention">
                     <div class="multicheck-header" onclick="toggleMultiGroup('attention')">
-                        <span class="multicheck-label">Выберите из списка (множественный выбор)</span>
+                        <span class="multicheck-label">Внимание (множественный выбор)</span>
                         <span class="multicheck-summary" id="attention_summary">Не выбрано</span>
                     </div>
                     <div class="multicheck-body" id="attention_body">
@@ -1491,10 +1230,8 @@ button:active {
                 </div>
             </div>
 
-            
-
-    <div id="status-mood" class="status-subsection">
-                <h3>🙂 Настроение</h3>
+            <div id="status-mood" class="status-subsection">
+                <h3>Настроение</h3>
                 <div class="subgroup-grid">
                     <div>
                         <label>Настроение:</label>
@@ -1533,6 +1270,7 @@ button:active {
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием тревоги" onchange="updateMultiSummary('emotions')">с преобладанием тревоги</label>
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием депрессии" onchange="updateMultiSummary('emotions')">с преобладанием депрессии</label>
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием раздражительности" onchange="updateMultiSummary('emotions')">с преобладанием раздражительности</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием повышенного настроения" onchange="updateMultiSummary('emotions')">с преобладанием повышенного настроения</label>
                     </div>
                 </div>
 
@@ -1570,10 +1308,8 @@ button:active {
                 <textarea id="contrsuicidal_factors" placeholder="семья, дети, религиозные убеждения и др."></textarea>
             </div>
 
-            
-
-    <div id="status-motor" class="status-subsection">
-                <h3>🏃 Двигательная сфера</h3>
+            <div id="status-motor" class="status-subsection">
+                <h3>Двигательная сфера</h3>
                 <label>Волевые качества:</label>
                 <select id="will">
                     <option value="">— выбрать —</option>
@@ -1594,10 +1330,8 @@ button:active {
                 </select>
             </div>
 
-            
-
-    <div id="status-insight" class="status-subsection">
-                <h3>🔍 Критика к своему заболеванию</h3>
+            <div id="status-insight" class="status-subsection">
+                <h3>Критика к своему заболеванию</h3>
                 <label>Чувство дистанции:</label>
                 <select id="distance">
                     <option value="">— выбрать —</option>
@@ -1618,10 +1352,8 @@ button:active {
                 <textarea id="future_plans"></textarea>
             </div>
 
-            
-
-    <div id="status-sleep-appetite" class="status-subsection">
-                <h3>🌙 Сон, 🍎 аппетит</h3>
+            <div id="status-sleep-appetite" class="status-subsection">
+                <h3>Сон, аппетит</h3>
                 <div class="multicheck-group" data-name="sleep">
                     <div class="multicheck-header" onclick="toggleMultiGroup('sleep')">
                         <span class="multicheck-label">Сон (можно несколько)</span>
@@ -1648,177 +1380,92 @@ button:active {
                     <option>булимия</option>
                 </select>
             </div>
-
+        </div>
 <!-- ДИАГНОЗ, РЕКОМЕНДАЦИИ, НАЗНАЧЕНИЯ -->
 
-        
+        <div class="section" id="section-diagnosis">
+            <h2>Диагноз и рекомендации</h2>
 
-</div>
+            <label>Поиск диагноза по МКБ-10:</label>
+            <input type="text" id="icd_search"
+                   placeholder="Начните вводить, например: депрессивный, шизофрения, F32..."
+                   oninput="searchICD()">
+            <div id="icd_results" class="icd-results"></div>
+            <p class="small-note">
+                Кликните по варианту ниже, чтобы добавить его в поле диагноза.
+            </p>
 
+            <label>Диагноз (шифры МКБ-10):</label>
+            <textarea id="diagnosis"></textarea>
 
-      <!-- Диагноз, рекомендации, назначения, результат -->
-      <!-- =============================== -->
-<!--   БЛОК ДИАГНОЗА                 -->
-<!-- =============================== -->
+            <label>Рекомендации:</label>
+            <textarea id="recommendations">1. Соблюдение режима сна и бодрствования
+2. Умеренная физическая активность
+3. Повторное посещение психиатра через ___ дней
+4. </textarea>
 
-<div class="section-card">
-    <h2 class="section-title">🩺 Диагноз</h2>
-
-    <label for="icd_search">Поиск диагноза по МКБ-10:</label>
-    <input id="icd_search"
-           type="text"
-           placeholder="Начните вводить..."
-           oninput="searchICD()">
-
-    <div id="icd_results" class="icd-results"></div>
-
-    <label for="diagnosis">Диагноз (шифры МКБ-10):</label>
-    <textarea id="diagnosis"></textarea>
-</div>
-
-      <div class="section" id="section-recommendations">
-    <h2>🖋️️ Рекомендации</h2>
-
-     <div class="section-card">
-        <div class="library-top">
-            <div class="small-note">
-                Отметьте нужные рекомендации, выберите вариант
-                <b>«Коротко»</b> или <b>«Полно»</b> — текст появится в карточке ниже.
+            <label>Назначения:</label>
+            <div class="prescriptions-controls">
+                <button type="button" class="btn-secondary" onclick="addPrescription()">Добавить препарат</button>
+                <button type="button" class="btn-secondary" onclick="removeLastPrescription()">Удалить последний</button>
             </div>
-
-            <div class="selected-count">
-                Выбрано рекомендаций:
-                <span id="recommendations-selected-count">0</span>
-            </div>
+            <div id="prescriptions_list"></div>
         </div>
 
-        <!-- СЮДА JS РИСУЕТ КАРТОЧКИ -->
-        <div class="rec-grid" id="recommendation-cards"></div>
+        <!-- КНОПКИ И РЕЗУЛЬТАТ -->
 
-        <div class="library-footer">
-            <button type="button" id="collect-recommendations-button">
-                Собрать рекомендации в поле ниже
-            </button>
+        <div class="buttons">
+            <button type="button" onclick="generateText()">Сформировать текст</button>
+            <button type="button" class="btn-secondary" onclick="copyResult()">Скопировать результат</button>
         </div>
 
-        <label for="recommendations">Итоговый список рекомендаций:</label>
-        <textarea id="recommendations"></textarea>
+        <div class="section" id="section-result">
+            <h2>Сформированный текст</h2>
+            <div id="result-container">
+                <div id="result" contenteditable="true"></div>
+            </div>
+        </div>
     </div>
 </div>
 
-      <div class="section" id="section-prescriptions">
-    <h2>℞ Назначения</h2>
-    <div class="prescriptions-controls">
-        <button type="button" class="btn-secondary" onclick="addPrescription()">Добавить препарат</button>
-        <button type="button" class="btn-secondary" onclick="removeLastPrescription()">Удалить последний</button>
-    </div>
-    <div id="prescriptions_list"></div>
-</div>
-
-      <div class="buttons">
-    <button type="button" onclick="generateText()">Сформировать текст</button>
-    <button type="button" class="btn-secondary" onclick="copyResult()">Скопировать результат</button>
-</div>
-
-<div class="section" id="section-result">
-    <h2>Сформированный текст</h2>
-    <div id="result-container">
-        <div id="result" contenteditable="true"></div>
-    </div>
-</div>
-
-
-    </div>
-  </div>
-
-  <footer style="
-    width: 100%;
-    padding: 14px 0;
-    margin-top: 26px;
-    text-align: center;
-    font-size: 13px;
-    color: #666;
-    line-height: 1.4;
-">
-  <div>Psychstatus • модульный шаблон</div>
-  <div>Разработчик: Убейконь Дмитрий</div>
-
-  <div style="margin-top: 6px;">
-    <a href="https://t.me/Dmitrii_Ubeikon" target="_blank"
-       style="color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="#0088cc" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9.99995 15.1999L9.89995 19.2999C10.2999 19.2999 10.4999 19.0999 10.6999 18.8999L12.6999 16.9999L16.6999 20.0999C17.3999 20.4999 17.8999 20.2999 18.0999 19.3999L21.8999 2.89993C22.1999 1.79993 21.4999 1.29993 20.7999 1.59993L2.99995 8.49993C1.89995 8.89993 1.89995 9.49993 2.79995 9.79993L7.39995 11.1999L17.6999 5.19993C18.1999 4.89993 18.6999 5.09993 18.2999 5.39993L9.99995 15.1999Z"/>
-      </svg>
-      @Dmitrii_Ubeikon
-    </a>
-  </div>
-
-  <div style="margin-top: 10px; font-size: 9px; color: #888; max-width: 750px; margin-left:auto; margin-right:auto;">
-    Использование модуля означает согласие с условиями.
-    Материалы предоставлены «как есть».
-    Разработчик не несёт ответственности за последствия использования.
-    Не является медицинской услугой или заменой очной консультации специалиста.
-    Лицензия: свободное некоммерческое использование с указанием автора.
-  </div>
-</footer>
-
-  <!-- TODO: modals -->
-
-
-  <script>
-    // TODO: DOM helpers
-
-    // TODO: text helpers
-
-
-    const FORM_SCHEMA = {};
-
-    const DEFAULT_STATE = {};
-
-    function loadState() {
-    return null;
-}
-
-function saveState(state) {
-    return state;
-}
-
+<script>
+    function toggleMultiGroup(name) {
+        const body = document.getElementById(name + '_body');
+        if (!body) return;
+        body.classList.toggle('open');
+    }
 
     function toggleSidebar() {
-    document.body.classList.toggle('sidebar-collapsed');
-}
+        document.body.classList.toggle('sidebar-collapsed');
+    }
 
-    function toggleMultiGroup(name) {
-    const body = document.getElementById(name + '_body');
-    if (!body) return;
-    body.classList.toggle('open');
-}
+    function updateMultiSummary(name) {
+        const summary = document.getElementById(name + '_summary');
+        if (!summary) return;
+        const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
+        const values = Array.from(checked).map(c => c.value);
+        summary.textContent = values.length ? values.join(', ') : 'Не выбрано';
+    }
 
-function updateMultiSummary(name) {
-    const summary = document.getElementById(name + '_summary');
-    if (!summary) return;
-    const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
-    const values = Array.from(checked).map(c => c.value);
-    summary.textContent = values.length ? values.join(', ') : 'Не выбрано';
-}
+    function getCheckedTextByName(name) {
+        const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
+        return Array.from(checked).map(c => c.value).join(', ');
+    }
 
-function getCheckedTextByName(name) {
-    const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
-    return Array.from(checked).map(c => c.value).join(', ');
-}
-
-    document.addEventListener('DOMContentLoaded', () => {
-    const links = document.querySelectorAll('.sidebar-link');
-
-    links.forEach(link => {
-        link.addEventListener('click', () => {
-            links.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
+    function collectIdeasText() {
+        const items = [];
+        document.querySelectorAll('.idea-checkbox').forEach(cb => {
+            if (cb.checked) {
+                const type = cb.dataset.ideaType;
+                const descInput = document.querySelector('.idea-description[data-idea-type="' + type + '"]');
+                const desc = descInput ? descInput.value.trim() : '';
+                items.push(desc ? `${type} — ${desc}` : type);
+            }
         });
-    });
-});
+        return items.join('; ');
+    }
 
-        function collectCheckboxDescriptions(selector) {
+    function collectCheckboxDescriptions(selector) {
         const items = [];
         document.querySelectorAll(selector).forEach(cb => {
             if (cb.checked) {
@@ -1836,36 +1483,38 @@ function getCheckedTextByName(name) {
         document.querySelectorAll('.illusion-checkbox').forEach(cb => {
             if (cb.checked) {
                 const type = cb.dataset.illusionType;
-                const descInput = document.querySelector(
-                    '.illusion-description[data-illusion-type="' + type + '"]'
-                );
+                const descInput = document.querySelector('.illusion-description[data-illusion-type="' + type + '"]');
                 const desc = descInput ? descInput.value.trim() : '';
-                illusions.push(desc ? type + ' — ' + desc : type);
+                illusions.push(desc ? `${type} — ${desc}` : type);
             }
         });
         return illusions;
     }
 
+
     function collectHallucinationText() {
         const analyzer = getCheckedTextByName('hallucination_analyzer');
-
-        const hallTypes = [];
-        document.querySelectorAll('.hall-type-checkbox').forEach(cb => {
+        const items = [];
+        // Истинные, псевдо, галлюцинаторно-подобные
+        document.querySelectorAll('.hallucination-type').forEach(cb => {
             if (cb.checked) {
                 const type = cb.dataset.hallType;
                 const descInput = document.querySelector(
-                    '.hall-type-description[data-hall-type="' + type + '"]'
+                    '.hallucination-description[data-hall-type="' + type + '"]'
                 );
                 const desc = descInput ? descInput.value.trim() : '';
-                hallTypes.push(desc ? type + ' — ' + desc : type);
+                items.push(desc ? `${type} — ${desc}` : type);
             }
         });
-
-        const parts = [];
-        if (analyzer) parts.push('по анализатору: ' + analyzer);
-        if (hallTypes.length) parts.push(hallTypes.join('; '));
-
-        return parts.length ? 'галлюцинации (' + parts.join('; ') + ')' : '';
+        const resultParts = [];
+        if (analyzer) {
+            resultParts.push("по анализатору: " + analyzer);
+        }
+        if (items.length) {
+            resultParts.push(items.join("; "));
+        }
+        if (!resultParts.length) return "";
+        return "галлюцинации (" + resultParts.join("; ") + ")";
     }
 
     function collectPerceptionText() {
@@ -1885,28 +1534,36 @@ function getCheckedTextByName(name) {
 
         // Психосенсорные расстройства
         const dereal = getCheckedTextByName('psychosensory_derealization');
-        const autopsych = getCheckedTextByName('psychosensory_autopsychic');
+        const autopsychic = getCheckedTextByName('psychosensory_autopsychic');
         const psychoDesc = document.getElementById('psychosensory_description')?.value.trim();
-        if (dereal || autopsych || psychoDesc) {
+
+        if (dereal || autopsychic || psychoDesc) {
             const psParts = [];
             if (dereal) psParts.push('дереализационные — ' + dereal);
-            if (autopsych) psParts.push('аутопсихические — ' + autopsych);
+            if (autopsychic) psParts.push('аутопсихические — ' + autopsychic);
             if (psychoDesc) psParts.push(psychoDesc);
+
             parts.push('психосенсорные расстройства: ' + psParts.join('; '));
         }
 
         // Психические автоматизмы
-        const automatismTypes = getCheckedTextByName('psychic_automatism');
+        const automatism = getCheckedTextByName('psychic_automatism');
         const automatismDesc = document.getElementById('psychic_automatism_description')?.value.trim();
-        if (automatismTypes || automatismDesc) {
-            let line = 'психические автоматизмы: ';
-            if (automatismTypes) line += automatismTypes;
-            if (automatismDesc) line += (automatismTypes ? '; ' : '') + automatismDesc;
-            parts.push(line);
+
+        if (automatism || automatismDesc) {
+            let aText = '';
+            if (automatism) aText += automatism;
+            if (automatismDesc) {
+                aText += (aText ? '; ' : '') + automatismDesc;
+            }
+            parts.push('психические автоматизмы: ' + aText);
         }
 
         // Свободный текст
         const freeText = document.getElementById('perception')?.value.trim();
+        if (!parts.length && freeText) {
+            return freeText;
+        }
         if (freeText) {
             parts.push(freeText);
         }
@@ -1914,21 +1571,8 @@ function getCheckedTextByName(name) {
         return parts.join('; ');
     }
 
-        function collectIdeasText() {
-        const items = [];
-        document.querySelectorAll('.idea-checkbox').forEach(cb => {
-            if (cb.checked) {
-                const type = cb.dataset.ideaType;
-                const descInput = document.querySelector('.idea-description[data-idea-type="' + type + '"]');
-                const desc = descInput ? descInput.value.trim() : '';
-                items.push(desc ? `${type} — ${desc}` : type);
-            }
-        });
-        return items.join('; ');
-    }
 
-
-        // Небольшой список часто используемых рубрик МКБ-10 (можно дополнять)
+    // Небольшой список часто используемых рубрик МКБ-10 (можно дополнять)
     const icd10 = [
         { code: 'F10.2', name: 'Психические и поведенческие расстройства, связанные с употреблением алкоголя, синдром зависимости' },
         { code: 'F11.2', name: 'Психические и поведенческие расстройства, связанные с употреблением опиоидов, синдром зависимости' },
@@ -2020,380 +1664,7 @@ function getCheckedTextByName(name) {
 
     /* ДИНАМИЧЕСКИЕ НАЗНАЧЕНИЯ */
 
-
-
-
-        const RECOMMENDATIONS_LIBRARY = [
-        {
-            id: 'rec_sleep_schedule',
-            group: 'general',
-            title: 'Режим сна и бодрствования',
-            short: 'Соблюдать регулярный режим сна',
-            full: 'Соблюдать регулярный режим сна и бодрствования: укладываться и просыпаться в одно и то же время, избегать дневного сна более 30 минут, ограничивать использование гаджетов за 1–2 часа до сна, формировать спокойный ритуал засыпания.'
-        },
-        {
-            id: 'rec_activity',
-            group: 'general',
-            title: 'Умеренная физическая активность',
-            short: 'Ежедневная умеренная активность',
-            full: 'Рекомендована регулярная умеренная физическая активность не менее 30 минут в день (ходьба, ЛФК, растяжка, плавание) с учётом соматического состояния.'
-        },
-        {
-            id: 'rec_caffeine_limit',
-            group: 'general',
-            title: 'Ограничение кофеина',
-            short: 'Ограничить кофеин после 14:00',
-            full: 'Ограничить употребление кофе, чая, энергетиков и других стимуляторов, особенно во второй половине дня, поскольку они могут усиливать тревогу и нарушать сон.'
-        },
-        {
-            id: 'rec_no_alcohol',
-            group: 'general',
-            title: 'Исключение алкоголя и ПАВ',
-            short: 'Исключить алкоголь и ПАВ',
-            full: 'Полностью исключить употребление алкоголя и немедицинское употребление психоактивных веществ, так как они ухудшают течение заболевания и снижают эффективность назначенной терапии.'
-        },
-        {
-            id: 'rec_med_adherence',
-            group: 'general',
-            title: 'Соблюдение медикаментозной терапии',
-            short: 'Принимать препараты по схеме',
-            full: 'Принимать препараты строго по назначенной схеме, не изменять дозировку и не отменять лекарства самостоятельно. При появлении побочных эффектов не прекращать приём, а обратиться к врачу для коррекции терапии.'
-        },
-        {
-            id: 'rec_psychiatrist_followup',
-            group: 'general',
-            title: 'Наблюдение у психиатра',
-            short: 'Регулярное наблюдение у психиатра',
-            full: 'Регулярно наблюдаться у психиатра для контроля динамики состояния, переносимости терапии и своевременной коррекции лечения. Повторный визит рекомендуется через ___ дней или раньше при ухудшении состояния.'
-        },
-        {
-            id: 'rec_day_structure',
-            group: 'general',
-            title: 'Структурирование дня',
-            short: 'Структурировать день и активность',
-            full: 'Структурировать день: планировать посильную активность, чередовать нагрузку и отдых, избегать длительной пассивности и чрезмерных перегрузок.'
-        },
-        {
-            id: 'rec_stress_management',
-            group: 'general',
-            title: 'Работа со стрессом',
-            short: 'Осваивать техники управления стрессом',
-            full: 'Осваивать техники управления стрессом: дыхательные упражнения, мышечная релаксация, простые когнитивные техники, снижение воздействия провоцирующих факторов.'
-        },
-        {
-            id: 'rec_psychoeducation',
-            group: 'general',
-            title: 'Психообразование',
-            short: 'Психообразование пациента (и семьи)',
-            full: 'Рекомендовано психообразование пациента и, при согласии, его близких: обсуждение природы заболевания, возможной симптоматики, принципов лечения и признаков, требующих повторного обращения к врачу.'
-        },
-        {
-            id: 'rec_psychotherapy',
-            group: 'general',
-            title: 'Психотерапия',
-            short: 'Рассмотреть психотерапию',
-            full: 'Рассмотреть возможность индивидуальной или групповой психотерапии (когнитивно-поведенческой, поддерживающей и др.) с учётом запроса пациента и доступности специалистов.'
-        },
-        {
-            id: 'rec_family_support',
-            group: 'general',
-            title: 'Поддержка близких',
-            short: 'Привлечь поддержку семьи',
-            full: 'Привлечь поддержку семьи и значимых близких: обсуждать состояние, совместно планировать помощь, информировать их о признаках возможного ухудшения.'
-        },
-        {
-            id: 'rec_crisis_plan',
-            group: 'general',
-            title: 'Кризисный план',
-            short: 'Составить кризисный план',
-            full: 'Составить кризисный план: при выраженном ухудшении состояния, усилении тревоги или появлении суицидальных мыслей и намерений незамедлительно обращаться за медицинской помощью (к дежурному психиатру, в ПНД, в службу скорой помощи), по возможности информировать близких, исключить доступ к потенциально опасным предметам и веществам.'
-        },
-        {
-            id: 'rec_self_monitoring',
-            group: 'general',
-            title: 'Самонаблюдение',
-            short: 'Вести дневник самочувствия',
-            full: 'Вести краткий дневник самочувствия: отмечать настроение, тревогу, качество сна, приём препаратов и значимые события для более точного обсуждения динамики на приёме.'
-        },
-        {
-            id: 'rec_work_rest',
-            group: 'general',
-            title: 'Режим труда и отдыха',
-            short: 'Оптимизировать режим работы и отдыха',
-            full: 'Оптимизировать режим труда и отдыха: по возможности избегать ночных смен, переработок и хронического недосыпания; при необходимости обсуждать с работодателем временное снижение нагрузки.'
-        },
-        {
-            id: 'rec_anxiety_management',
-            group: 'anxiety',
-            title: 'Работа с тревогой',
-            short: 'Осваивать техники снижения тревоги',
-            full: 'Рекомендовано освоение техник снижения тревоги: медленное диафрагмальное дыхание, мышечная релаксация, техники переключения внимания, ведение дневника тревоги.'
-        },
-        {
-            id: 'rec_stimulant_limit',
-            group: 'anxiety',
-            title: 'Ограничение стимуляторов',
-            short: 'Сократить кофеин и никотин',
-            full: 'Сократить употребление кофеина, никотина и других стимуляторов, так как они могут усиливать тревожные симптомы и нарушать сон.'
-        },
-        {
-            id: 'rec_activity_depression',
-            group: 'depression',
-            title: 'Повышение активности',
-            short: 'Поддерживать умеренную активность',
-            full: 'Поддерживать умеренную ежедневную активность: включать посильные дела, прогулки, постепенно расширять круг активности с учётом самочувствия.'
-        },
-        {
-            id: 'rec_psychotherapy_depression',
-            group: 'depression',
-            title: 'Психотерапия при депрессии',
-            short: 'Психотерапия при депрессии',
-            full: 'Рассмотреть когнитивно-поведенческую или межличностную психотерапию для работы с негативными убеждениями, сниженной активностью и нарушенной самооценкой.'
-        },
-        {
-            id: 'rec_antipsychotic_control',
-            group: 'psychosis',
-            title: 'Контроль антипсихотической терапии',
-            short: 'Не пропускать антипсихотики',
-            full: 'Строго соблюдать антипсихотическую терапию: не пропускать приём, не менять дозировку и не отменять препарат самостоятельно.'
-        },
-        {
-            id: 'rec_psychosis_safety',
-            group: 'psychosis',
-            title: 'Безопасность при психозе',
-            short: 'Соблюдать меры безопасности',
-            full: 'При выраженных психотических симптомах избегать управления транспортом, работы с потенциально опасными механизмами и ситуаций с высоким риском травм.'
-        },
-        {
-            id: 'rec_psychosis_support',
-            group: 'psychosis',
-            title: 'Поддержка близких при психозе',
-            short: 'Информировать близких о признаках ухудшения',
-            full: 'Информировать близких о признаках возможного ухудшения (усиление галлюцинаций, бредовых идей, снижение критики, нарастание возбудимости) и просить их о наблюдении и своевременном обращении за помощью при необходимости.'
-        },
-        {
-            id: 'rec_sleep_hygiene',
-            group: 'sleep',
-            title: 'Гигиена сна',
-            short: 'Гигиена сна',
-            full: 'Соблюдать гигиену сна: ограничивать использование экранов за 1–2 часа до сна, проветривать комнату, избегать тяжёлой пищи и интенсивной нагрузки вечером.'
-        },
-        {
-            id: 'rec_day_sleep_limit',
-            group: 'sleep',
-            title: 'Ограничение дневного сна',
-            short: 'Исключить дневной сон',
-            full: 'Избегать дневного сна или ограничивать его продолжительность до 20–30 минут, чтобы не ухудшать ночной сон.'
-        },
-        {
-            id: 'rec_sleep_relaxation',
-            group: 'sleep',
-            title: 'Релаксация перед сном',
-            short: 'Релаксация перед сном',
-            full: 'Использовать перед сном расслабляющие процедуры: дыхательные упражнения, лёгкую растяжку, тёплый душ или ванну.'
-        },
-        {
-            id: 'rec_substance_stop',
-            group: 'substance',
-            title: 'Отказ от алкоголя и ПАВ',
-            short: 'Полный отказ от алкоголя и ПАВ',
-            full: 'Рекомендован полный отказ от употребления алкоголя и немедицинского употребления психоактивных веществ; при трудностях — консультация нарколога или специализированной службы.'
-        },
-        {
-            id: 'rec_evening_plan',
-            group: 'substance',
-            title: 'Структурирование времени при зависимости',
-            short: 'Структурировать вечернее время',
-            full: 'Структурировать особенно вечернее время, заранее планировать занятость, чтобы снизить риск употребления алкоголя или других веществ.'
-        },
-        {
-            id: 'rec_nutrition',
-            group: 'extra',
-            title: 'Питание',
-            short: 'Сбалансированное питание',
-            full: 'Сохранять регулярное и сбалансированное питание, избегать больших перерывов между приёмами пищи и переедания, особенно вечером.'
-        },
-        {
-            id: 'rec_screen_time',
-            group: 'extra',
-            title: 'Ограничение экранного времени',
-            short: 'Снизить время за экранами',
-            full: 'По возможности снизить общее время за экранами (телефон, компьютер, телевизор), особенно перед сном.'
-        },
-        {
-            id: 'rec_social_activity',
-            group: 'extra',
-            title: 'Социальная активность',
-            short: 'Поддерживать социальные контакты',
-            full: 'Поддерживать посильный уровень общения с близкими и знакомыми, избегая длительной социальной изоляции.'
-        }
-    ];
-
-// === ЛОГИКА КАРТОЧЕК РЕКОМЕНДАЦИЙ ===
-
-function initRecommendationCards() {
-    const container = document.getElementById('recommendation-cards');
-    if (!container || !Array.isArray(RECOMMENDATIONS_LIBRARY)) return;
-
-    container.innerHTML = '';
-
-    RECOMMENDATIONS_LIBRARY.forEach((item) => {
-        const card = document.createElement('div');
-        card.className = 'rec-card';
-        card.dataset.recId = item.id;
-        card.dataset.mode = 'short';
-
-        card.innerHTML = `
-            <label class="rec-title">
-                <input type="checkbox"
-                       class="rec-toggle"
-                       data-rec-id="${item.id}">
-                <span>${item.title}</span>
-            </label>
-
-            <div class="rec-modes" data-rec-id="${item.id}">
-                <label>
-                    <input type="radio"
-                           name="rec-${item.id}-mode"
-                           value="short"
-                           disabled>
-                    Коротко
-                </label>
-                <label>
-                    <input type="radio"
-                           name="rec-${item.id}-mode"
-                           value="full"
-                           disabled>
-                    Полно
-                </label>
-            </div>
-
-            <div class="rec-text"
-                 id="rec-text-${item.id}"
-                 style="display:none;"></div>
-        `;
-
-        container.appendChild(card);
-    });
-
-    container.addEventListener('change', onRecommendationCardsChange);
-    updateSelectedCount();
-}
-
-function onRecommendationCardsChange(event) {
-    const target = event.target;
-    if (!target) return;
-
-    const card = target.closest('.rec-card');
-    if (!card) return;
-
-    const id = card.dataset.recId;
-    const modesBlock = card.querySelector('.rec-modes');
-    const textBlock = card.querySelector('.rec-text');
-    if (!modesBlock || !textBlock) return;
-
-    const radios = modesBlock.querySelectorAll('input[type="radio"]');
-
-    // клик по чекбоксу
-    if (target.classList.contains('rec-toggle')) {
-        if (target.checked) {
-            radios.forEach((r) => { r.disabled = false; });
-
-            let mode = card.dataset.mode || 'short';
-            let radioToCheck =
-                modesBlock.querySelector(`input[value="${mode}"]`) ||
-                modesBlock.querySelector('input[value="short"]');
-
-            if (radioToCheck) {
-                radioToCheck.checked = true;
-                mode = radioToCheck.value;
-                card.dataset.mode = mode;
-                setRecText(id, mode);
-            }
-
-            textBlock.style.display = 'block';
-        } else {
-            radios.forEach((r) => {
-                r.disabled = true;
-                r.checked = false;
-            });
-            textBlock.style.display = 'none';
-            textBlock.textContent = '';
-        }
-
-        updateSelectedCount();
-        return;
-    }
-
-    // клик по радио Коротко/Полно
-    if (target.type === 'radio' &&
-        target.name.startsWith('rec-') &&
-        target.name.endsWith('-mode')) {
-
-        const mode = target.value;
-        card.dataset.mode = mode;
-        setRecText(id, mode);
-    }
-}
-
-function setRecText(id, mode) {
-    const item = RECOMMENDATIONS_LIBRARY.find((r) => r.id === id);
-    if (!item) return;
-
-    const block = document.getElementById(`rec-text-${id}`);
-    if (!block) return;
-
-    block.textContent = mode === 'full' ? item.full : item.short;
-}
-
-function updateSelectedCount() {
-    const counter = document.getElementById('recommendations-selected-count');
-    if (!counter) return;
-
-    const count =
-        document.querySelectorAll('.rec-card .rec-toggle:checked').length;
-
-    counter.textContent = String(count);
-}
-
-function collectSelectedRecommendations() {
-    const textarea = document.getElementById('recommendations');
-    if (!textarea) return;
-
-    const cards = document.querySelectorAll('.rec-card');
-    const texts = [];
-
-    cards.forEach((card) => {
-        const checkbox = card.querySelector('.rec-toggle');
-        if (!checkbox || !checkbox.checked) return;
-
-        const id = card.dataset.recId;
-        const mode = card.dataset.mode || 'short';
-
-        const item = RECOMMENDATIONS_LIBRARY.find((r) => r.id === id);
-        if (!item) return;
-
-        const text = mode === 'full' ? item.full : item.short;
-        texts.push(`${texts.length + 1}. ${text}`);
-    });
-
-    textarea.value = texts.join('\n');
-}
-
-function initRecommendationsLibrary() {
-    initRecommendationCards();
-
-    const collectBtn =
-        document.getElementById('collect-recommendations-button');
-    if (collectBtn) {
-        collectBtn.addEventListener('click', collectSelectedRecommendations);
-    }
-}
-
-// гарантируем инициализацию
-document.addEventListener('DOMContentLoaded', initRecommendationsLibrary);
-
-        let prescriptionCounter = 0;
+    let prescriptionCounter = 0;
 
     function addPrescription() {
         prescriptionCounter += 1;
@@ -2500,11 +1771,7 @@ document.addEventListener('DOMContentLoaded', initRecommendationsLibrary);
         return lines.join('<br>');
     }
 
-
-
-    // TODO: report templates placeholder
-
-        function generateText() {
+    function generateText() {
         // Общие части
         const complaints = document.getElementById('complaints').value.trim();
         const anamnesis = document.getElementById('anamnesis').value.trim();
@@ -2613,18 +1880,35 @@ document.addEventListener('DOMContentLoaded', initRecommendationsLibrary);
             text += psLine1 + '<br>';
         }
 
+        // Блок мышления с подписями
         let thinkingParts = [];
-        if (thinking_tempo) thinkingParts.push(thinking_tempo);
-        if (thinking_productivity) thinkingParts.push(thinking_productivity);
-        if (thinking_sequence) thinkingParts.push(thinking_sequence);
-        if (thinking_goal) thinkingParts.push(thinking_goal);
-        if (thinking_disorders) thinkingParts.push('с признаками: ' + thinking_disorders);
-        if (thinking_mobility) thinkingParts.push('подвижность мышления: ' + thinking_mobility);
-        if (abstraction) thinkingParts.push('абстрагирование ' + abstraction);
+
+        if (thinking_tempo) {
+            thinkingParts.push('темп — ' + thinking_tempo);
+        }
+        if (thinking_productivity) {
+            thinkingParts.push('продуктивность — ' + thinking_productivity);
+        }
+        if (thinking_sequence) {
+            thinkingParts.push('последовательность — ' + thinking_sequence);
+        }
+        if (thinking_goal) {
+            thinkingParts.push('характер мышления — ' + thinking_goal.toLowerCase());
+        }
+        if (thinking_disorders) {
+            thinkingParts.push('особенности: ' + thinking_disorders);
+        }
+        if (thinking_mobility) {
+            thinkingParts.push('подвижность — ' + thinking_mobility);
+        }
+        if (abstraction) {
+            thinkingParts.push('абстрагирование — ' + abstraction);
+        }
 
         if (thinkingParts.length > 0) {
-            text += 'Мышление ' + thinkingParts.join(', ') + '.<br>';
+            text += 'Мышление: ' + thinkingParts.join(', ') + '.<br>';
         }
+
 
         if (ideas) {
             text += 'Идеи: ' + ideas + '.<br>';
@@ -2727,24 +2011,7 @@ document.addEventListener('DOMContentLoaded', initRecommendationsLibrary);
         }
         sel.removeAllRanges();
     }
+</script>
 
-    function prettifyReport(html) {
-    return html;
-}
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-    if (typeof initRecommendationsLibrary === 'function') {
-        initRecommendationsLibrary();
-    }
-
-    if (typeof initRecommendationCards === 'function') {
-        initRecommendationCards();
-    }
-
-    // Additional UI initialization can be placed here
-});
-
-  </script>
 </body>
 </html>

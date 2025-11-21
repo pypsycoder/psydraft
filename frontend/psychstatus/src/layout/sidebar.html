@@ -1,31 +1,73 @@
 <nav class="sidebar">
     <div class="sidebar-header">
-        <button type="button"
-                class="sidebar-toggle"
-                onclick="toggleSidebar()"
-                aria-label="Свернуть или развернуть навигацию">
-            ☰
+        <button
+            type="button"
+            class="sidebar-toggle"
+            onclick="toggleSidebar()"
+            aria-label="Свернуть или развернуть навигацию"
+        >
+            <!-- INCLUDE ../icons/sidebar-toggle.svg -->
         </button>
-        <div class="sidebar-title">Навигация</div>
+        <div class="sidebar-title">НАВИГАЦИЯ</div>
     </div>
-    <ul>
-        <li><a href="#section-general">Общие разделы</a></li>
-        <li>
-            <a href="#section-status">Психический статус</a>
-            <ul>
-                <li><a href="#status-consciousness">Сознание</a></li>
-                <li><a href="#status-thinking">Мышление</a></li>
-                <li><a href="#status-intellect">Интеллект</a></li>
-                <li><a href="#status-perception">Обманы восприятия</a></li>
-                <li><a href="#status-memory">Память</a></li>
-                <li><a href="#status-mood">Настроение</a></li>
-                <li><a href="#status-motor">Двигательная сфера</a></li>
-                <li><a href="#status-attention">Внимание</a></li>
-                <li><a href="#status-insight">Критика к своему заболеванию</a></li>
-                <li><a href="#status-sleep-appetite">Сон, аппетит</a></li>
-            </ul>
-        </li>
-        <li><a href="#section-diagnosis">Диагноз и рекомендации</a></li>
-        <li><a href="#section-result">Сформированный текст</a></li>
-    </ul>
+
+    <div class="sidebar-nav">
+        <div class="sidebar-group-title">Жалобы и анамнез</div>
+        <a href="#section-general" class="sidebar-link">
+            <span class="sidebar-link-icon">📋</span>
+            <span class="sidebar-link-label">Общие разделы</span>
+        </a>
+
+        <div class="sidebar-group-title">Психический статус</div>
+        <a href="#status-consciousness" class="sidebar-link">
+            <span class="sidebar-link-icon">🧠</span>
+            <span class="sidebar-link-label">Сознание</span>
+        </a>
+        <a href="#status-thinking" class="sidebar-link">
+            <span class="sidebar-link-icon">💭</span>
+            <span class="sidebar-link-label">Мышление</span>
+        </a>
+        <a href="#status-intellect" class="sidebar-link">
+            <span class="sidebar-link-icon">📚</span>
+            <span class="sidebar-link-label">Интеллект</span>
+        </a>
+        <a href="#status-perception" class="sidebar-link">
+            <span class="sidebar-link-icon">👁️</span>
+            <span class="sidebar-link-label">Обманы восприятия</span>
+        </a>
+        <a href="#status-memory" class="sidebar-link">
+            <span class="sidebar-link-icon">🧩</span>
+            <span class="sidebar-link-label">Память</span>
+        </a>
+        <a href="#status-mood" class="sidebar-link">
+            <span class="sidebar-link-icon">🙂</span>
+            <span class="sidebar-link-label">Настроение</span>
+        </a>
+        <a href="#status-motor" class="sidebar-link">
+            <span class="sidebar-link-icon">🏃</span>
+            <span class="sidebar-link-label">Двигательная сфера</span>
+        </a>
+        <a href="#status-attention" class="sidebar-link">
+            <span class="sidebar-link-icon">🎯</span>
+            <span class="sidebar-link-label">Внимание</span>
+        </a>
+        <a href="#status-insight" class="sidebar-link">
+            <span class="sidebar-link-icon">🔍</span>
+            <span class="sidebar-link-label">Критика к своему заболеванию</span>
+        </a>
+        <a href="#status-sleep-appetite" class="sidebar-link">
+            <span class="sidebar-link-icon">🌙</span>
+            <span class="sidebar-link-label">Сон, аппетит</span>
+        </a>
+
+        <div class="sidebar-group-title">Итог</div>
+        <a href="#section-diagnosis" class="sidebar-link">
+            <span class="sidebar-link-icon">🩺</span>
+            <span class="sidebar-link-label">Диагноз и рекомендации</span>
+        </a>
+        <a href="#section-result" class="sidebar-link">
+            <span class="sidebar-link-icon">📝</span>
+            <span class="sidebar-link-label">Сформированный текст</span>
+        </a>
+    </div>
 </nav>

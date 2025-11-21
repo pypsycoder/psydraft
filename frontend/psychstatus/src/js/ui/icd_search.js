@@ -90,5 +90,5 @@
 
     /* ДИНАМИЧЕСКИЕ НАЗНАЧЕНИЯ */
 
-    let prescriptionCounter = 0;
+
 

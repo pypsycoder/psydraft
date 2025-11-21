@@ -1,34 +1,18 @@
-<div class="section" id="section-diagnosis">
-            <h2>Диагноз и рекомендации</h2>
+<!-- =============================== -->
+<!--   БЛОК ДИАГНОЗА                 -->
+<!-- =============================== -->
 
-            <label>Поиск диагноза по МКБ-10:</label>
-            <input type="text" id="icd_search"
-                   placeholder="Начните вводить, например: депрессивный, шизофрения, F32..."
-                   oninput="searchICD()">
-            <div id="icd_results" class="icd-results"></div>
-            <p class="small-note">
-                Кликните по варианту ниже, чтобы добавить его в поле диагноза.
-            </p>
+<div class="section-card">
+    <h2 class="section-title">🩺 Диагноз</h2>
 
-            <label>Диагноз (шифры МКБ-10):</label>
-            <textarea id="diagnosis"></textarea>
+    <label for="icd_search">Поиск диагноза по МКБ-10:</label>
+    <input id="icd_search"
+           type="text"
+           placeholder="Начните вводить..."
+           oninput="searchICD()">
 
-            <div class="section-like-block" id="recommendations-library">
-                <div class="library-top">
-                    <div class="library-title">Библиотека рекомендаций</div>
-                    <div class="library-filters" id="recommendations-filters"></div>
-                </div>
-                <div class="recommendations-list" id="recommendations-list"></div>
-                <div class="library-footer">
-                    <div class="selected-count">Выбрано рекомендаций: <span id="recommendations-selected-count">0</span></div>
-                    <button type="button" class="btn-secondary" id="collect-recommendations-button">Собрать рекомендации в поле ниже</button>
-                </div>
-            </div>
+    <div id="icd_results" class="icd-results"></div>
 
-            <h3 style="margin-top: 12px;">Библиотека рекомендаций</h3>
-            <p class="small-note">
-                Отметьте нужные рекомендации и выберите формат текста (коротко или полно).
-                Сейчас это только заготовка — текст ниже пока не подставляется автоматически в итоговое заключение.
-            </p>
-            <div id="recommendation-cards" class="rec-grid"></div>
+    <label for="diagnosis">Диагноз (шифры МКБ-10):</label>
+    <textarea id="diagnosis"></textarea>
 </div>
