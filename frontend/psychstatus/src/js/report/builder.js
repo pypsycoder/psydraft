@@ -1,4 +1,4 @@
-    function generateText() {
+function generateText() {
         // Общие части
         const complaints = document.getElementById('complaints').value.trim();
         const anamnesis = document.getElementById('anamnesis').value.trim();
@@ -9,10 +9,11 @@
         const dynamics = document.getElementById('dynamics').value.trim();
         const life_history = document.getElementById('life_history').value.trim();
 
-        // Психстатус
+        // ПСИХСТАТУС
+        //  Сознание и общение
         const consciousness = document.getElementById('consciousness').value || '';
         const behavior = getCheckedTextByName('behavior');
-        const appearance = document.getElementById('appearance').value || '';
+        const appearance = document.getElementById('appearance')?.value.trim() || '';
         const facial_expression = getCheckedTextByName('facial_expression');
         const eye_contact = document.getElementById('eye_contact').value || '';
         const contact = document.getElementById('contact').value || '';
@@ -20,6 +21,7 @@
         const answers = getCheckedTextByName('answers');
         const speech = document.getElementById('speech').value || '';
 
+        // Мышление
         const thinking_tempo = document.getElementById('thinking_tempo').value || '';
         const thinking_productivity = document.getElementById('thinking_productivity').value || '';
         const thinking_sequence = document.getElementById('thinking_sequence').value || '';
@@ -32,30 +34,39 @@
         const intellect = document.getElementById('intellect').value || '';
         const vocabulary = document.getElementById('vocabulary').value || '';
 
+        // Восприятие
         const perceptionDetails = collectPerceptionText();
+
+        // Память, внимание
         const memory = getCheckedTextByName('memory');
         const amnesia = getCheckedTextByName('amnesia');
         const paramnesia = getCheckedTextByName('paramnesia');
         const attention = getCheckedTextByName('attention');
 
+        // Эмоции
         const mood = document.getElementById('mood').value || '';
         const emotions_stability = document.getElementById('emotions_stability').value || '';
         const emotions = getCheckedTextByName('emotions');
         const aggression = document.getElementById('aggression').value || '';
+
+        // Суицидальное поведение (текущие мысли/планы + контрфакторы)
         const suicidal_thoughts = document.getElementById('suicidal_thoughts').value || '';
         const suicidal_plans = document.getElementById('suicidal_plans').value || '';
-        const suicidal_behavior = document.getElementById('suicidal_behavior').value || '';
         const contrsuicidal_factors = document.getElementById('contrsuicidal_factors').value || '';
 
+        // Мотивация, двигательна сфера, планы, судороги
         const will = document.getElementById('will').value || '';
         const motor = document.getElementById('motor').value.trim();
         const distance = document.getElementById('distance').value || '';
         const insight = document.getElementById('insight').value || '';
         const future_plans = document.getElementById('future_plans').value || '';
         const seizures = document.getElementById('seizures').value || '';
+
+        // Сон, аппетит
         const sleep = getCheckedTextByName('sleep');
         const appetite = document.getElementById('appetite').value || '';
 
+        // Диагноз, рекомендации, назначения
         const diagnosis = document.getElementById('diagnosis').value.trim();
         const recommendations = document.getElementById('recommendations').value.trim();
         const prescriptionsText = collectPrescriptionsText();
@@ -157,13 +168,21 @@
         if (aggression) emoLine += 'Агрессивные тенденции: ' + aggression + '. ';
         if (suicidal_thoughts) emoLine += 'Суицидальные мысли на момент осмотра: ' + suicidal_thoughts + '. ';
         if (suicidal_plans) emoLine += 'Суицидальные планы на момент осмотра: ' + suicidal_plans + '. ';
-        if (suicidal_behavior) emoLine += 'Суицидальное поведение: ' + suicidal_behavior + '. ';
         if (contrsuicidal_factors) emoLine += 'Контрсуицидальные факторы: ' + contrsuicidal_factors + '. ';
 
         if (emoLine) {
             text += emoLine + '<br>';
         }
 
+        // Суицидальное поведение в анамнезе из мультчека (если функция есть)
+        if (typeof buildSuicideHistoryText === 'function') {
+            const sh = buildSuicideHistoryText();
+            if (sh) {
+                text += sh + '<br>';
+            }
+        }
+
+        // Воля
         if (will) {
             text += 'Воля: ' + will + '.<br>';
         }

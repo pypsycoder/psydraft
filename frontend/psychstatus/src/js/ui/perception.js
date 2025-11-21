@@ -86,7 +86,10 @@
         }
 
         // Свободный текст
-        const freeText = document.getElementById('perception')?.value.trim();
+        const freeTextEl =
+            document.getElementById('perception_hallucinations')
+            ?? document.getElementById('perception');
+        const freeText = freeTextEl?.value.trim();
         if (freeText) {
             parts.push(freeText);
         }

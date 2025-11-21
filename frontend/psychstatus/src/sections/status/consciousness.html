@@ -13,17 +13,61 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label>Внешний вид:</label>
-                        <select id="appearance">
-                            <option value="">— выбрать —</option>
-                            <option>опрятный</option>
-                            <option>неопрятный</option>
-                            <option>соответствует возрасту</option>
-                            <option>моложе возраста</option>
-                            <option>старше возраста</option>
-                        </select>
+                    <div class="multicheck-group" data-name="appearance">
+                        <div class="multicheck-header" onclick="toggleMultiGroup('appearance')">
+                            <span class="multicheck-label">Внешний вид (можно несколько)</span>
+                            <span class="multicheck-summary" id="appearance_summary">Не выбрано</span>
+                        </div>
+
+                        <div class="multicheck-body" id="appearance_body">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance" value="опрятный"
+                                       onchange="updateAppearance()">
+                                опрятный
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance" value="неопрятный"
+                                       onchange="updateAppearance()">
+                                неопрятный
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance"
+                                       value="выглядит в соответствии с возрастом"
+                                       onchange="updateAppearance()">
+                                соответствует возрасту
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance"
+                                       value="выглядит моложе возраста"
+                                       onchange="updateAppearance()">
+                                моложе возраста
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance"
+                                       value="выглядит старше возраста"
+                                       onchange="updateAppearance()">
+                                старше возраста
+                            </label>
+
+                            <!-- Другое -->
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance" value="D_OTHER"
+                                       onchange="toggleAppearanceOther(this); updateAppearance()">
+                                другое:
+                            </label>
+
+                            <input type="text"
+                                   id="appearance_other"
+                                   placeholder="уточните..."
+                                   style="display:none; margin-left: 15px;"
+                                   oninput="updateAppearance()">
+
+                            <!-- Итоговая строка (скрытое поле, без визуального отображения) -->
+                            <input type="hidden" id="appearance">
+                        </div>
                     </div>
+
+
 
                     <div>
                         <label>Зрительный контакт:</label>
@@ -39,9 +83,11 @@
                         <label>Установление контакта:</label>
                         <select id="contact">
                             <option value="">— выбрать —</option>
-                            <option>легко устанавливается</option>
-                            <option>затруднено</option>
-                            <option>не устанавливается</option>
+                            <option>устанавливает охотно</option>
+                            <option>устанавливает неохотно</option>
+                            <option>устанавливает "формально"</option>
+                            <option>установка затруднена</option>
+                            <option>не устанавливает</option>
                         </select>
                     </div>
                 </div>
@@ -55,11 +101,28 @@
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="спокоен" onchange="updateMultiSummary('behavior')">спокоен</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="упорядочен" onchange="updateMultiSummary('behavior')">упорядочен</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив" onchange="updateMultiSummary('behavior')">суетлив</label>
-                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив с элементами негативизма" onchange="updateMultiSummary('behavior')">суетлив с элементами негативизма</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="беспокоен" onchange="updateMultiSummary('behavior')">беспокоен</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="негативизм" onchange="updateMultiSummary('behavior')">негативизм</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="груб" onchange="updateMultiSummary('behavior')">груб</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="агрессивен" onchange="updateMultiSummary('behavior')">агрессивен</label>
+                        <!-- ... варианты поведения ... -->
+                        <label class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                name="behavior"
+                                value="D_OTHER"
+                                onchange="toggleOtherField('behavior')"
+                            >
+                            другое
+                        </label>
+                        <input
+                            type="text"
+                            id="behavior_other"
+                            maxlength="100"
+                            placeholder="уточните особенности поведения"
+                            oninput="updateMultiSummary('behavior')"
+                            style="display:none"
+                        >
                     </div>
                 </div>
 
@@ -112,7 +175,6 @@
                     <option>скандированная</option>
                     <option>монологичная</option>
                     <option>жаргон</option>
-                    <option>скандированная</option>
                     <option>монотонная</option>
                 </select>
             </div>
