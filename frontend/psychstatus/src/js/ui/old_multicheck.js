@@ -4,82 +4,17 @@ function toggleMultiGroup(name) {
     body.classList.toggle('open');
 }
 
-/**
- * Универсальное обновление summary под заголовком мультичекса.
- * Поддерживает "другое":
- *  - чекбокс со значением D_OTHER / ДРУГОЕ
- *  - текстовое поле с id="<name>_other"
- */
 function updateMultiSummary(name) {
     const summary = document.getElementById(name + '_summary');
     if (!summary) return;
-
     const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
-    const parts = [];
-
-    checked.forEach(cb => {
-        if (cb.value !== 'D_OTHER' && cb.value !== 'ДРУГОЕ') {
-            parts.push(cb.value);
-        }
-    });
-
-    const otherCheckbox = document.querySelector(
-    `input[type="checkbox"][name="${name}"][value="D_OTHER"]`
-    );
-    const otherField = document.getElementById(name + '_other');
-
-    if (otherCheckbox && otherCheckbox.checked && otherField) {
-        const txt = otherField.value.trim();
-        if (txt) parts.push(txt);
-    }
-
-    summary.textContent = parts.length ? parts.join(', ') : 'Не выбрано';
+    const values = Array.from(checked).map(c => c.value);
+    summary.textContent = values.length ? values.join(', ') : 'Не выбрано';
 }
 
-function toggleOtherField(name) {
-    const otherCheckbox = document.querySelector(`input[name="${name}"][value="D_OTHER"]`);
-    const otherField = document.getElementById(name + '_other');
-
-    if (!otherCheckbox || !otherField) return;
-
-    if (otherCheckbox.checked) {
-        otherField.style.display = 'block';
-    } else {
-        otherField.style.display = 'none';
-        otherField.value = '';
-    }
-
-    updateMultiSummary(name);
-}
-
-
-/**
- * Универсальный сбор текста для builder.js.
- * Логика совпадает с updateMultiSummary:
- *  - игнорирует сам маркер "другое" (D_OTHER/ДРУГОЕ)
- *  - добавляет текст из "<name>_other", если он есть.
- */
 function getCheckedTextByName(name) {
     const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
-    const parts = [];
-
-    checked.forEach(cb => {
-        if (cb.value !== 'D_OTHER' && cb.value !== 'ДРУГОЕ') {
-            parts.push(cb.value);
-        }
-    });
-
-    const otherCheckbox = document.querySelector(
-        `input[type="checkbox"][name="${name}"][value="D_OTHER"]`
-    );
-    const otherField = document.getElementById(name + '_other');
-
-    if (otherCheckbox && otherCheckbox.checked && otherField) {
-        const txt = otherField.value.trim();
-        if (txt) parts.push(txt);
-    }
-
-    return parts.join(', ');
+    return Array.from(checked).map(c => c.value).join(', ');
 }
 
 // Функции сбора выбранных симптомов в "Внешний вид"
@@ -88,6 +23,7 @@ function toggleAppearanceOther(cb) {
     field.style.display = cb.checked ? 'block' : 'none';
     if (!cb.checked) field.value = "";
 }
+
 
 function updateAppearance() {
     const checkboxes = document.querySelectorAll('input[name="appearance"]:checked');
@@ -120,7 +56,7 @@ function updateAppearance() {
 }
 
 // ==========================
-// Суицидальное поведение в анамнезе
+// Суицидальное поведение в анамнезе логика UI
 // ==========================
 
 function initSuicideHistory() {
@@ -200,3 +136,57 @@ document.addEventListener('DOMContentLoaded', function () {
     // ...если тут уже есть другие init-функции — просто добавляем ещё одну
     initSuicideHistory();
 });
+
+// =========================================
+// Генерация текста: суицидальное поведение в анамнезе
+// =========================================
+
+function buildSuicideHistoryText() {
+    const noneCb      = document.getElementById('suicide_history_none');
+    const attemptsCb  = document.getElementById('suicide_history_attempts');
+    const nssiCb      = document.getElementById('suicide_history_nssi');
+    const uncertainCb = document.getElementById('suicide_history_uncertain');
+
+    const attemptsInput = document.getElementById('suicide_attempts_times');
+    const nssiInput     = document.getElementById('suicide_nssi_times');
+    const lastInput     = document.getElementById('suicide_last_description');
+
+    // --- Эксклюзивные варианты ---
+    if (noneCb.checked) {
+        return "Суицидальное поведение в анамнезе не отмечает.";
+    }
+
+    if (uncertainCb.checked) {
+        return "Относительно суицидального поведения в анамнезе затрудняется ответить.";
+    }
+
+    // --- Если выбраны попытки / НСС ---
+    let parts = [];
+
+    if (attemptsCb.checked) {
+        const t = attemptsInput.value.trim();
+        if (t) {
+            parts.push(`отмечает суицидальные попытки (${t} раз)`);
+        } else {
+            parts.push("отмечает суицидальные попытки");
+        }
+    }
+
+    if (nssiCb.checked) {
+        const n = nssiInput.value.trim();
+        if (n) {
+            parts.push(`отмечает эпизоды самоповреждения без суицидального намерения (${n} раз)`);
+        } else {
+            parts.push("отмечает эпизоды самоповреждения без суицидального намерения");
+        }
+    }
+
+    if (parts.length === 0) {
+        return "";
+    }
+
+    const last = lastInput.value.trim();
+    let lastPart = last ? ` Последний эпизод: ${last}.` : "";
+
+    return "В анамнезе " + parts.join("; ") + "." + lastPart;
+}

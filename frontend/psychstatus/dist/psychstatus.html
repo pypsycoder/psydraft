@@ -1379,11 +1379,28 @@ button:active {
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="спокоен" onchange="updateMultiSummary('behavior')">спокоен</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="упорядочен" onchange="updateMultiSummary('behavior')">упорядочен</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив" onchange="updateMultiSummary('behavior')">суетлив</label>
-                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив с элементами негативизма" onchange="updateMultiSummary('behavior')">суетлив с элементами негативизма</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="беспокоен" onchange="updateMultiSummary('behavior')">беспокоен</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="негативизм" onchange="updateMultiSummary('behavior')">негативизм</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="груб" onchange="updateMultiSummary('behavior')">груб</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="агрессивен" onchange="updateMultiSummary('behavior')">агрессивен</label>
+                        <!-- ... варианты поведения ... -->
+                        <label class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                name="behavior"
+                                value="D_OTHER"
+                                onchange="toggleOtherField('behavior')"
+                            >
+                            другое
+                        </label>
+                        <input
+                            type="text"
+                            id="behavior_other"
+                            maxlength="100"
+                            placeholder="уточните особенности поведения"
+                            oninput="updateMultiSummary('behavior')"
+                            style="display:none"
+                        >
                     </div>
                 </div>
 
@@ -1590,6 +1607,8 @@ button:active {
                         <label class="checkbox-item"><input type="checkbox" name="judgment" value="легковесные" onchange="updateMultiSummary('judgment')">легковесные</label>
                         <label class="checkbox-item"><input type="checkbox" name="judgment" value="поверхностные" onchange="updateMultiSummary('judgment')">поверхностные</label>
                         <label class="checkbox-item"><input type="checkbox" name="judgment" value="категоричные" onchange="updateMultiSummary('judgment')">категоричные</label>
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="незрелые" onchange="updateMultiSummary('judgment')">незрелые</label>
+                        <label class="checkbox-item"><input type="checkbox" name="judgment" value="зрелые" onchange="updateMultiSummary('judgment')">зрелые</label>
                     </div>
                 </div>
             </div>
@@ -1924,6 +1943,24 @@ button:active {
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием тревоги" onchange="updateMultiSummary('emotions')">с преобладанием тревоги</label>
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием депрессии" onchange="updateMultiSummary('emotions')">с преобладанием депрессии</label>
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием раздражительности" onchange="updateMultiSummary('emotions')">с преобладанием раздражительности</label>
+                        <!-- ... остальные варианты ... -->
+                        <label class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                name="emotions"
+                                value="D_OTHER"
+                                onchange="toggleOtherField('emotions')"
+                            >
+                            другое
+                        </label>
+                        <input
+                            type="text"
+                            id="emotions_other"
+                            maxlength="100"
+                            placeholder="уточните эмоциональную реакцию"
+                            oninput="updateMultiSummary('emotions')"
+                            style="display:none"
+                        >
                     </div>
                 </div>
 
@@ -2427,17 +2464,82 @@ document.addEventListener('DOMContentLoaded', initSidebar);
     body.classList.toggle('open');
 }
 
+/**
+ * Универсальное обновление summary под заголовком мультичекса.
+ * Поддерживает "другое":
+ *  - чекбокс со значением D_OTHER / ДРУГОЕ
+ *  - текстовое поле с id="<name>_other"
+ */
 function updateMultiSummary(name) {
     const summary = document.getElementById(name + '_summary');
     if (!summary) return;
+
     const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
-    const values = Array.from(checked).map(c => c.value);
-    summary.textContent = values.length ? values.join(', ') : 'Не выбрано';
+    const parts = [];
+
+    checked.forEach(cb => {
+        if (cb.value !== 'D_OTHER' && cb.value !== 'ДРУГОЕ') {
+            parts.push(cb.value);
+        }
+    });
+
+    const otherCheckbox = document.querySelector(
+    `input[type="checkbox"][name="${name}"][value="D_OTHER"]`
+    );
+    const otherField = document.getElementById(name + '_other');
+
+    if (otherCheckbox && otherCheckbox.checked && otherField) {
+        const txt = otherField.value.trim();
+        if (txt) parts.push(txt);
+    }
+
+    summary.textContent = parts.length ? parts.join(', ') : 'Не выбрано';
 }
 
+function toggleOtherField(name) {
+    const otherCheckbox = document.querySelector(`input[name="${name}"][value="D_OTHER"]`);
+    const otherField = document.getElementById(name + '_other');
+
+    if (!otherCheckbox || !otherField) return;
+
+    if (otherCheckbox.checked) {
+        otherField.style.display = 'block';
+    } else {
+        otherField.style.display = 'none';
+        otherField.value = '';
+    }
+
+    updateMultiSummary(name);
+}
+
+
+/**
+ * Универсальный сбор текста для builder.js.
+ * Логика совпадает с updateMultiSummary:
+ *  - игнорирует сам маркер "другое" (D_OTHER/ДРУГОЕ)
+ *  - добавляет текст из "<name>_other", если он есть.
+ */
 function getCheckedTextByName(name) {
     const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
-    return Array.from(checked).map(c => c.value).join(', ');
+    const parts = [];
+
+    checked.forEach(cb => {
+        if (cb.value !== 'D_OTHER' && cb.value !== 'ДРУГОЕ') {
+            parts.push(cb.value);
+        }
+    });
+
+    const otherCheckbox = document.querySelector(
+        `input[type="checkbox"][name="${name}"][value="D_OTHER"]`
+    );
+    const otherField = document.getElementById(name + '_other');
+
+    if (otherCheckbox && otherCheckbox.checked && otherField) {
+        const txt = otherField.value.trim();
+        if (txt) parts.push(txt);
+    }
+
+    return parts.join(', ');
 }
 
 // Функции сбора выбранных симптомов в "Внешний вид"
@@ -2446,7 +2548,6 @@ function toggleAppearanceOther(cb) {
     field.style.display = cb.checked ? 'block' : 'none';
     if (!cb.checked) field.value = "";
 }
-
 
 function updateAppearance() {
     const checkboxes = document.querySelectorAll('input[name="appearance"]:checked');
@@ -2479,7 +2580,7 @@ function updateAppearance() {
 }
 
 // ==========================
-// Суицидальное поведение в анамнезе логика UI
+// Суицидальное поведение в анамнезе
 // ==========================
 
 function initSuicideHistory() {
@@ -2559,60 +2660,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // ...если тут уже есть другие init-функции — просто добавляем ещё одну
     initSuicideHistory();
 });
-
-// =========================================
-// Генерация текста: суицидальное поведение в анамнезе
-// =========================================
-
-function buildSuicideHistoryText() {
-    const noneCb      = document.getElementById('suicide_history_none');
-    const attemptsCb  = document.getElementById('suicide_history_attempts');
-    const nssiCb      = document.getElementById('suicide_history_nssi');
-    const uncertainCb = document.getElementById('suicide_history_uncertain');
-
-    const attemptsInput = document.getElementById('suicide_attempts_times');
-    const nssiInput     = document.getElementById('suicide_nssi_times');
-    const lastInput     = document.getElementById('suicide_last_description');
-
-    // --- Эксклюзивные варианты ---
-    if (noneCb.checked) {
-        return "Суицидальное поведение в анамнезе не отмечает.";
-    }
-
-    if (uncertainCb.checked) {
-        return "Относительно суицидального поведения в анамнезе затрудняется ответить.";
-    }
-
-    // --- Если выбраны попытки / НСС ---
-    let parts = [];
-
-    if (attemptsCb.checked) {
-        const t = attemptsInput.value.trim();
-        if (t) {
-            parts.push(`отмечает суицидальные попытки (${t} раз)`);
-        } else {
-            parts.push("отмечает суицидальные попытки");
-        }
-    }
-
-    if (nssiCb.checked) {
-        const n = nssiInput.value.trim();
-        if (n) {
-            parts.push(`отмечает эпизоды самоповреждения без суицидального намерения (${n} раз)`);
-        } else {
-            parts.push("отмечает эпизоды самоповреждения без суицидального намерения");
-        }
-    }
-
-    if (parts.length === 0) {
-        return "";
-    }
-
-    const last = lastInput.value.trim();
-    let lastPart = last ? ` Последний эпизод: ${last}.` : "";
-
-    return "В анамнезе " + parts.join("; ") + "." + lastPart;
-}
 
     document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('.sidebar-link');

@@ -101,11 +101,28 @@
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="спокоен" onchange="updateMultiSummary('behavior')">спокоен</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="упорядочен" onchange="updateMultiSummary('behavior')">упорядочен</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив" onchange="updateMultiSummary('behavior')">суетлив</label>
-                        <label class="checkbox-item"><input type="checkbox" name="behavior" value="суетлив с элементами негативизма" onchange="updateMultiSummary('behavior')">суетлив с элементами негативизма</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="беспокоен" onchange="updateMultiSummary('behavior')">беспокоен</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="негативизм" onchange="updateMultiSummary('behavior')">негативизм</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="груб" onchange="updateMultiSummary('behavior')">груб</label>
                         <label class="checkbox-item"><input type="checkbox" name="behavior" value="агрессивен" onchange="updateMultiSummary('behavior')">агрессивен</label>
+                        <!-- ... варианты поведения ... -->
+                        <label class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                name="behavior"
+                                value="D_OTHER"
+                                onchange="toggleOtherField('behavior')"
+                            >
+                            другое
+                        </label>
+                        <input
+                            type="text"
+                            id="behavior_other"
+                            maxlength="100"
+                            placeholder="уточните особенности поведения"
+                            oninput="updateMultiSummary('behavior')"
+                            style="display:none"
+                        >
                     </div>
                 </div>
 

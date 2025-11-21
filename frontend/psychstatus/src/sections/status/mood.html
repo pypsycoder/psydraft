@@ -38,6 +38,24 @@
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием тревоги" onchange="updateMultiSummary('emotions')">с преобладанием тревоги</label>
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием депрессии" onchange="updateMultiSummary('emotions')">с преобладанием депрессии</label>
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием раздражительности" onchange="updateMultiSummary('emotions')">с преобладанием раздражительности</label>
+                        <!-- ... остальные варианты ... -->
+                        <label class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                name="emotions"
+                                value="D_OTHER"
+                                onchange="toggleOtherField('emotions')"
+                            >
+                            другое
+                        </label>
+                        <input
+                            type="text"
+                            id="emotions_other"
+                            maxlength="100"
+                            placeholder="уточните эмоциональную реакцию"
+                            oninput="updateMultiSummary('emotions')"
+                            style="display:none"
+                        >
                     </div>
                 </div>
 
