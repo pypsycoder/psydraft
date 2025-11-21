@@ -247,3 +247,26 @@ body.sidebar-collapsed .sidebar-toggle {
     border-color: var(--accent);
     box-shadow: 0 0 0 2px rgba(0,122,255,0.15);
 }
+
+/* --- Глобальное правило для всех верхнеуровневых секций --- */
+
+.section {
+    margin-bottom: 28px;
+
+    /* сбрасываем старый белый фон, который прилип к section */
+    background: transparent !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Заголовок секции (серый фон, как в iOS) */
+.section > h2 {
+    margin: 0 0 12px;
+    padding: 10px 14px;
+    font-size: 20px;
+    font-weight: 700;
+    border-radius: 12px;
+    background: #f2f3f5;
+    color: #1f2937;
+}
