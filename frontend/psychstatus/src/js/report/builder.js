@@ -1,4 +1,4 @@
-    function generateText() {
+function generateText() {
         // Общие части
         const complaints = document.getElementById('complaints').value.trim();
         const anamnesis = document.getElementById('anamnesis').value.trim();
@@ -49,10 +49,9 @@
         const emotions = getCheckedTextByName('emotions');
         const aggression = document.getElementById('aggression').value || '';
 
-        // Суицидальное поведение
+        // Суицидальное поведение (текущие мысли/планы + контрфакторы)
         const suicidal_thoughts = document.getElementById('suicidal_thoughts').value || '';
         const suicidal_plans = document.getElementById('suicidal_plans').value || '';
-        const suicidal_behavior = document.getElementById('suicidal_behavior').value || '';
         const contrsuicidal_factors = document.getElementById('contrsuicidal_factors').value || '';
 
         // Мотивация, двигательна сфера, планы, судороги
@@ -169,13 +168,21 @@
         if (aggression) emoLine += 'Агрессивные тенденции: ' + aggression + '. ';
         if (suicidal_thoughts) emoLine += 'Суицидальные мысли на момент осмотра: ' + suicidal_thoughts + '. ';
         if (suicidal_plans) emoLine += 'Суицидальные планы на момент осмотра: ' + suicidal_plans + '. ';
-        if (suicidal_behavior) emoLine += 'Суицидальное поведение: ' + suicidal_behavior + '. ';
         if (contrsuicidal_factors) emoLine += 'Контрсуицидальные факторы: ' + contrsuicidal_factors + '. ';
 
         if (emoLine) {
             text += emoLine + '<br>';
         }
 
+        // Суицидальное поведение в анамнезе из мультчека (если функция есть)
+        if (typeof buildSuicideHistoryText === 'function') {
+            const sh = buildSuicideHistoryText();
+            if (sh) {
+                text += sh + '<br>';
+            }
+        }
+
+        // Воля
         if (will) {
             text += 'Воля: ' + will + '.<br>';
         }

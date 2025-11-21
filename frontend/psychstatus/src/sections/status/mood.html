@@ -63,13 +63,59 @@
                     <option>присутствуют</option>
                 </select>
 
-                <label>Суицидальное поведение:</label>
-                <select id="suicidal_behavior">
-                    <option value="">— выбрать —</option>
-                    <option>отсутствует</option>
-                    <option>в анамнезе</option>
-                    <option>на момент осмотра</option>
-                </select>
+                <label>Суицидальное поведение в анамнезе:</label>
+                <div class="suicide-history" id="suicide_history_block">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="suicide_history" value="none" id="suicide_history_none">
+                        не отмечает
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="suicide_history" value="attempts" id="suicide_history_attempts">
+                        были попытки суицида
+                        <input
+                            type="text"
+                            id="suicide_attempts_times"
+                            class="suicide-inline-input"
+                            maxlength="5"
+                            placeholder="много/3/10+"
+                            disabled
+                        >
+                        <span>раз</span>
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="suicide_history" value="nssi" id="suicide_history_nssi">
+                        самоповреждение без суицидального намерения
+                        <input
+                            type="text"
+                            id="suicide_nssi_times"
+                            class="suicide-inline-input"
+                            maxlength="5"
+                            placeholder="несколько"
+                            disabled
+                        >
+                        <span>раз</span>
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="suicide_history" value="uncertain" id="suicide_history_uncertain">
+                        затрудняется ответить
+                    </label>
+                </div>
+
+                <label for="suicide_last_description" id="suicide_last_description_label" style="display: none;">
+                    Описание последнего эпизода:
+                </label>
+                <input
+                    type="text"
+                    id="suicide_last_description"
+                    style="display: none;"
+                    placeholder="Кратко о последнем эпизоде (что делал, когда, последствия)"
+                >
+
+
+
 
                 <label>Контрсуицидальные факторы:</label>
                 <textarea id="contrsuicidal_factors" placeholder="семья, дети, религиозные убеждения и др."></textarea>

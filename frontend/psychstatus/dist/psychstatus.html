@@ -321,6 +321,36 @@ body.sidebar-collapsed .sidebar-toggle {
     color: #1f2937;
 }
 
+/* ==== Суицидальное поведение в анамнезе ==== */
+
+.suicide-history {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.suicide-history .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+}
+
+.suicide-inline-input {
+    width: 90px;
+    max-width: 120px;
+    font-size: 14px;
+    padding: 4px 6px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+}
+
+.suicide-inline-input:disabled {
+    background-color: #f9fafb;
+    color: #9ca3af;
+}
+
     /* Apple Health inspired theme accents */
 .page-footer {
     text-align: center;
@@ -1919,13 +1949,59 @@ button:active {
                     <option>присутствуют</option>
                 </select>
 
-                <label>Суицидальное поведение:</label>
-                <select id="suicidal_behavior">
-                    <option value="">— выбрать —</option>
-                    <option>отсутствует</option>
-                    <option>в анамнезе</option>
-                    <option>на момент осмотра</option>
-                </select>
+                <label>Суицидальное поведение в анамнезе:</label>
+                <div class="suicide-history" id="suicide_history_block">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="suicide_history" value="none" id="suicide_history_none">
+                        не отмечает
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="suicide_history" value="attempts" id="suicide_history_attempts">
+                        были попытки суицида
+                        <input
+                            type="text"
+                            id="suicide_attempts_times"
+                            class="suicide-inline-input"
+                            maxlength="5"
+                            placeholder="много/3/10+"
+                            disabled
+                        >
+                        <span>раз</span>
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="suicide_history" value="nssi" id="suicide_history_nssi">
+                        самоповреждение без суицидального намерения
+                        <input
+                            type="text"
+                            id="suicide_nssi_times"
+                            class="suicide-inline-input"
+                            maxlength="5"
+                            placeholder="несколько"
+                            disabled
+                        >
+                        <span>раз</span>
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="suicide_history" value="uncertain" id="suicide_history_uncertain">
+                        затрудняется ответить
+                    </label>
+                </div>
+
+                <label for="suicide_last_description" id="suicide_last_description_label" style="display: none;">
+                    Описание последнего эпизода:
+                </label>
+                <input
+                    type="text"
+                    id="suicide_last_description"
+                    style="display: none;"
+                    placeholder="Кратко о последнем эпизоде (что делал, когда, последствия)"
+                >
+
+
+
 
                 <label>Контрсуицидальные факторы:</label>
                 <textarea id="contrsuicidal_factors" placeholder="семья, дети, религиозные убеждения и др."></textarea>
@@ -2402,6 +2478,141 @@ function updateAppearance() {
     }
 }
 
+// ==========================
+// Суицидальное поведение в анамнезе логика UI
+// ==========================
+
+function initSuicideHistory() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="suicide_history"]');
+    if (!checkboxes.length) return;
+
+    const noneCb      = document.getElementById('suicide_history_none');
+    const uncertainCb = document.getElementById('suicide_history_uncertain');
+    const attemptsCb  = document.getElementById('suicide_history_attempts');
+    const nssiCb      = document.getElementById('suicide_history_nssi');
+
+    const attemptsInput = document.getElementById('suicide_attempts_times');
+    const nssiInput     = document.getElementById('suicide_nssi_times');
+
+    const lastLabel = document.getElementById('suicide_last_description_label');
+    const lastInput = document.getElementById('suicide_last_description');
+
+    function updateSuicideHistoryState(changedCb) {
+        // Эксклюзивность "не отмечает"
+        if (noneCb && changedCb === noneCb && noneCb.checked) {
+            checkboxes.forEach(cb => {
+                if (cb !== noneCb) cb.checked = false;
+            });
+        }
+
+        // Эксклюзивность "затрудняется ответить"
+        if (uncertainCb && changedCb === uncertainCb && uncertainCb.checked) {
+            checkboxes.forEach(cb => {
+                if (cb !== uncertainCb) cb.checked = false;
+            });
+        }
+
+        // Если отметили попытки/НСС — снимаем "не отмечает" и "затрудняется"
+        const attemptsChecked = attemptsCb && attemptsCb.checked;
+        const nssiChecked     = nssiCb && nssiCb.checked;
+
+        if (attemptsChecked || nssiChecked) {
+            if (noneCb) noneCb.checked = false;
+            if (uncertainCb) uncertainCb.checked = false;
+        }
+
+        // Управление полями "раз"
+        if (attemptsInput) {
+            attemptsInput.disabled = !attemptsChecked;
+            if (!attemptsChecked) attemptsInput.value = '';
+        }
+
+        if (nssiInput) {
+            nssiInput.disabled = !nssiChecked;
+            if (!nssiChecked) nssiInput.value = '';
+        }
+
+        // Показ / скрытие "Описание последнего эпизода"
+        const showLast = attemptsChecked || nssiChecked;
+
+        if (lastLabel && lastInput) {
+            lastLabel.style.display = showLast ? '' : 'none';
+            lastInput.style.display = showLast ? '' : 'none';
+
+            if (!showLast) {
+                lastInput.value = '';
+            }
+        }
+    }
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function () {
+            updateSuicideHistoryState(cb);
+        });
+    });
+
+    // Инициализация при загрузке
+    updateSuicideHistoryState(null);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    // ...если тут уже есть другие init-функции — просто добавляем ещё одну
+    initSuicideHistory();
+});
+
+// =========================================
+// Генерация текста: суицидальное поведение в анамнезе
+// =========================================
+
+function buildSuicideHistoryText() {
+    const noneCb      = document.getElementById('suicide_history_none');
+    const attemptsCb  = document.getElementById('suicide_history_attempts');
+    const nssiCb      = document.getElementById('suicide_history_nssi');
+    const uncertainCb = document.getElementById('suicide_history_uncertain');
+
+    const attemptsInput = document.getElementById('suicide_attempts_times');
+    const nssiInput     = document.getElementById('suicide_nssi_times');
+    const lastInput     = document.getElementById('suicide_last_description');
+
+    // --- Эксклюзивные варианты ---
+    if (noneCb.checked) {
+        return "Суицидальное поведение в анамнезе не отмечает.";
+    }
+
+    if (uncertainCb.checked) {
+        return "Относительно суицидального поведения в анамнезе затрудняется ответить.";
+    }
+
+    // --- Если выбраны попытки / НСС ---
+    let parts = [];
+
+    if (attemptsCb.checked) {
+        const t = attemptsInput.value.trim();
+        if (t) {
+            parts.push(`отмечает суицидальные попытки (${t} раз)`);
+        } else {
+            parts.push("отмечает суицидальные попытки");
+        }
+    }
+
+    if (nssiCb.checked) {
+        const n = nssiInput.value.trim();
+        if (n) {
+            parts.push(`отмечает эпизоды самоповреждения без суицидального намерения (${n} раз)`);
+        } else {
+            parts.push("отмечает эпизоды самоповреждения без суицидального намерения");
+        }
+    }
+
+    if (parts.length === 0) {
+        return "";
+    }
+
+    const last = lastInput.value.trim();
+    let lastPart = last ? ` Последний эпизод: ${last}.` : "";
+
+    return "В анамнезе " + parts.join("; ") + "." + lastPart;
+}
 
     document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('.sidebar-link');
@@ -3539,7 +3750,7 @@ function collectPrescriptionsText() {
 
     // TODO: report templates placeholder
 
-        function generateText() {
+    function generateText() {
         // Общие части
         const complaints = document.getElementById('complaints').value.trim();
         const anamnesis = document.getElementById('anamnesis').value.trim();
@@ -3590,10 +3801,9 @@ function collectPrescriptionsText() {
         const emotions = getCheckedTextByName('emotions');
         const aggression = document.getElementById('aggression').value || '';
 
-        // Суицидальное поведение
+        // Суицидальное поведение (текущие мысли/планы + контрфакторы)
         const suicidal_thoughts = document.getElementById('suicidal_thoughts').value || '';
         const suicidal_plans = document.getElementById('suicidal_plans').value || '';
-        const suicidal_behavior = document.getElementById('suicidal_behavior').value || '';
         const contrsuicidal_factors = document.getElementById('contrsuicidal_factors').value || '';
 
         // Мотивация, двигательна сфера, планы, судороги
@@ -3710,13 +3920,21 @@ function collectPrescriptionsText() {
         if (aggression) emoLine += 'Агрессивные тенденции: ' + aggression + '. ';
         if (suicidal_thoughts) emoLine += 'Суицидальные мысли на момент осмотра: ' + suicidal_thoughts + '. ';
         if (suicidal_plans) emoLine += 'Суицидальные планы на момент осмотра: ' + suicidal_plans + '. ';
-        if (suicidal_behavior) emoLine += 'Суицидальное поведение: ' + suicidal_behavior + '. ';
         if (contrsuicidal_factors) emoLine += 'Контрсуицидальные факторы: ' + contrsuicidal_factors + '. ';
 
         if (emoLine) {
             text += emoLine + '<br>';
         }
 
+        // Суицидальное поведение в анамнезе из мультчека (если функция есть)
+        if (typeof buildSuicideHistoryText === 'function') {
+            const sh = buildSuicideHistoryText();
+            if (sh) {
+                text += sh + '<br>';
+            }
+        }
+
+        // Воля
         if (will) {
             text += 'Воля: ' + will + '.<br>';
         }

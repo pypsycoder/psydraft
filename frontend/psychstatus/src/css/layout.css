@@ -270,3 +270,33 @@ body.sidebar-collapsed .sidebar-toggle {
     background: #f2f3f5;
     color: #1f2937;
 }
+
+/* ==== Суицидальное поведение в анамнезе ==== */
+
+.suicide-history {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.suicide-history .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+}
+
+.suicide-inline-input {
+    width: 90px;
+    max-width: 120px;
+    font-size: 14px;
+    padding: 4px 6px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+}
+
+.suicide-inline-input:disabled {
+    background-color: #f9fafb;
+    color: #9ca3af;
+}
