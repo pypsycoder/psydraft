@@ -1691,6 +1691,7 @@ button:active {
                 <span id="recommendations-selected-count">0</span>
             </div>
         </div>
+        <div id="group-filters" class="group-filters"></div>
 
         <!-- СЮДА JS РИСУЕТ КАРТОЧКИ -->
         <div class="rec-grid" id="recommendation-cards"></div>
@@ -2231,13 +2232,120 @@ function getCheckedTextByName(name) {
 
 // === ЛОГИКА КАРТОЧЕК РЕКОМЕНДАЦИЙ ===
 
-function initRecommendationCards() {
+
+// Сопоставление внутренних групп → русские названия
+const GROUP_LABELS = {
+    general: "Общие",
+    sleep: "Сон",
+    anxiety: "Тревога",
+    depression: "Депрессия",
+    psychosis: "Психоз",
+    substance: "ПАВ",
+    extra: "Дополнительно"
+};
+// Порядок отражения групп
+
+const GROUP_ORDER = [
+    "general",
+    "sleep",
+    "anxiety",
+    "depression",
+    "psychosis",
+    "substance",
+    "extra"
+];
+
+
+// == Переменная активной группы и функции рендера групп ==
+
+let activeGroup = 'all'; // "все" по умолчанию
+
+function getGroups() {
+    const groupsSet = new Set();
+    RECOMMENDATIONS_LIBRARY.forEach(item => {
+        if (item.group) groupsSet.add(item.group);
+    });
+
+    const groups = Array.from(groupsSet);
+
+    // сортировка по нашему порядку
+    groups.sort((a, b) => GROUP_ORDER.indexOf(a) - GROUP_ORDER.indexOf(b));
+
+    return groups;
+}
+
+function renderGroupFilters() {
+    const container = document.getElementById('group-filters');
+    if (!container) return;
+
+    const groups = getGroups();
+    let html = '';
+
+    // Кнопка "Все"
+    html += `
+        <button 
+            class="group-filter-btn ${activeGroup === 'all' ? 'active' : ''}" 
+            data-group="all">
+            Все
+        </button>
+    `;
+
+    // Кнопки по группам
+    groups.forEach(group => {
+        const label = GROUP_LABELS[group] || group;
+        html += `
+          <button 
+            class="group-filter-btn ${activeGroup === group ? 'active' : ''}" 
+            data-group="${group}">
+            ${label}
+          </button>
+        `;
+    });
+
+    container.innerHTML = html;
+
+    // Обработчики на кнопки (делегирование не нужно, коллекция маленькая)
+    container.querySelectorAll('.group-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            activeGroup = btn.dataset.group;
+            renderGroupFilters();    // обновляем .active
+            renderRecommendations(); // перерисовываем карточки с учётом фильтра
+        });
+    });
+}
+
+// == Сортировка и фильтрация карточек ==
+
+function getSortedFilteredRecommendations() {
+    let items = RECOMMENDATIONS_LIBRARY.slice();
+
+    // фильтр по активной группе
+    if (activeGroup !== 'all') {
+        items = items.filter((item) => item.group === activeGroup);
+    }
+
+    // сортировка: сначала по group, потом по title
+    items.sort((a, b) => {
+        if (a.group === b.group) {
+            return (a.title || '').localeCompare(b.title || '', 'ru');
+        }
+        return (a.group || '').localeCompare(b.group || '', 'ru');
+    });
+
+    return items;
+}
+
+// == Рендер карточек рекомендаций ==
+
+function renderRecommendations() {
     const container = document.getElementById('recommendation-cards');
     if (!container || !Array.isArray(RECOMMENDATIONS_LIBRARY)) return;
 
     container.innerHTML = '';
 
-    RECOMMENDATIONS_LIBRARY.forEach((item) => {
+    const items = getSortedFilteredRecommendations();
+
+    items.forEach((item) => {
         const card = document.createElement('div');
         card.className = 'rec-card';
         card.dataset.recId = item.id;
@@ -2276,9 +2384,24 @@ function initRecommendationCards() {
         container.appendChild(card);
     });
 
-    container.addEventListener('change', onRecommendationCardsChange);
+    // после перерисовки карточек пересчитываем счётчик
     updateSelectedCount();
 }
+
+// == Инициализация карточек (один раз) ==
+
+function initRecommendationCards() {
+    const container = document.getElementById('recommendation-cards');
+    if (!container || !Array.isArray(RECOMMENDATIONS_LIBRARY)) return;
+
+    // делаем первый рендер с учётом активной группы (по умолчанию "all")
+    renderRecommendations();
+
+    // один раз вешаем обработчик событий на контейнер (делегирование)
+    container.addEventListener('change', onRecommendationCardsChange);
+}
+
+// == Обработка изменений в карточках ==
 
 function onRecommendationCardsChange(event) {
     const target = event.target;
@@ -2294,7 +2417,7 @@ function onRecommendationCardsChange(event) {
 
     const radios = modesBlock.querySelectorAll('input[type="radio"]');
 
-    // клик по чекбоксу
+    // клик по чекбоксу (включение / выключение карточки)
     if (target.classList.contains('rec-toggle')) {
         if (target.checked) {
             radios.forEach((r) => { r.disabled = false; });
@@ -2336,6 +2459,8 @@ function onRecommendationCardsChange(event) {
     }
 }
 
+// == Установка текста в зависимости от режима ==
+
 function setRecText(id, mode) {
     const item = RECOMMENDATIONS_LIBRARY.find((r) => r.id === id);
     if (!item) return;
@@ -2346,6 +2471,8 @@ function setRecText(id, mode) {
     block.textContent = mode === 'full' ? item.full : item.short;
 }
 
+// == Счётчик выбранных рекомендаций ==
+
 function updateSelectedCount() {
     const counter = document.getElementById('recommendations-selected-count');
     if (!counter) return;
@@ -2355,6 +2482,8 @@ function updateSelectedCount() {
 
     counter.textContent = String(count);
 }
+
+// == Сбор выбранных рекомендаций в текстовое поле ==
 
 function collectSelectedRecommendations() {
     const textarea = document.getElementById('recommendations');
@@ -2380,7 +2509,13 @@ function collectSelectedRecommendations() {
     textarea.value = texts.join('\n');
 }
 
+// == Общая инициализация библиотеки рекомендаций ==
+
 function initRecommendationsLibrary() {
+    // сначала рисуем фильтры по группам (если есть контейнер)
+    renderGroupFilters();
+
+    // затем инициализируем карточки
     initRecommendationCards();
 
     const collectBtn =
@@ -2390,7 +2525,7 @@ function initRecommendationsLibrary() {
     }
 }
 
-// гарантируем инициализацию
+// гарантируем инициализацию после загрузки DOM
 document.addEventListener('DOMContentLoaded', initRecommendationsLibrary);
 
         let prescriptionCounter = 0;
