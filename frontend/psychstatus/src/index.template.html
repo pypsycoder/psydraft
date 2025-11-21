@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <!-- INCLUDE layout/head.html -->
+  <style>
+    <!-- INCLUDE css/base.css -->
+    <!-- INCLUDE css/layout.css -->
+    <!-- INCLUDE css/theme.apple.css -->
+    <!-- INCLUDE css/components/cards.css -->
+    <!-- INCLUDE css/components/controls.css -->
+    <!-- INCLUDE css/components/checkboxes.css -->
+    <!-- INCLUDE css/components/multicheck.css -->
+    <!-- INCLUDE css/components/perception.css -->
+    <!-- INCLUDE css/components/prescriptions.css -->
+    <!-- INCLUDE css/components/recommendations.css -->
+    <!-- INCLUDE css/components/result.css -->
+    <!-- INCLUDE css/components/animations.css -->
+  </style>
+</head>
+<body>
+
+  <button type="button"
+          class="sidebar-floating-toggle"
+          onclick="toggleSidebar()"
+          aria-label="Открыть навигацию">
+      ☰
+  </button>
+
+  <div class="layout">
+    <!-- INCLUDE layout/sidebar.html -->
+
+    <div class="main">
+      <!-- INCLUDE layout/header.html -->
+
+      <!-- INCLUDE sections/general.html -->
+
+      <!-- Блок психического статуса -->
+      <!-- INCLUDE sections/status/status.wrapper.html -->
+
+      <!-- Диагноз, рекомендации, назначения, результат -->
+      <!-- INCLUDE sections/diagnosis.html -->
+      <!-- INCLUDE sections/recommendations.html -->
+      <!-- INCLUDE sections/prescriptions.html -->
+      <!-- INCLUDE sections/result.html -->
+    </div>
+  </div>
+
+  <!-- INCLUDE layout/footer.html -->
+  <!-- INCLUDE layout/modals.html -->
+
+  <script>
+    <!-- INCLUDE js/utils/dom.js -->
+    <!-- INCLUDE js/utils/text.js -->
+
+    <!-- INCLUDE js/state/schema.js -->
+    <!-- INCLUDE js/state/defaults.js -->
+    <!-- INCLUDE js/state/storage.js -->
+
+    <!-- INCLUDE js/ui/sidebar.js -->
+    <!-- INCLUDE js/ui/multicheck.js -->
+    <!-- INCLUDE js/ui/navigation.js -->
+    <!-- INCLUDE js/ui/perception.js -->
+    <!-- INCLUDE js/ui/ideas.js -->
+    <!-- INCLUDE js/ui/icd_search.js -->
+    <!-- INCLUDE js/ui/recommendations.js -->
+    <!-- INCLUDE js/ui/prescriptions.js -->
+
+    <!-- INCLUDE js/report/templates.js -->
+    <!-- INCLUDE js/report/builder.js -->
+    <!-- INCLUDE js/report/prettifier.js -->
+
+    <!-- INCLUDE js/main.js -->
+  </script>
+</body>
+</html>

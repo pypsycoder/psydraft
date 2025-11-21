@@ -1,0 +1,7 @@
+/* Apple Health inspired theme accents */
+.page-footer {
+    text-align: center;
+    padding: 16px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}

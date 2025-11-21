@@ -1,0 +1,65 @@
+.prescriptions-controls {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.prescription-item {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fafafa;
+    border: 1px solid #e1e4eb;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    animation: fadeInUp 0.25s ease-out;
+}
+
+.prescription-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin-top: 6px;
+}
+
+.prescription-row > div {
+    flex: 1 1 160px;
+    min-width: 140px;
+}
+
+.prescription-label-small {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.time-dose-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.time-dose-row input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+}
+
+.time-dose-row input[type="number"] {
+    width: 72px;
+    padding: 4px 6px;
+    font-size: 14px;
+    border-radius: 8px;
+}
+
+.prescription-comment {
+    margin-top: 6px;
+}
+
+.prescription-comment input {
+    font-size: 14px;
+    padding: 6px 8px;
+}

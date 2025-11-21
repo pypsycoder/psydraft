@@ -1,0 +1,121 @@
+.idea-row,
+.perception-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px 12px;
+    padding: 8px 12px;
+}
+
+/* Оформление рамкой только для блока обманов восприятия */
+#status-perception .perception-row {
+    border: none;
+    background: none;
+    padding: 8px 0;
+}
+
+.idea-description,
+.perception-description,
+.hallucination-description-input {
+    flex: 1 1 200px;
+    min-width: 180px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #ced0d8;
+    font-size: 15px;
+}
+
+.perception-columns,
+.psychosensory-columns {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.perception-card {
+    background: #ffffff;
+    border: 1px solid #e1e4eb;
+    border-radius: 12px;
+    padding: 10px 12px;
+}
+
+.perception-card h4 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: #1c1c1e;
+}
+
+.perception-group {
+    border: 1px solid #e1e4eb;
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.perception-group summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.perception-group summary::marker {
+    content: "";
+}
+
+.perception-group[open] {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+}
+
+.perception-summary::before {
+    content: "▸";
+    display: inline-block;
+    transition: transform 0.2s ease;
+    font-size: 12px;
+    color: #8e8e93;
+}
+
+.perception-group[open] .perception-summary::before {
+    transform: rotate(90deg);
+}
+
+.perception-inner {
+    padding: 6px 12px 12px;
+    border-top: 1px solid #e1e4eb;
+}
+
+.perception-row {
+    margin-top: 6px;
+}
+
+.perception-row-inline {
+    display: grid;
+    grid-template-columns: minmax(0, 230px) 1fr;
+    gap: 6px 12px;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.perception-columns-analyzer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 4px 12px;
+    margin-bottom: 8px;
+}
+
+.attention-group {
+    background: #ffffff;
+    border: 1px solid #e1e4eb;
+    border-radius: 12px;
+    padding: 10px 12px;
+}
+
+.attention-group .group-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #1c1c1e;
+}

@@ -1,0 +1,15 @@
+.checkbox-item {
+    font-size: 15px;
+    color: #1c1c1e;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}

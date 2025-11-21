@@ -1,0 +1,1 @@
+const FORM_SCHEMA = {};
