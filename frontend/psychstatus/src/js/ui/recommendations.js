@@ -232,7 +232,7 @@ const GROUP_ORDER = [
 
 // == Переменная активной группы и функции рендера групп ==
 
-let activeGroup = 'all'; // "все" по умолчанию
+let activeGroup = 'sleep'; // "Сон" по умолчанию
 
 function getGroups() {
     const groupsSet = new Set();
