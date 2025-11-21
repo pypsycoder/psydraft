@@ -24,3 +24,19 @@ body {
     font-size: 17px;
     line-height: 1.5;
 }
+
+/* ================== LAYOUT ================== */
+
+.layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 12px 32px;
+    display: flex;       /* ← ключевая строка */
+    gap: 16px;
+}
+
+/* основная колонка справа от сайдбара */
+.main {
+    flex: 1;
+    min-width: 0;
+}

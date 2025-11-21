@@ -1,3 +1,278 @@
+/* Блок управления назначениями / раздел ℞ */
+
+#section-prescriptions .prescription-editor,
+#section-prescriptions .prescription-editor input,
+#section-prescriptions .prescription-editor textarea,
+#section-prescriptions .prescription-editor select,
+#section-prescriptions .prescriptions-list {
+    font-size: 15px;
+}
+
+.prescription-editor {
+    margin-top: 8px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #fafbff;
+    border: 1px solid #dde2f0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.prescription-editor-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 10px;
+    align-items: flex-end;
+}
+
+.prescription-field {
+    flex: 1 1 220px;
+    min-width: 200px;
+}
+
+.prescription-field.full-width {
+    flex-basis: 100%;
+}
+
+.prescription-field-inline {
+    max-width: 260px;
+}
+
+.prescription-label-small {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    display: block;
+}
+
+.rx-input-wide {
+    width: 100%;
+    padding: 7px 9px;
+    border-radius: 8px;
+    border: 1px solid #d5d8e3;
+    font-size: 15px;
+    background: #fff;
+}
+
+.rx-input-wide:focus,
+.rx-dose-input:focus,
+.rx-textarea:focus,
+#rx-duration-value:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(74, 118, 255, 0.18);
+}
+
+/* ========== Длительность ========== */
+
+.rx-duration-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap; /* держим всё в одной строке */
+}
+
+#rx-duration-value {
+    padding: 4px 6px;
+    border-radius: 8px;
+    border: 1px solid #d5d8e3;
+    font-size: 15px;
+    width: 3.2em;   /* примерно 4 символа */
+    min-width: 0;
+    background: #fff;
+    text-align: right;
+}
+
+.rx-duration-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* Укорачиваем поле "Название препарата", расширяем блок "В течение" */
+#section-prescriptions .prescription-editor-row:first-child .prescription-field:first-child {
+    flex: 1.6 1 320px;          /* стало чуть короче */
+}
+
+#section-prescriptions .prescription-editor-row:first-child .prescription-field:nth-child(2) {
+    flex: 1.2 1 260px;          /* чуть шире */
+    max-width: 260px;
+}
+
+/* ========== Сетка времени приёма ========== */
+/* 4 колонки: сверху время, снизу – мг */
+
+.rx-times-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(90px, 1fr));
+    gap: 6px 10px;
+    margin-top: 4px;
+}
+
+.rx-time-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.rx-time-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 15px;
+    white-space: nowrap;
+}
+
+.rx-time-label input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+}
+
+.rx-dose-input {
+    width: 100%;
+    max-width: 80px;
+    padding: 4px 6px;
+    border-radius: 8px;
+    border: 1px solid #d5d8e3;
+    font-size: 15px;
+}
+
+.rx-dose-input:disabled {
+    background: #f3f4f8;
+    color: #9ca3b5;
+}
+
+/* Комментарий */
+
+.rx-textarea {
+    width: 100%;
+    padding: 7px 9px;
+    border-radius: 8px;
+    border: 1px solid #d5d8e3;
+    font-size: 15px;
+    resize: vertical;
+    min-height: 52px;
+    max-height: 130px;
+}
+
+/* Кнопки редактора */
+
+.prescription-editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+/* Список назначений */
+
+.prescriptions-list-header {
+    margin-top: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.prescriptions-list {
+    margin-top: 4px;
+}
+
+.prescriptions-empty {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--text-tertiary, #969cb3);
+}
+
+/* Карточка одного назначения */
+
+.prescription-item {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fafafa;
+    border: 1px solid #e1e4eb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    animation: fadeInUp 0.25s ease-out;
+}
+
+.prescription-main-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.prescription-main-text {
+    flex: 1 1 auto;
+    min-width: 220px;
+    font-size: 15px;
+}
+
+.prescription-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.prescription-subline {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.prescription-comment-row {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.prescription-comment-label {
+    font-weight: 500;
+}
+
+/* ========== Кнопки действий (✏️ и ❌) ========== */
+/* Минимализм: без фона, с серой тенью */
+
+.prescription-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.prescription-action-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 16px;
+    cursor: pointer;
+    background: transparent;
+    color: #6b7280; /* серая иконка */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    transition: box-shadow 0.15s ease-out, transform 0.1s ease-out;
+}
+
+.prescription-action-btn span {
+    line-height: 1;
+}
+
+.prescription-action-btn.danger {
+    /* без отдельного красного фона, только такой же серый стиль */
+}
+
+.prescription-action-btn:hover {
+    box-shadow: 0 2px 7px rgba(0,0,0,0.26);
+    transform: translateY(-1px);
+}
+
+/* Сохранение старых классов (на всякий случай, чтобы ничего не сломать) */
+
 .prescriptions-controls {
     margin-top: 8px;
     display: flex;
@@ -5,61 +280,15 @@
     flex-wrap: wrap;
 }
 
-.prescription-item {
-    margin-top: 12px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: #fafafa;
-    border: 1px solid #e1e4eb;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    animation: fadeInUp 0.25s ease-out;
-}
+/* Анимация */
 
-.prescription-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 12px;
-    margin-top: 6px;
-}
-
-.prescription-row > div {
-    flex: 1 1 160px;
-    min-width: 140px;
-}
-
-.prescription-label-small {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 2px;
-}
-
-.time-dose-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 4px;
-    font-size: 14px;
-}
-
-.time-dose-row input[type="checkbox"] {
-    width: 15px;
-    height: 15px;
-    accent-color: var(--accent);
-}
-
-.time-dose-row input[type="number"] {
-    width: 72px;
-    padding: 4px 6px;
-    font-size: 14px;
-    border-radius: 8px;
-}
-
-.prescription-comment {
-    margin-top: 6px;
-}
-
-.prescription-comment input {
-    font-size: 14px;
-    padding: 6px 8px;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

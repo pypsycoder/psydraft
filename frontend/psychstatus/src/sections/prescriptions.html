@@ -1,8 +1,184 @@
 <div class="section" id="section-prescriptions">
     <h2>℞ Назначения</h2>
-    <div class="prescriptions-controls">
-        <button type="button" class="btn-secondary" onclick="addPrescription()">Добавить препарат</button>
-        <button type="button" class="btn-secondary" onclick="removeLastPrescription()">Удалить последний</button>
+
+    <!-- Карточка добавления / редактирования назначения -->
+    <div class="prescription-editor" id="prescription-editor">
+        <div class="prescription-editor-row">
+            <div class="prescription-field">
+                <label class="prescription-label-small" for="rx-name">Название препарата</label>
+                <input
+                    type="text"
+                    id="rx-name"
+                    class="rx-input-wide"
+                    placeholder="например, Сертралин"
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="prescription-field prescription-field-inline">
+                <span class="prescription-label-small">В течение</span>
+                <div class="rx-duration-row">
+                    <select id="rx-duration-value">
+                        <option value="">—</option>
+                        <!-- 1–30 -->
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                        <option value="26">26</option>
+                        <option value="27">27</option>
+                        <option value="28">28</option>
+                        <option value="29">29</option>
+                        <option value="30">30</option>
+                    </select>
+
+                    <label class="rx-duration-type">
+                        <input type="radio" name="rx-duration-type" value="days" checked>
+                        дней
+                    </label>
+                    <label class="rx-duration-type">
+                        <input type="radio" name="rx-duration-type" value="months">
+                        месяцев
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="prescription-editor-row">
+            <div class="prescription-field full-width">
+                <span class="prescription-label-small">Схема приёма и доза (мг)</span>
+                <div class="rx-times-grid">
+                    <div class="rx-time-cell">
+                        <label class="rx-time-label">
+                            <input
+                                type="checkbox"
+                                class="rx-time-checkbox"
+                                data-time="утром"
+                            >
+                            Утром
+                        </label>
+                        <input
+                            type="number"
+                            class="rx-dose-input"
+                            data-time="утром"
+                            placeholder="мг"
+                            min="0"
+                            step="1"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="rx-time-cell">
+                        <label class="rx-time-label">
+                            <input
+                                type="checkbox"
+                                class="rx-time-checkbox"
+                                data-time="днём"
+                            >
+                            Днём
+                        </label>
+                        <input
+                            type="number"
+                            class="rx-dose-input"
+                            data-time="днём"
+                            placeholder="мг"
+                            min="0"
+                            step="1"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="rx-time-cell">
+                        <label class="rx-time-label">
+                            <input
+                                type="checkbox"
+                                class="rx-time-checkbox"
+                                data-time="вечером"
+                            >
+                            Вечером
+                        </label>
+                        <input
+                            type="number"
+                            class="rx-dose-input"
+                            data-time="вечером"
+                            placeholder="мг"
+                            min="0"
+                            step="1"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="rx-time-cell">
+                        <label class="rx-time-label">
+                            <input
+                                type="checkbox"
+                                class="rx-time-checkbox"
+                                data-time="на ночь"
+                            >
+                            На ночь
+                        </label>
+                        <input
+                            type="number"
+                            class="rx-dose-input"
+                            data-time="на ночь"
+                            placeholder="мг"
+                            min="0"
+                            step="1"
+                            disabled
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="prescription-editor-row">
+            <div class="prescription-field full-width">
+                <label class="prescription-label-small" for="rx-comment">Комментарий</label>
+                <textarea
+                    id="rx-comment"
+                    rows="2"
+                    class="rx-textarea"
+                    placeholder="например, принимать после еды"
+                ></textarea>
+            </div>
+        </div>
+
+        <div class="prescription-editor-actions">
+            <button type="button" class="btn-secondary" id="rx-clear-btn">
+                Очистить
+            </button>
+            <button type="button" class="btn-primary" id="rx-submit-btn">
+                Добавить
+            </button>
+        </div>
     </div>
-    <div id="prescriptions_list"></div>
+
+    <!-- Список назначений -->
+    <div class="prescriptions-list-header">
+        Добавленные назначения
+    </div>
+    <div id="prescriptions_list" class="prescriptions-list">
+        <div class="prescriptions-empty">Пока нет назначений.</div>
+    </div>
 </div>

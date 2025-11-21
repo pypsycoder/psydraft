@@ -1,23 +1,12 @@
-/* ================== LAYOUT ================== */
-
-.layout {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 16px 12px 32px;
-    display: flex;
-    gap: 16px;
-}
-
 /* ================== SIDEBAR ================== */
 
+/* Контейнер сайдбара — обычная колонка слева во flex-лейауте */
 .sidebar {
     width: 240px;
     position: sticky;
     top: 12px;
     align-self: flex-start;
-
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(16px);
+    background: #ffffff; /* непрозрачный белый, без ощущения “наложения” */
     border-radius: 18px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     border: 1px solid rgba(0,0,0,0.06);
@@ -35,8 +24,7 @@
         opacity var(--transition-fast);
 }
 
-/* Шапка: иконка сайдбара + заголовок */
-
+/* Шапка */
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -48,13 +36,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     width: 30px;
     height: 30px;
     border-radius: 999px;
     border: none;
     padding: 0;
-
     background: var(--accent);
     color: #fff;
     cursor: pointer;
@@ -66,33 +52,26 @@
         transform 0.12s ease;
 }
 
-.sidebar-toggle svg {
-    width: 20px;
-    height: 20px;
-    display: block;
-}
-
 .sidebar-toggle:hover {
     background: #0063d1;
     box-shadow: 0 6px 14px rgba(0,122,255,0.38);
     transform: translateY(-1px);
 }
 
-.sidebar-toggle:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 8px rgba(0,122,255,0.30);
+.sidebar-toggle svg {
+    width: 20px;
+    height: 20px;
 }
 
 .sidebar-title {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--text-secondary);
 }
 
-/* Навигационный список в стиле Apple Health */
-
+/* Навигационные ссылки */
 .sidebar-nav {
     margin-top: 4px;
     display: flex;
@@ -103,7 +82,7 @@
 .sidebar-group-title {
     margin-top: 10px;
     margin-bottom: 2px;
-    font-size: 11px;
+    font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -111,7 +90,6 @@
 }
 
 /* Строка меню */
-
 .sidebar-link {
     display: flex;
     align-items: center;
@@ -120,30 +98,32 @@
     width: 100%;
     padding: 6px 8px;
     border-radius: 12px;
-
+    background: transparent; /* больше НЕТ голубой заливки */
     text-decoration: none;
     color: var(--text-primary);
     font-size: 14px;
 
     cursor: pointer;
     transition:
-        background var(--transition-fast),
-        transform 0.08s ease;
+        background 0.12s ease,
+        box-shadow 0.12s ease,
+        transform 0.1s ease;
 }
 
 .sidebar-link:hover {
     background: rgba(0,0,0,0.04);
+    box-shadow: 0 0 0 1px rgba(148,163,184,0.35);
     transform: translateX(1px);
 }
 
-/* Иконка слева */
-
+/* Иконка */
 .sidebar-link-icon {
     flex: 0 0 36px;
     height: 36px;
 
     border-radius: 12px;
-    background: rgba(0,122,255,0.12);
+    background: transparent; /* не подсвечиваем фон */
+    color: var(--accent);
 
     display: flex;
     align-items: center;
@@ -151,50 +131,49 @@
 
     font-size: 20px;
     line-height: 1;
-    color: var(--accent);
 
-    transition: transform 0.1s ease;
+    transition: transform 0.12s ease;
 }
 
 .sidebar-link:hover .sidebar-link-icon {
-    transform: scale(1.08);
+    transform: scale(1.1);
 }
 
+/* Подпись */
 .sidebar-link-label {
     white-space: nowrap;
 }
 
-/* Чтобы не было фиолетовых visited */
-
+/* Чтобы не было фиолетового visited */
 .sidebar-link:visited {
     color: var(--text-primary);
 }
 
-/* ===== Подсветка активной секции ===== */
-
+/* ===== АКТИВНАЯ СЕКЦИЯ — мягкое голубое кольцо ===== */
 .sidebar-link.active {
-    background: rgba(0,122,255,0.12);
+    background: transparent;
+    box-shadow:
+        0 0 0 2px rgba(59,130,246,0.55),
+        0 4px 10px rgba(59,130,246,0.22);
+    transform: translateX(1px);
 }
 
 .sidebar-link.active .sidebar-link-icon {
-    background: rgba(0,122,255,0.22);
-    color: #fff;
+    transform: scale(1.1);
 }
 
 /* ===== Свернутый режим: только иконки ===== */
 
 body.sidebar-collapsed .sidebar {
-    width: 58px;
+    width: 60px;
     padding-inline: 6px;
 }
 
-/* в свернутом режиме заголовок и подписи групп не нужны */
 body.sidebar-collapsed .sidebar-title,
 body.sidebar-collapsed .sidebar-group-title {
     display: none;
 }
 
-/* и текст элементов скрываем, остаются только эмодзи */
 body.sidebar-collapsed .sidebar-link-label {
     display: none;
 }
@@ -204,78 +183,67 @@ body.sidebar-collapsed .sidebar-link {
     padding-inline: 0;
 }
 
-/* шапка по центру в свернутом режиме */
 body.sidebar-collapsed .sidebar-header {
     justify-content: center;
 }
 
-/* кнопку можно чуть увеличить, чтобы визуально совпадала с иконками */
 body.sidebar-collapsed .sidebar-toggle {
     width: 36px;
     height: 36px;
 }
 
-/* ================== MAIN ================== */
+/* ============================= */
+/*   Айфоновский стиль секций    */
+/* ============================= */
 
-.main {
-    flex: 1;
-    min-width: 0;
+.section {
+    margin-bottom: 28px;
 }
 
-h1 {
-    font-size: 28px;
-    margin: 0 0 16px;
+/* Заголовок секции на сером фоне */
+.section > h2,
+.section-heading {
+    margin: 0 0 10px;
+    padding: 8px 14px;
+
+    font-size: 20px;
     font-weight: 700;
-    color: #111;
-    text-align: left;
+
+    border-radius: 12px;
+    background: #f2f3f5;   /* светлый серый */
+    color: #1f2937;        /* тёмно-серый текст */
 }
 
-.page-header {
-    margin-bottom: 14px;
+/* Белая карточка под заголовком */
+.section-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 14px 16px;
+
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.05),
+        0 10px 20px rgba(0,0,0,0.03);
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.small-note {
-    font-size: 14px;
-    color: var(--text-secondary);
+/* Поля внутри карточки чуть крупнее и с нормальным фокусом */
+.section-card textarea,
+.section-card input[type="text"],
+.section-card input[type="number"] {
+    font-size: 15px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
 }
 
-/* ================== MOBILE ================== */
-
-@media (max-width: 900px) {
-    .layout {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        position: static;
-        order: -1;
-    }
-
-    /* На мобилках "свернутость" не схлопывает до иконок,
-       чтобы навигация оставалась читаемой */
-    body.sidebar-collapsed .sidebar {
-        width: 100%;
-        padding-inline: 14px;
-    }
-
-    body.sidebar-collapsed .sidebar-title,
-    body.sidebar-collapsed .sidebar-group-title,
-    body.sidebar-collapsed .sidebar-link-label {
-        display: block;
-    }
-
-    body.sidebar-collapsed .sidebar-link {
-        justify-content: flex-start;
-        padding-inline: 8px;
-    }
-
-    body.sidebar-collapsed .sidebar-header {
-        justify-content: flex-start;
-    }
-
-    body.sidebar-collapsed .sidebar-toggle {
-        width: 30px;
-        height: 30px;
-    }
+.section-card textarea:focus,
+.section-card input[type="text"]:focus,
+.section-card input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0,122,255,0.15);
 }

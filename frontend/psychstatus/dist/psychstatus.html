@@ -32,26 +32,31 @@ body {
     line-height: 1.5;
 }
 
-    /* ================== LAYOUT ================== */
+/* ================== LAYOUT ================== */
 
 .layout {
     max-width: 1200px;
     margin: 0 auto;
     padding: 16px 12px 32px;
-    display: flex;
+    display: flex;       /* ← ключевая строка */
     gap: 16px;
 }
 
-/* ================== SIDEBAR ================== */
+/* основная колонка справа от сайдбара */
+.main {
+    flex: 1;
+    min-width: 0;
+}
 
+    /* ================== SIDEBAR ================== */
+
+/* Контейнер сайдбара — обычная колонка слева во flex-лейауте */
 .sidebar {
     width: 240px;
     position: sticky;
     top: 12px;
     align-self: flex-start;
-
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(16px);
+    background: #ffffff; /* непрозрачный белый, без ощущения “наложения” */
     border-radius: 18px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     border: 1px solid rgba(0,0,0,0.06);
@@ -69,8 +74,7 @@ body {
         opacity var(--transition-fast);
 }
 
-/* Шапка: иконка сайдбара + заголовок */
-
+/* Шапка */
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -82,13 +86,11 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     width: 30px;
     height: 30px;
     border-radius: 999px;
     border: none;
     padding: 0;
-
     background: var(--accent);
     color: #fff;
     cursor: pointer;
@@ -100,33 +102,26 @@ body {
         transform 0.12s ease;
 }
 
-.sidebar-toggle svg {
-    width: 20px;
-    height: 20px;
-    display: block;
-}
-
 .sidebar-toggle:hover {
     background: #0063d1;
     box-shadow: 0 6px 14px rgba(0,122,255,0.38);
     transform: translateY(-1px);
 }
 
-.sidebar-toggle:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 8px rgba(0,122,255,0.30);
+.sidebar-toggle svg {
+    width: 20px;
+    height: 20px;
 }
 
 .sidebar-title {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--text-secondary);
 }
 
-/* Навигационный список в стиле Apple Health */
-
+/* Навигационные ссылки */
 .sidebar-nav {
     margin-top: 4px;
     display: flex;
@@ -137,7 +132,7 @@ body {
 .sidebar-group-title {
     margin-top: 10px;
     margin-bottom: 2px;
-    font-size: 11px;
+    font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -145,7 +140,6 @@ body {
 }
 
 /* Строка меню */
-
 .sidebar-link {
     display: flex;
     align-items: center;
@@ -154,30 +148,32 @@ body {
     width: 100%;
     padding: 6px 8px;
     border-radius: 12px;
-
+    background: transparent; /* больше НЕТ голубой заливки */
     text-decoration: none;
     color: var(--text-primary);
     font-size: 14px;
 
     cursor: pointer;
     transition:
-        background var(--transition-fast),
-        transform 0.08s ease;
+        background 0.12s ease,
+        box-shadow 0.12s ease,
+        transform 0.1s ease;
 }
 
 .sidebar-link:hover {
     background: rgba(0,0,0,0.04);
+    box-shadow: 0 0 0 1px rgba(148,163,184,0.35);
     transform: translateX(1px);
 }
 
-/* Иконка слева */
-
+/* Иконка */
 .sidebar-link-icon {
     flex: 0 0 36px;
     height: 36px;
 
     border-radius: 12px;
-    background: rgba(0,122,255,0.12);
+    background: transparent; /* не подсвечиваем фон */
+    color: var(--accent);
 
     display: flex;
     align-items: center;
@@ -185,50 +181,49 @@ body {
 
     font-size: 20px;
     line-height: 1;
-    color: var(--accent);
 
-    transition: transform 0.1s ease;
+    transition: transform 0.12s ease;
 }
 
 .sidebar-link:hover .sidebar-link-icon {
-    transform: scale(1.08);
+    transform: scale(1.1);
 }
 
+/* Подпись */
 .sidebar-link-label {
     white-space: nowrap;
 }
 
-/* Чтобы не было фиолетовых visited */
-
+/* Чтобы не было фиолетового visited */
 .sidebar-link:visited {
     color: var(--text-primary);
 }
 
-/* ===== Подсветка активной секции ===== */
-
+/* ===== АКТИВНАЯ СЕКЦИЯ — мягкое голубое кольцо ===== */
 .sidebar-link.active {
-    background: rgba(0,122,255,0.12);
+    background: transparent;
+    box-shadow:
+        0 0 0 2px rgba(59,130,246,0.55),
+        0 4px 10px rgba(59,130,246,0.22);
+    transform: translateX(1px);
 }
 
 .sidebar-link.active .sidebar-link-icon {
-    background: rgba(0,122,255,0.22);
-    color: #fff;
+    transform: scale(1.1);
 }
 
 /* ===== Свернутый режим: только иконки ===== */
 
 body.sidebar-collapsed .sidebar {
-    width: 58px;
+    width: 60px;
     padding-inline: 6px;
 }
 
-/* в свернутом режиме заголовок и подписи групп не нужны */
 body.sidebar-collapsed .sidebar-title,
 body.sidebar-collapsed .sidebar-group-title {
     display: none;
 }
 
-/* и текст элементов скрываем, остаются только эмодзи */
 body.sidebar-collapsed .sidebar-link-label {
     display: none;
 }
@@ -238,80 +233,69 @@ body.sidebar-collapsed .sidebar-link {
     padding-inline: 0;
 }
 
-/* шапка по центру в свернутом режиме */
 body.sidebar-collapsed .sidebar-header {
     justify-content: center;
 }
 
-/* кнопку можно чуть увеличить, чтобы визуально совпадала с иконками */
 body.sidebar-collapsed .sidebar-toggle {
     width: 36px;
     height: 36px;
 }
 
-/* ================== MAIN ================== */
+/* ============================= */
+/*   Айфоновский стиль секций    */
+/* ============================= */
 
-.main {
-    flex: 1;
-    min-width: 0;
+.section {
+    margin-bottom: 28px;
 }
 
-h1 {
-    font-size: 28px;
-    margin: 0 0 16px;
+/* Заголовок секции на сером фоне */
+.section > h2,
+.section-heading {
+    margin: 0 0 10px;
+    padding: 8px 14px;
+
+    font-size: 20px;
     font-weight: 700;
-    color: #111;
-    text-align: left;
+
+    border-radius: 12px;
+    background: #f2f3f5;   /* светлый серый */
+    color: #1f2937;        /* тёмно-серый текст */
 }
 
-.page-header {
-    margin-bottom: 14px;
+/* Белая карточка под заголовком */
+.section-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 14px 16px;
+
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.05),
+        0 10px 20px rgba(0,0,0,0.03);
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.small-note {
-    font-size: 14px;
-    color: var(--text-secondary);
+/* Поля внутри карточки чуть крупнее и с нормальным фокусом */
+.section-card textarea,
+.section-card input[type="text"],
+.section-card input[type="number"] {
+    font-size: 15px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
 }
 
-/* ================== MOBILE ================== */
-
-@media (max-width: 900px) {
-    .layout {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        position: static;
-        order: -1;
-    }
-
-    /* На мобилках "свернутость" не схлопывает до иконок,
-       чтобы навигация оставалась читаемой */
-    body.sidebar-collapsed .sidebar {
-        width: 100%;
-        padding-inline: 14px;
-    }
-
-    body.sidebar-collapsed .sidebar-title,
-    body.sidebar-collapsed .sidebar-group-title,
-    body.sidebar-collapsed .sidebar-link-label {
-        display: block;
-    }
-
-    body.sidebar-collapsed .sidebar-link {
-        justify-content: flex-start;
-        padding-inline: 8px;
-    }
-
-    body.sidebar-collapsed .sidebar-header {
-        justify-content: flex-start;
-    }
-
-    body.sidebar-collapsed .sidebar-toggle {
-        width: 30px;
-        height: 30px;
-    }
+.section-card textarea:focus,
+.section-card input[type="text"]:focus,
+.section-card input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0,122,255,0.15);
 }
 
     /* Apple Health inspired theme accents */
@@ -803,11 +787,307 @@ button:active {
     cursor: pointer;
 }
 
+    /* Блок управления назначениями / раздел ℞ */
+
+#section-prescriptions .prescription-editor,
+#section-prescriptions .prescription-editor input,
+#section-prescriptions .prescription-editor textarea,
+#section-prescriptions .prescription-editor select,
+#section-prescriptions .prescriptions-list {
+    font-size: 15px;
+}
+
+.prescription-editor {
+    margin-top: 8px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #fafbff;
+    border: 1px solid #dde2f0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.prescription-editor-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 10px;
+    align-items: flex-end;
+}
+
+.prescription-field {
+    flex: 1 1 220px;
+    min-width: 200px;
+}
+
+.prescription-field.full-width {
+    flex-basis: 100%;
+}
+
+.prescription-field-inline {
+    max-width: 260px;
+}
+
+.prescription-label-small {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    display: block;
+}
+
+.rx-input-wide {
+    width: 100%;
+    padding: 7px 9px;
+    border-radius: 8px;
+    border: 1px solid #d5d8e3;
+    font-size: 15px;
+    background: #fff;
+}
+
+.rx-input-wide:focus,
+.rx-dose-input:focus,
+.rx-textarea:focus,
+#rx-duration-value:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(74, 118, 255, 0.18);
+}
+
+/* ========== Длительность ========== */
+
+.rx-duration-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap; /* держим всё в одной строке */
+}
+
+#rx-duration-value {
+    padding: 4px 6px;
+    border-radius: 8px;
+    border: 1px solid #d5d8e3;
+    font-size: 15px;
+    width: 3.2em;   /* примерно 4 символа */
+    min-width: 0;
+    background: #fff;
+    text-align: right;
+}
+
+.rx-duration-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* Укорачиваем поле "Название препарата", расширяем блок "В течение" */
+#section-prescriptions .prescription-editor-row:first-child .prescription-field:first-child {
+    flex: 1.6 1 320px;          /* стало чуть короче */
+}
+
+#section-prescriptions .prescription-editor-row:first-child .prescription-field:nth-child(2) {
+    flex: 1.2 1 260px;          /* чуть шире */
+    max-width: 260px;
+}
+
+/* ========== Сетка времени приёма ========== */
+/* 4 колонки: сверху время, снизу – мг */
+
+.rx-times-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(90px, 1fr));
+    gap: 6px 10px;
+    margin-top: 4px;
+}
+
+.rx-time-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.rx-time-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 15px;
+    white-space: nowrap;
+}
+
+.rx-time-label input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+}
+
+.rx-dose-input {
+    width: 100%;
+    max-width: 80px;
+    padding: 4px 6px;
+    border-radius: 8px;
+    border: 1px solid #d5d8e3;
+    font-size: 15px;
+}
+
+.rx-dose-input:disabled {
+    background: #f3f4f8;
+    color: #9ca3b5;
+}
+
+/* Комментарий */
+
+.rx-textarea {
+    width: 100%;
+    padding: 7px 9px;
+    border-radius: 8px;
+    border: 1px solid #d5d8e3;
+    font-size: 15px;
+    resize: vertical;
+    min-height: 52px;
+    max-height: 130px;
+}
+
+/* Кнопки редактора */
+
+.prescription-editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+/* Список назначений */
+
+.prescriptions-list-header {
+    margin-top: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.prescriptions-list {
+    margin-top: 4px;
+}
+
+.prescriptions-empty {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--text-tertiary, #969cb3);
+}
+
+/* Карточка одного назначения */
+
+.prescription-item {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fafafa;
+    border: 1px solid #e1e4eb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    animation: fadeInUp 0.25s ease-out;
+}
+
+.prescription-main-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.prescription-main-text {
+    flex: 1 1 auto;
+    min-width: 220px;
+    font-size: 15px;
+}
+
+.prescription-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.prescription-subline {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.prescription-comment-row {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.prescription-comment-label {
+    font-weight: 500;
+}
+
+/* ========== Кнопки действий (✏️ и ❌) ========== */
+/* Минимализм: без фона, с серой тенью */
+
+.prescription-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.prescription-action-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 16px;
+    cursor: pointer;
+    background: transparent;
+    color: #6b7280; /* серая иконка */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    transition: box-shadow 0.15s ease-out, transform 0.1s ease-out;
+}
+
+.prescription-action-btn span {
+    line-height: 1;
+}
+
+.prescription-action-btn.danger {
+    /* без отдельного красного фона, только такой же серый стиль */
+}
+
+.prescription-action-btn:hover {
+    box-shadow: 0 2px 7px rgba(0,0,0,0.26);
+    transform: translateY(-1px);
+}
+
+/* Сохранение старых классов (на всякий случай, чтобы ничего не сломать) */
+
+.prescriptions-controls {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Анимация */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
   </style>
 </head>
 <body>
 
   <div class="layout">
+    <!-- Сайдбар слева -->
     <nav class="sidebar">
     <div class="sidebar-header">
         <button
@@ -830,7 +1110,7 @@ button:active {
 
     <div class="sidebar-nav">
         <div class="sidebar-group-title">Жалобы и анамнез</div>
-        <a href="#section-general" class="sidebar-link">
+        <a href="#section-general" class="sidebar-link sidebar-link--active">
             <span class="sidebar-link-icon">📋</span>
             <span class="sidebar-link-label">Общие разделы</span>
         </a>
@@ -870,7 +1150,7 @@ button:active {
         </a>
         <a href="#status-insight" class="sidebar-link">
             <span class="sidebar-link-icon">🔍</span>
-            <span class="sidebar-link-label">Критика к своему заболеванию</span>
+            <span class="sidebar-link-label">Критика к состоянию</span>
         </a>
         <a href="#status-sleep-appetite" class="sidebar-link">
             <span class="sidebar-link-icon">🌙</span>
@@ -882,6 +1162,10 @@ button:active {
             <span class="sidebar-link-icon">🩺</span>
             <span class="sidebar-link-label">Диагноз и рекомендации</span>
         </a>
+        <a href="#section-prescriptions" class="sidebar-link">
+            <span class="sidebar-link-icon">℞</span>
+            <span class="sidebar-link-label">Назначения</span>
+        </a>
         <a href="#section-result" class="sidebar-link">
             <span class="sidebar-link-icon">📝</span>
             <span class="sidebar-link-label">Сформированный текст</span>
@@ -890,9 +1174,10 @@ button:active {
 </nav>
 
 
+    <!-- Основное содержимое справа -->
     <div class="main">
       <div class="page-header">
-    <h1>Конструктор заключения психиатра</h1>
+    <h1>𝚿 Шаблон заключения психиатра 𝚿</h1>
     <p class="small-note">
         Заполни поля ниже, затем нажми <b>«Сформировать текст»</b>. Готовый текст появится внизу — его можно скопировать в
         историю/Word.
@@ -900,33 +1185,38 @@ button:active {
 </div>
 
 
+      <!-- Общий раздел -->
       <div class="section" id="section-general">
-            <h2>📋 Общие разделы</h2>
+    <h2>📋 Общие разделы</h2>
 
-            <label>Жалобы:</label>
-            <textarea id="complaints"></textarea>
+    <div class="section-card">
 
-            <label>Анамнез заболевания:</label>
-            <textarea id="anamnesis"></textarea>
+        <label>Жалобы:</label>
+        <textarea id="complaints"></textarea>
 
-            <label>Состояние на учете в ПНД и наркологическом диспансере:</label>
-            <textarea id="dispensary_status"></textarea>
+        <label>Анамнез заболевания:</label>
+        <textarea id="anamnesis"></textarea>
 
-            <label>Лечение в ПНД и наркологическом диспансере:</label>
-            <textarea id="dispensary_treatment"></textarea>
+        <label>Состояние на учете в ПНД и наркологическом диспансере:</label>
+        <textarea id="dispensary_status"></textarea>
 
-            <label>Считает себя больным в течение (дней):</label>
-            <input type="number" id="ill_days" min="0" placeholder="например, 30">
+        <label>Лечение в ПНД и наркологическом диспансере:</label>
+        <textarea id="dispensary_treatment"></textarea>
 
-            <label>Самостоятельное лечение:</label>
-            <textarea id="self_treatment"></textarea>
+        <label>Считает себя больным в течение (дней):</label>
+        <input type="number" id="ill_days" min="0" placeholder="например, 30">
 
-            <label>Динамика заболевания:</label>
-            <textarea id="dynamics"></textarea>
+        <label>Самостоятельное лечение:</label>
+        <textarea id="self_treatment"></textarea>
 
-            <label>Анамнез жизни:</label>
-            <textarea id="life_history"></textarea>
-        </div>
+        <label>Динамика заболевания:</label>
+        <textarea id="dynamics"></textarea>
+
+        <label>Анамнез жизни:</label>
+        <textarea id="life_history"></textarea>
+
+    </div>
+</div>
 
 
       <!-- Блок психического статуса -->
@@ -1661,19 +1951,21 @@ button:active {
 <!--   БЛОК ДИАГНОЗА                 -->
 <!-- =============================== -->
 
-<div class="section-card">
+<div class="section" id="section-diagnosis">
     <h2 class="section-title">🩺 Диагноз</h2>
+    <div class="section-card">
+        <label for="icd_search">Поиск диагноза по МКБ-10:</label>
+        <input id="icd_search"
+               type="text"
+               placeholder="Начните вводить..."
+               oninput="searchICD()">
 
-    <label for="icd_search">Поиск диагноза по МКБ-10:</label>
-    <input id="icd_search"
-           type="text"
-           placeholder="Начните вводить..."
-           oninput="searchICD()">
+        <div id="icd_results" class="icd-results"></div>
 
-    <div id="icd_results" class="icd-results"></div>
+        <label for="diagnosis">Диагноз (шифры МКБ-10):</label>
+        <textarea id="diagnosis"></textarea>
+    </div>
 
-    <label for="diagnosis">Диагноз (шифры МКБ-10):</label>
-    <textarea id="diagnosis"></textarea>
 </div>
 
       <div class="section" id="section-recommendations">
@@ -1709,11 +2001,187 @@ button:active {
 
       <div class="section" id="section-prescriptions">
     <h2>℞ Назначения</h2>
-    <div class="prescriptions-controls">
-        <button type="button" class="btn-secondary" onclick="addPrescription()">Добавить препарат</button>
-        <button type="button" class="btn-secondary" onclick="removeLastPrescription()">Удалить последний</button>
+
+    <!-- Карточка добавления / редактирования назначения -->
+    <div class="prescription-editor" id="prescription-editor">
+        <div class="prescription-editor-row">
+            <div class="prescription-field">
+                <label class="prescription-label-small" for="rx-name">Название препарата</label>
+                <input
+                    type="text"
+                    id="rx-name"
+                    class="rx-input-wide"
+                    placeholder="например, Сертралин"
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="prescription-field prescription-field-inline">
+                <span class="prescription-label-small">В течение</span>
+                <div class="rx-duration-row">
+                    <select id="rx-duration-value">
+                        <option value="">—</option>
+                        <!-- 1–30 -->
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                        <option value="26">26</option>
+                        <option value="27">27</option>
+                        <option value="28">28</option>
+                        <option value="29">29</option>
+                        <option value="30">30</option>
+                    </select>
+
+                    <label class="rx-duration-type">
+                        <input type="radio" name="rx-duration-type" value="days" checked>
+                        дней
+                    </label>
+                    <label class="rx-duration-type">
+                        <input type="radio" name="rx-duration-type" value="months">
+                        месяцев
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="prescription-editor-row">
+            <div class="prescription-field full-width">
+                <span class="prescription-label-small">Схема приёма и доза (мг)</span>
+                <div class="rx-times-grid">
+                    <div class="rx-time-cell">
+                        <label class="rx-time-label">
+                            <input
+                                type="checkbox"
+                                class="rx-time-checkbox"
+                                data-time="утром"
+                            >
+                            Утром
+                        </label>
+                        <input
+                            type="number"
+                            class="rx-dose-input"
+                            data-time="утром"
+                            placeholder="мг"
+                            min="0"
+                            step="1"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="rx-time-cell">
+                        <label class="rx-time-label">
+                            <input
+                                type="checkbox"
+                                class="rx-time-checkbox"
+                                data-time="днём"
+                            >
+                            Днём
+                        </label>
+                        <input
+                            type="number"
+                            class="rx-dose-input"
+                            data-time="днём"
+                            placeholder="мг"
+                            min="0"
+                            step="1"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="rx-time-cell">
+                        <label class="rx-time-label">
+                            <input
+                                type="checkbox"
+                                class="rx-time-checkbox"
+                                data-time="вечером"
+                            >
+                            Вечером
+                        </label>
+                        <input
+                            type="number"
+                            class="rx-dose-input"
+                            data-time="вечером"
+                            placeholder="мг"
+                            min="0"
+                            step="1"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="rx-time-cell">
+                        <label class="rx-time-label">
+                            <input
+                                type="checkbox"
+                                class="rx-time-checkbox"
+                                data-time="на ночь"
+                            >
+                            На ночь
+                        </label>
+                        <input
+                            type="number"
+                            class="rx-dose-input"
+                            data-time="на ночь"
+                            placeholder="мг"
+                            min="0"
+                            step="1"
+                            disabled
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="prescription-editor-row">
+            <div class="prescription-field full-width">
+                <label class="prescription-label-small" for="rx-comment">Комментарий</label>
+                <textarea
+                    id="rx-comment"
+                    rows="2"
+                    class="rx-textarea"
+                    placeholder="например, принимать после еды"
+                ></textarea>
+            </div>
+        </div>
+
+        <div class="prescription-editor-actions">
+            <button type="button" class="btn-secondary" id="rx-clear-btn">
+                Очистить
+            </button>
+            <button type="button" class="btn-primary" id="rx-submit-btn">
+                Добавить
+            </button>
+        </div>
     </div>
-    <div id="prescriptions_list"></div>
+
+    <!-- Список назначений -->
+    <div class="prescriptions-list-header">
+        Добавленные назначения
+    </div>
+    <div id="prescriptions_list" class="prescriptions-list">
+        <div class="prescriptions-empty">Пока нет назначений.</div>
+    </div>
 </div>
 
       <div class="buttons">
@@ -1732,6 +2200,7 @@ button:active {
     </div>
   </div>
 
+  <!-- Модалки и низ страницы -->
   <footer style="
     width: 100%;
     padding: 14px 0;
@@ -1788,6 +2257,22 @@ function saveState(state) {
     function toggleSidebar() {
     document.body.classList.toggle('sidebar-collapsed');
 }
+
+function initSidebar() {
+    const links = document.querySelectorAll('.sidebar-link');
+    if (!links.length) return;
+
+    links.forEach((link) => {
+        link.addEventListener('click', () => {
+            // снимаем выделение со всех
+            links.forEach((l) => l.classList.remove('sidebar-link--active'));
+            // ставим на кликнутый
+            link.classList.add('sidebar-link--active');
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initSidebar);
 
     function toggleMultiGroup(name) {
     const body = document.getElementById(name + '_body');
@@ -2528,113 +3013,415 @@ function initRecommendationsLibrary() {
 // гарантируем инициализацию после загрузки DOM
 document.addEventListener('DOMContentLoaded', initRecommendationsLibrary);
 
-        let prescriptionCounter = 0;
+    // Модель: массив назначений
+// Один элемент: {
+//   id: number,
+//   name: string,
+//   durationValue: string | null,
+//   durationType: "days" | "months",
+//   times: { [time: string]: string }  // "утром": "50", ...
+//   comment: string
+// }
 
-    function addPrescription() {
-        prescriptionCounter += 1;
-        const list = document.getElementById('prescriptions_list');
-        const item = document.createElement('div');
-        item.className = 'prescription-item';
-        item.dataset.index = prescriptionCounter;
+let prescriptions = [];
+let rxNextId = 1;
+let rxEditingId = null;
 
-        item.innerHTML = `
-            <div class="prescription-row">
-                <div>
-                    <div class="prescription-label-small">Название препарата</div>
-                    <input type="text" class="prescription-name" placeholder="например, Сертралин">
-                </div>
-                <div>
-                    <div class="prescription-label-small">В течение (дней)</div>
-                    <input type="number" class="prescription-days" min="1" placeholder="30">
-                </div>
-            </div>
-            <div class="prescription-row">
-                <div>
-                    <div class="prescription-label-small">Приём и доза (мг)</div>
-                    <div class="time-dose-row">
-                        <input type="checkbox" class="time-checkbox" data-time="утром">
-                        <span>утром</span>
-                        <input type="number" class="dose-input" data-time="утром" placeholder="мг">
-                    </div>
-                    <div class="time-dose-row">
-                        <input type="checkbox" class="time-checkbox" data-time="днём">
-                        <span>днём</span>
-                        <input type="number" class="dose-input" data-time="днём" placeholder="мг">
-                    </div>
-                    <div class="time-dose-row">
-                        <input type="checkbox" class="time-checkbox" data-time="вечером">
-                        <span>вечером</span>
-                        <input type="number" class="dose-input" data-time="вечером" placeholder="мг">
-                    </div>
-                    <div class="time-dose-row">
-                        <input type="checkbox" class="time-checkbox" data-time="на ночь">
-                        <span>на ночь</span>
-                        <input type="number" class="dose-input" data-time="на ночь" placeholder="мг">
-                    </div>
-                </div>
-            </div>
-            <div class="prescription-comment">
-                <div class="prescription-label-small">Комментарий (необязательно)</div>
-                <input type="text" class="prescription-comment-input" placeholder="например, принимать после еды">
-            </div>
-        `;
+// Инициализация UI после загрузки DOM
+document.addEventListener('DOMContentLoaded', function () {
+    const submitBtn = document.getElementById('rx-submit-btn');
+    const clearBtn = document.getElementById('rx-clear-btn');
+    const timeCheckboxes = document.querySelectorAll('.rx-time-checkbox');
 
-        list.appendChild(item);
+    if (submitBtn) {
+        submitBtn.addEventListener('click', onRxSubmit);
     }
 
-    function removeLastPrescription() {
-        const list = document.getElementById('prescriptions_list');
-        if (list.lastElementChild) {
-            list.removeChild(list.lastElementChild);
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearPrescriptionForm);
+    }
+
+    // включение/отключение доз в зависимости от чекбоксов
+    timeCheckboxes.forEach(cb => {
+        cb.addEventListener('change', function () {
+            const time = cb.getAttribute('data-time');
+            const doseInput = document.querySelector('.rx-dose-input[data-time="' + time + '"]');
+            if (!doseInput) return;
+            if (cb.checked) {
+                doseInput.disabled = false;
+                doseInput.focus();
+            } else {
+                doseInput.value = '';
+                doseInput.disabled = true;
+            }
+        });
+    });
+
+    // Делегирование кликов по ✏️ / ❌
+    const list = document.getElementById('prescriptions_list');
+    if (list) {
+        list.addEventListener('click', function (event) {
+            const target = event.target.closest('.prescription-action-btn');
+            if (!target) return;
+
+            const id = parseInt(target.getAttribute('data-id'), 10);
+            if (!id) return;
+
+            const action = target.getAttribute('data-action');
+            if (action === 'edit') {
+                editPrescription(id);
+            } else if (action === 'delete') {
+                deletePrescription(id);
+            }
+        });
+    }
+
+    renderPrescriptionsList();
+});
+
+// Собрать данные из формы
+function collectPrescriptionFormData() {
+    const nameInput = document.getElementById('rx-name');
+    const durationSelect = document.getElementById('rx-duration-value');
+    const commentInput = document.getElementById('rx-comment');
+
+    if (!nameInput || !durationSelect || !commentInput) {
+        return null;
+    }
+
+    const name = nameInput.value.trim();
+    if (!name) {
+        return null;
+    }
+
+    const durationValue = durationSelect.value || null;
+    let durationType = 'days';
+    const durationTypeRadio = document.querySelector('input[name="rx-duration-type"]:checked');
+    if (durationTypeRadio && (durationTypeRadio.value === 'days' || durationTypeRadio.value === 'months')) {
+        durationType = durationTypeRadio.value;
+    }
+
+    const times = {};
+    const timeCheckboxes = document.querySelectorAll('.rx-time-checkbox');
+    timeCheckboxes.forEach(cb => {
+        if (!cb.checked) return;
+        const time = cb.getAttribute('data-time');
+        const doseInput = document.querySelector('.rx-dose-input[data-time="' + time + '"]');
+        if (!time) return;
+        const doseVal = doseInput ? doseInput.value.trim() : '';
+        if (doseVal) {
+            times[time] = doseVal;
+        } else {
+            // время отмечено, но доза не указана — всё равно фиксируем как время без дозы
+            times[time] = '';
+        }
+    });
+
+    const comment = commentInput.value.trim();
+
+    return {
+        name,
+        durationValue,
+        durationType,
+        times,
+        comment
+    };
+}
+
+// Применить данные к форме (для режима редактирования)
+function fillPrescriptionForm(data) {
+    const nameInput = document.getElementById('rx-name');
+    const durationSelect = document.getElementById('rx-duration-value');
+    const commentInput = document.getElementById('rx-comment');
+    const timeCheckboxes = document.querySelectorAll('.rx-time-checkbox');
+
+    if (!nameInput || !durationSelect || !commentInput) {
+        return;
+    }
+
+    nameInput.value = data.name || '';
+    durationSelect.value = data.durationValue || '';
+
+    const radios = document.querySelectorAll('input[name="rx-duration-type"]');
+    radios.forEach(r => {
+        r.checked = (r.value === data.durationType);
+    });
+
+    // Сначала сбрасываем всё
+    timeCheckboxes.forEach(cb => {
+        const time = cb.getAttribute('data-time');
+        const doseInput = document.querySelector('.rx-dose-input[data-time="' + time + '"]');
+        cb.checked = false;
+        if (doseInput) {
+            doseInput.value = '';
+            doseInput.disabled = true;
+        }
+    });
+
+    // Затем включаем то, что есть в данных
+    Object.keys(data.times || {}).forEach(time => {
+        const cb = document.querySelector('.rx-time-checkbox[data-time="' + time + '"]');
+        const doseInput = document.querySelector('.rx-dose-input[data-time="' + time + '"]');
+        if (cb) {
+            cb.checked = true;
+        }
+        if (doseInput) {
+            doseInput.disabled = false;
+            doseInput.value = data.times[time] || '';
+        }
+    });
+
+    commentInput.value = data.comment || '';
+}
+
+// Очистка формы и выход из режима редактирования
+function clearPrescriptionForm() {
+    const nameInput = document.getElementById('rx-name');
+    const durationSelect = document.getElementById('rx-duration-value');
+    const commentInput = document.getElementById('rx-comment');
+    const timeCheckboxes = document.querySelectorAll('.rx-time-checkbox');
+    const submitBtn = document.getElementById('rx-submit-btn');
+
+    if (nameInput) nameInput.value = '';
+    if (durationSelect) durationSelect.value = '';
+    if (commentInput) commentInput.value = '';
+
+    timeCheckboxes.forEach(cb => {
+        const time = cb.getAttribute('data-time');
+        const doseInput = document.querySelector('.rx-dose-input[data-time="' + time + '"]');
+        cb.checked = false;
+        if (doseInput) {
+            doseInput.value = '';
+            doseInput.disabled = true;
+        }
+    });
+
+    rxEditingId = null;
+    if (submitBtn) {
+        submitBtn.textContent = 'Добавить';
+    }
+}
+
+// Обработка клика по кнопке "Добавить"/"Сохранить"
+function onRxSubmit() {
+    const formData = collectPrescriptionFormData();
+    if (!formData) {
+        // Можно в будущем добавить мягкую валидацию / подсветку
+        return;
+    }
+
+    if (rxEditingId === null) {
+        // режим добавления
+        const newItem = {
+            id: rxNextId++,
+            name: formData.name,
+            durationValue: formData.durationValue,
+            durationType: formData.durationType,
+            times: formData.times,
+            comment: formData.comment
+        };
+        prescriptions.push(newItem);
+    } else {
+        // режим редактирования
+        const index = prescriptions.findIndex(p => p.id === rxEditingId);
+        if (index !== -1) {
+            prescriptions[index] = {
+                id: rxEditingId,
+                name: formData.name,
+                durationValue: formData.durationValue,
+                durationType: formData.durationType,
+                times: formData.times,
+                comment: formData.comment
+            };
         }
     }
 
-    function collectPrescriptionsText() {
-        const items = document.querySelectorAll('.prescription-item');
-        const lines = [];
-        let index = 1;
+    renderPrescriptionsList();
+    clearPrescriptionForm();
+}
 
-        items.forEach(item => {
-            const name = item.querySelector('.prescription-name')?.value.trim();
-            const days = item.querySelector('.prescription-days')?.value.trim();
-            const timeCheckboxes = item.querySelectorAll('.time-checkbox');
-            const doses = item.querySelectorAll('.dose-input');
-            const comment = item.querySelector('.prescription-comment-input')?.value.trim();
+// Рендер списка назначений
+function renderPrescriptionsList() {
+    const list = document.getElementById('prescriptions_list');
+    if (!list) return;
 
-            if (!name) return;
+    list.innerHTML = '';
 
-            const timeParts = [];
-            timeCheckboxes.forEach(cb => {
-                if (cb.checked) {
-                    const time = cb.getAttribute('data-time');
-                    const doseInput = item.querySelector('.dose-input[data-time="' + time + '"]');
-                    const doseVal = doseInput && doseInput.value.trim() ? doseInput.value.trim() + ' мг' : '';
-                    if (doseVal) {
-                        timeParts.push(time + ' ' + doseVal);
-                    } else {
-                        timeParts.push(time);
-                    }
-                }
-            });
-
-            let line = index + '. ' + name + '. ';
-            if (timeParts.length) {
-                line += 'Приём: ' + timeParts.join(', ') + '. ';
-            }
-            if (days) {
-                line += 'В течение ' + days + ' дней. ';
-            }
-            if (comment) {
-                line += 'Комментарий: ' + comment + '.';
-            }
-
-            lines.push(line.trim());
-            index += 1;
-        });
-
-        return lines.join('<br>');
+    if (!prescriptions.length) {
+        const empty = document.createElement('div');
+        empty.className = 'prescriptions-empty';
+        empty.textContent = 'Пока нет назначений.';
+        list.appendChild(empty);
+        return;
     }
 
+    prescriptions.forEach((p, idx) => {
+        const item = document.createElement('div');
+        item.className = 'prescription-item';
+        item.setAttribute('data-id', String(p.id));
+
+        const titleParts = [];
+        titleParts.push((idx + 1) + '. ' + p.name);
+
+        const subParts = [];
+
+        // схема приёма
+        const timeParts = [];
+        Object.keys(p.times || {}).forEach(time => {
+            const dose = (p.times[time] || '').trim();
+            if (dose) {
+                timeParts.push(time + ' ' + dose + ' мг');
+            } else {
+                timeParts.push(time);
+            }
+        });
+
+        if (timeParts.length) {
+            subParts.push('Приём: ' + timeParts.join(', '));
+        }
+
+        if (p.durationValue) {
+            const unit = p.durationType === 'months' ? 'месяцев' : 'дней';
+            subParts.push('В течение ' + p.durationValue + ' ' + unit);
+        }
+
+        const titleText = titleParts.join(' ');
+        const subText = subParts.join(' • ');
+
+        const mainRow = document.createElement('div');
+        mainRow.className = 'prescription-main-row';
+
+        const textBlock = document.createElement('div');
+        textBlock.className = 'prescription-main-text';
+
+        const titleEl = document.createElement('div');
+        titleEl.className = 'prescription-title';
+        titleEl.textContent = titleText;
+
+        textBlock.appendChild(titleEl);
+
+        if (subText) {
+            const subEl = document.createElement('div');
+            subEl.className = 'prescription-subline';
+            subEl.textContent = subText;
+            textBlock.appendChild(subEl);
+        }
+
+        mainRow.appendChild(textBlock);
+
+        const actions = document.createElement('div');
+        actions.className = 'prescription-actions';
+
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'prescription-action-btn';
+        editBtn.setAttribute('data-action', 'edit');
+        editBtn.setAttribute('data-id', String(p.id));
+        editBtn.title = 'Редактировать';
+        editBtn.innerHTML = '<span>✏️</span>';
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'prescription-action-btn danger';
+        deleteBtn.setAttribute('data-action', 'delete');
+        deleteBtn.setAttribute('data-id', String(p.id));
+        deleteBtn.title = 'Удалить';
+        deleteBtn.innerHTML = '<span>❌</span>';
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+
+        mainRow.appendChild(actions);
+        item.appendChild(mainRow);
+
+        if (p.comment) {
+            const commentRow = document.createElement('div');
+            commentRow.className = 'prescription-comment-row';
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'prescription-comment-label';
+            labelSpan.textContent = 'Комментарий: ';
+            const textSpan = document.createElement('span');
+            textSpan.textContent = p.comment;
+            commentRow.appendChild(labelSpan);
+            commentRow.appendChild(textSpan);
+            item.appendChild(commentRow);
+        }
+
+        list.appendChild(item);
+    });
+}
+
+// Вход в режим редактирования
+function editPrescription(id) {
+    const item = prescriptions.find(p => p.id === id);
+    if (!item) return;
+
+    rxEditingId = id;
+
+    const submitBtn = document.getElementById('rx-submit-btn');
+    if (submitBtn) {
+        submitBtn.textContent = 'Сохранить';
+    }
+
+    fillPrescriptionForm(item);
+
+    const nameInput = document.getElementById('rx-name');
+    if (nameInput) {
+        nameInput.focus();
+        nameInput.select();
+    }
+}
+
+// Удаление назначения
+function deletePrescription(id) {
+    prescriptions = prescriptions.filter(p => p.id !== id);
+
+    if (rxEditingId === id) {
+        // Если удалили то, что редактировали — выходим из режима редактирования
+        clearPrescriptionForm();
+    }
+
+    renderPrescriptionsList();
+}
+
+// Экспорт в текст: используется при сборке заключения
+function collectPrescriptionsText() {
+    if (!prescriptions.length) {
+        return '';
+    }
+
+    const lines = [];
+    prescriptions.forEach((p, index) => {
+        let line = (index + 1) + '. ' + p.name + '. ';
+
+        const timeParts = [];
+        Object.keys(p.times || {}).forEach(time => {
+            const dose = (p.times[time] || '').trim();
+            if (dose) {
+                timeParts.push(time + ' ' + dose + ' мг');
+            } else {
+                timeParts.push(time);
+            }
+        });
+
+        if (timeParts.length) {
+            line += 'Приём: ' + timeParts.join(', ') + '. ';
+        }
+
+        if (p.durationValue) {
+            const unit = p.durationType === 'months' ? 'месяцев' : 'дней';
+            line += 'В течение ' + p.durationValue + ' ' + unit + '. ';
+        }
+
+        if (p.comment) {
+            line += 'Комментарий: ' + p.comment + '.';
+        }
+
+        lines.push(line.trim());
+    });
+
+    return lines.join('<br>');
+}
 
 
     // TODO: report templates placeholder

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sidebar demo</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: flex-start;
+      background: #f3f5fb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* Контейнер сайдбара */
+    .sidebar {
+      width: 72px;
+      padding: 12px 0;
+      background: #ffffff;
+      border-radius: 999px;
+      margin: 16px;
+      box-shadow: 0 8px 24px rgba(15, 35, 95, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Обёртка под иконку (чтобы было куда вешать подсветку) */
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;          /* <-- нет голубого фона по умолчанию */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition:
+        background-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.1s ease;
+    }
+
+    /* Сама иконка — тут можно вставить <img> вместо emoji */
+    .icon-inner {
+      font-size: 22px;
+      line-height: 1;
+      display: block;
+    }
+
+    /* Hover — лёгкий эффект, без цвета */
+    .icon-btn:hover {
+      background: rgba(15, 35, 95, 0.04);
+      box-shadow: 0 0 0 1px rgba(15, 35, 95, 0.06);
+      transform: translateY(-1px);
+    }
+
+    /* Активная кнопка: ЕДИНСТВЕННЫЙ яркий синий акцент */
+    .icon-btn.active {
+      background: #e3f1ff;
+      box-shadow:
+        0 0 0 1px #3b82f6,
+        0 6px 16px rgba(59, 130, 246, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* Чтобы показать «выбрана» — делаем иконку чуть крупнее */
+    .icon-btn.active .icon-inner {
+      transform: scale(1.05);
+    }
+
+    /* Разделитель для логики / групп (как у тебя) */
+    .sidebar-separator {
+      width: 60%;
+      height: 1px;
+      background: rgba(148, 163, 184, 0.35);
+      margin: 4px 0 2px;
+    }
+
+    /* Заглушка для контента справа, просто чтобы было не пусто */
+    .content {
+      flex: 1;
+      margin: 24px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #eef2ff, #fdf2ff);
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <!-- Активная иконка -->
+    <button class="icon-btn active" title="История">
+      <span class="icon-inner">📘</span>
+    </button>
+
+    <!-- Остальные — без фона, только hover -->
+    <button class="icon-btn" title="Заметки">
+      <span class="icon-inner">📋</span>
+    </button>
+    <button class="icon-btn" title="Мозг / психстатус">
+      <span class="icon-inner">🧠</span>
+    </button>
+    <button class="icon-btn" title="Диалог">
+      <span class="icon-inner">💬</span>
+    </button>
+
+    <div class="sidebar-separator"></div>
+
+    <button class="icon-btn" title="Графики">
+      <span class="icon-inner">📊</span>
+    </button>
+    <button class="icon-btn" title="Наблюдение">
+      <span class="icon-inner">👁️</span>
+    </button>
+    <button class="icon-btn" title="Диагнозы">
+      <span class="icon-inner">❌</span>
+    </button>
+    <button class="icon-btn" title="Настроение">
+      <span class="icon-inner">🙂</span>
+    </button>
+
+    <div class="sidebar-separator"></div>
+
+    <button class="icon-btn" title="Активность">
+      <span class="icon-inner">🏃</span>
+    </button>
+    <button class="icon-btn" title="Цели">
+      <span class="icon-inner">🎯</span>
+    </button>
+    <button class="icon-btn" title="Поиск">
+      <span class="icon-inner">🔍</span>
+    </button>
+    <button class="icon-btn" title="Сон">
+      <span class="icon-inner">🌙</span>
+    </button>
+
+    <div class="sidebar-separator"></div>
+
+    <button class="icon-btn" title="Врач">
+      <span class="icon-inner">🩺</span>
+    </button>
+    <button class="icon-btn" title="Рецепты">
+      <span class="icon-inner">℞</span>
+    </button>
+    <button class="icon-btn" title="Отчёты">
+      <span class="icon-inner">📑</span>
+    </button>
+  </div>
+
+  <div class="content"></div>
+
+</body>
+</html>
