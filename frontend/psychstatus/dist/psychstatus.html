@@ -1261,17 +1261,61 @@ button:active {
                         </select>
                     </div>
 
-                    <div>
-                        <label>Внешний вид:</label>
-                        <select id="appearance">
-                            <option value="">— выбрать —</option>
-                            <option>опрятный</option>
-                            <option>неопрятный</option>
-                            <option>соответствует возрасту</option>
-                            <option>моложе возраста</option>
-                            <option>старше возраста</option>
-                        </select>
+                    <div class="multicheck-group" data-name="appearance">
+                        <div class="multicheck-header" onclick="toggleMultiGroup('appearance')">
+                            <span class="multicheck-label">Внешний вид (можно несколько)</span>
+                            <span class="multicheck-summary" id="appearance_summary">Не выбрано</span>
+                        </div>
+
+                        <div class="multicheck-body" id="appearance_body">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance" value="опрятный"
+                                       onchange="updateAppearance()">
+                                опрятный
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance" value="неопрятный"
+                                       onchange="updateAppearance()">
+                                неопрятный
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance"
+                                       value="выглядит в соответствии с возрастом"
+                                       onchange="updateAppearance()">
+                                соответствует возрасту
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance"
+                                       value="выглядит моложе возраста"
+                                       onchange="updateAppearance()">
+                                моложе возраста
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance"
+                                       value="выглядит старше возраста"
+                                       onchange="updateAppearance()">
+                                старше возраста
+                            </label>
+
+                            <!-- Другое -->
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="appearance" value="D_OTHER"
+                                       onchange="toggleAppearanceOther(this); updateAppearance()">
+                                другое:
+                            </label>
+
+                            <input type="text"
+                                   id="appearance_other"
+                                   placeholder="уточните..."
+                                   style="display:none; margin-left: 15px;"
+                                   oninput="updateAppearance()">
+
+                            <!-- Итоговая строка (скрытое поле, без визуального отображения) -->
+                            <input type="hidden" id="appearance">
+                        </div>
                     </div>
+
+
 
                     <div>
                         <label>Зрительный контакт:</label>
@@ -2316,6 +2360,45 @@ function getCheckedTextByName(name) {
     const checked = document.querySelectorAll('input[type="checkbox"][name="' + name + '"]:checked');
     return Array.from(checked).map(c => c.value).join(', ');
 }
+
+// Функции сбора выбранных симптомов в "Внешний вид"
+function toggleAppearanceOther(cb) {
+    const field = document.getElementById('appearance_other');
+    field.style.display = cb.checked ? 'block' : 'none';
+    if (!cb.checked) field.value = "";
+}
+
+
+function updateAppearance() {
+    const checkboxes = document.querySelectorAll('input[name="appearance"]:checked');
+    const parts = [];
+
+    // Добавляем все отмеченные варианты, кроме самого слова "другое"
+    checkboxes.forEach(cb => {
+        if (cb.value !== "ДРУГОЕ" && cb.value !== "D_OTHER") {
+            parts.push(cb.value);
+        }
+    });
+
+    // Если в поле "другое" что-то написано — просто добавляем это как текст
+    const otherField = document.getElementById('appearance_other');
+    if (otherField && otherField.value.trim() !== "") {
+        parts.push(otherField.value.trim());
+    }
+
+    // Пишем строку в скрытое поле для builder.js
+    const hidden = document.getElementById('appearance');
+    if (hidden) {
+        hidden.value = parts.join(', ');
+    }
+
+    // Обновляем summary под заголовком
+    const summary = document.getElementById('appearance_summary');
+    if (summary) {
+        summary.innerText = parts.length ? parts.join(', ') : 'Не выбрано';
+    }
+}
+
 
     document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('.sidebar-link');
@@ -3468,7 +3551,7 @@ function collectPrescriptionsText() {
         //  Сознание и общение
         const consciousness = document.getElementById('consciousness').value || '';
         const behavior = getCheckedTextByName('behavior');
-        const appearance = document.getElementById('appearance').value || '';
+        const appearance = document.getElementById('appearance')?.value.trim() || '';
         const facial_expression = getCheckedTextByName('facial_expression');
         const eye_contact = document.getElementById('eye_contact').value || '';
         const contact = document.getElementById('contact').value || '';

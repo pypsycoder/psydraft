@@ -13,7 +13,7 @@
         //  Сознание и общение
         const consciousness = document.getElementById('consciousness').value || '';
         const behavior = getCheckedTextByName('behavior');
-        const appearance = document.getElementById('appearance').value || '';
+        const appearance = document.getElementById('appearance')?.value.trim() || '';
         const facial_expression = getCheckedTextByName('facial_expression');
         const eye_contact = document.getElementById('eye_contact').value || '';
         const contact = document.getElementById('contact').value || '';
