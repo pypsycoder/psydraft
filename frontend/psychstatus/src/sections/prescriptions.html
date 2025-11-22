@@ -1,8 +1,9 @@
 <div class="section" id="section-prescriptions">
     <h2>℞ Назначения</h2>
 
-    <!-- Карточка добавления / редактирования назначения -->
+    <!-- Общая карточка: и редактор, и список назначений -->
     <div class="prescription-editor" id="prescription-editor">
+        <!-- Форма добавления / редактирования назначения -->
         <div class="prescription-editor-row">
             <div class="prescription-field">
                 <label class="prescription-label-small" for="rx-name">Название препарата</label>
@@ -172,13 +173,15 @@
                 Добавить
             </button>
         </div>
-    </div>
 
-    <!-- Список назначений -->
-    <div class="prescriptions-list-header">
-        Добавленные назначения
-    </div>
-    <div id="prescriptions_list" class="prescriptions-list">
-        <div class="prescriptions-empty">Пока нет назначений.</div>
+        <!-- Список назначений ВНУТРИ той же карточки -->
+        <div class="prescriptions-list-wrapper">
+            <div class="prescriptions-list-header">
+                Добавленные назначения
+            </div>
+            <div id="prescriptions_list" class="prescriptions-list">
+                <div class="prescriptions-empty">Пока нет назначений.</div>
+            </div>
+        </div>
     </div>
 </div>

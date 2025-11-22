@@ -77,7 +77,7 @@ function generateText() {
         text += '<strong>Жалобы:</strong> ' + (complaints || '&nbsp;') + '<br><br>';
         text += '<strong>Анамнез заболевания:</strong> ' + (anamnesis || '&nbsp;') + '<br><br>';
         text += '<strong>Состояние на учете в ПНД и наркологическом диспансере:</strong> ' + (dispensary_status || '&nbsp;') + '<br>';
-        text += '<strong>Лечение в ПНД и наркологическом диспансере:</strong> ' + (dispensary_treatment || '&nbsp;') + '<br>';
+        text += '<strong>Лечение у психиатра или нарколога:</strong> ' + (dispensary_treatment || '&nbsp;') + '<br>';
         text += '<strong>Считает себя больным в течение (дней):</strong> ' + (ill_days || '__') + '<br>';
         text += '<strong>Самостоятельное лечение:</strong> ' + (self_treatment || '&nbsp;') + '<br>';
         text += '<strong>Динамика заболевания:</strong> ' + (dynamics || '&nbsp;') + '<br><br>';

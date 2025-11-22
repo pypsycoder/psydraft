@@ -50,28 +50,29 @@ body {
 
     /* ================== SIDEBAR ================== */
 
-/* Контейнер сайдбара — обычная колонка слева во flex-лейауте */
+/* Контейнер сайдбара — колонка слева во flex-лейауте */
 .sidebar {
     width: 240px;
     position: sticky;
     top: 12px;
     align-self: flex-start;
-    background: #ffffff; /* непрозрачный белый, без ощущения “наложения” */
+    background: #ffffff;
     border-radius: 18px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     border: 1px solid rgba(0,0,0,0.06);
 
-    padding: 14px 14px 12px;
+    padding: 8px 10px 8px;
 
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* чтобы в свернутом режимe всё лишнее просто обрезалось */
 
     animation: slideIn 0.35s ease-out;
     transition:
-        width var(--transition-fast),
-        padding var(--transition-fast),
-        transform var(--transition-fast),
-        opacity var(--transition-fast);
+        width 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+        padding 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+        transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+        opacity 0.25s ease-out;
 }
 
 /* Шапка */
@@ -108,35 +109,62 @@ body {
     transform: translateY(-1px);
 }
 
+/* Центрируем SVG внутри кнопки в обоих режимах */
 .sidebar-toggle svg {
-    width: 20px;
-    height: 20px;
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin: auto;
+}
+/* В свернутом режиме SVG слегка увеличивается, чтобы не теряться */
+body.sidebar-collapsed .sidebar-toggle svg {
+    width: 26px;
+    height: 26px;
 }
 
+/* Заголовок "НАВИГАЦИЯ" */
 .sidebar-title {
     font-size: 18px;
     font-weight: 700;
     letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--text-secondary);
+
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 40px;
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        max-height 0.25s ease,
+        margin 0.25s ease;
 }
 
-/* Навигационные ссылки */
+/* Навигационные ссылки и групповые заголовки */
 .sidebar-nav {
-    margin-top: 4px;
+    margin-top: 2px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
 }
 
 .sidebar-group-title {
-    margin-top: 10px;
-    margin-bottom: 2px;
-    font-size: 15px;
+    margin-top: 6px;
+    margin-bottom: 1px;
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-secondary);
+
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 32px;
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        max-height 0.25s ease,
+        margin 0.25s ease;
 }
 
 /* Строка меню */
@@ -145,10 +173,10 @@ body {
     align-items: center;
     gap: 10px;
 
-    width: 100%;
-    padding: 6px 8px;
-    border-radius: 12px;
-    background: transparent; /* больше НЕТ голубой заливки */
+    width: calc(100% - 16px);   /* чтобы подсветка не выходила за радиусы */
+    padding: 4px 8px;
+    border-radius: 10px;
+    background: transparent;
     text-decoration: none;
     color: var(--text-primary);
     font-size: 14px;
@@ -168,18 +196,18 @@ body {
 
 /* Иконка */
 .sidebar-link-icon {
-    flex: 0 0 36px;
-    height: 36px;
+    flex: 0 0 30px;
+    height: 30px;
 
-    border-radius: 12px;
-    background: transparent; /* не подсвечиваем фон */
+    border-radius: 10px;
+    background: transparent;
     color: var(--accent);
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1;
 
     transition: transform 0.12s ease;
@@ -189,17 +217,28 @@ body {
     transform: scale(1.1);
 }
 
-/* Подпись */
+/* Подпись пункта */
 .sidebar-link-label {
     white-space: nowrap;
+    display: inline-block;
+
+    opacity: 1;
+    transform: translateX(0);
+
+    max-width: 160px;      /* ← добавили */
+    overflow: hidden;      /* ← добавили */
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
 }
 
-/* Чтобы не было фиолетового visited */
+/* visited не фиолетовый */
 .sidebar-link:visited {
     color: var(--text-primary);
 }
 
-/* ===== АКТИВНАЯ СЕКЦИЯ — мягкое голубое кольцо ===== */
+/* Активная секция — мягкое голубое кольцо */
 .sidebar-link.active {
     background: transparent;
     box-shadow:
@@ -212,35 +251,47 @@ body {
     transform: scale(1.1);
 }
 
-/* ===== Свернутый режим: только иконки ===== */
+/* ========== СВЁРНУТЫЙ РЕЖИМ (= только иконки) ========== */
 
+/* Панель сжимается по ширине, но вертикальная сетка НЕ меняется */
 body.sidebar-collapsed .sidebar {
-    width: 60px;
-    padding-inline: 6px;
+    width: 56px;
+    padding-inline: 4px 0;
 }
 
+/* Текст пунктов — плавно гасим и чуть уводим влево,
+   он остаётся в потоке, но обрежется по overflow: hidden */
+body.sidebar-collapsed .sidebar-link-label {
+    opacity: 0;
+    transform: translateX(-8px);
+    max-width: 0;          /* ← добавили, чтобы ширина схлопывалась */
+}
+
+/* Центруем иконки в строке, убираем лишний padding */
+body.sidebar-collapsed .sidebar-link {
+    width: 100% !important;
+    padding: 4px 0 !important;
+    justify-content: center;   /* иконка по центру строки */
+    gap: 0;
+}
+
+/* Заголовок "НАВИГАЦИЯ" и group-title:
+   исчезают и СХЛОПЫВАЮТСЯ по высоте, чтобы не оставлять дыр */
 body.sidebar-collapsed .sidebar-title,
 body.sidebar-collapsed .sidebar-group-title {
-    display: none;
+    opacity: 0;
+    transform: translateY(-4px);
+    max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
-body.sidebar-collapsed .sidebar-link-label {
-    display: none;
+/* иконка строго по центру */
+body.sidebar-collapsed .sidebar-link-icon {
+    flex: 0 0 30px;
+    margin: 0 auto;
 }
 
-body.sidebar-collapsed .sidebar-link {
-    justify-content: center;
-    padding-inline: 0;
-}
-
-body.sidebar-collapsed .sidebar-header {
-    justify-content: center;
-}
-
-body.sidebar-collapsed .sidebar-toggle {
-    width: 36px;
-    height: 36px;
-}
 
 /* ============================= */
 /*   Айфоновский стиль секций    */
@@ -357,6 +408,87 @@ body.sidebar-collapsed .sidebar-toggle {
     padding: 16px;
     color: var(--text-secondary);
     font-size: 14px;
+}
+
+    .fancy-header {
+    position: relative;
+    overflow: hidden;
+    padding: 25px 30px;
+    border-radius: 0;
+    color: white;
+}
+
+/* Квадратный conic-gradient по центру */
+.fancy-header::before {
+    content: "";
+    position: absolute;
+
+    /* квадрат намного больше, чем экран */
+    width: 300vmax;
+    height: 300vmax;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background: conic-gradient(
+        from 160deg,
+        #ffd36f,
+        #ff9f75,
+        #fd6d76,
+        #6fe7e1,
+        #9de3b5,
+        #ffd36f
+    );
+
+    z-index: -1;
+}
+
+.fancy-header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: radial-gradient(
+        circle at center,
+        rgba(255,255,255,0.07) 0%,
+        rgba(255,255,255,0) 45%
+    );
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    pointer-events: none;
+    z-index: -1;
+}
+
+
+/* Лого */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Иконка мозга */
+.logo-icon {
+    font-size: 36px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+}
+
+/* Текст PsyStatus */
+.logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+
+    text-shadow:
+        0 2px 4px rgba(0,0,0,0.35),
+        0 0 8px rgba(255,255,255,0.25);
 }
 
     .section {
@@ -1135,9 +1267,33 @@ button:active {
     }
 }
 
+.prescriptions-list-wrapper {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(148, 163, 184, 0.35); /* тонкая граница между формой и списком */
+}
+
+.prescriptions-list-header {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.prescriptions-list {
+    margin-top: 4px;
+}
+
   </style>
 </head>
 <body>
+
+  <!-- ХЭДЕР НА ВСЮ ШИРИНУ СТРАНИЦЫ -->
+  <header class="fancy-header">
+    <div class="logo">
+        <span class="logo-icon">🧠</span>
+        <span class="logo-text">PsyStatus</span>
+    </div>
+</header>
+
 
   <div class="layout">
     <!-- Сайдбар слева -->
@@ -1229,14 +1385,6 @@ button:active {
 
     <!-- Основное содержимое справа -->
     <div class="main">
-      <div class="page-header">
-    <h1>𝚿 Шаблон заключения психиатра 𝚿</h1>
-    <p class="small-note">
-        Заполни поля ниже, затем нажми <b>«Сформировать текст»</b>. Готовый текст появится внизу — его можно скопировать в
-        историю/Word.
-    </p>
-</div>
-
 
       <!-- Общий раздел -->
       <div class="section" id="section-general">
@@ -1253,7 +1401,7 @@ button:active {
         <label>Состояние на учете в ПНД и наркологическом диспансере:</label>
         <textarea id="dispensary_status"></textarea>
 
-        <label>Лечение в ПНД и наркологическом диспансере:</label>
+        <label>Лечение у психиатра или нарколога:</label>
         <textarea id="dispensary_treatment"></textarea>
 
         <label>Считает себя больным в течение (дней):</label>
@@ -2195,8 +2343,9 @@ button:active {
       <div class="section" id="section-prescriptions">
     <h2>℞ Назначения</h2>
 
-    <!-- Карточка добавления / редактирования назначения -->
+    <!-- Общая карточка: и редактор, и список назначений -->
     <div class="prescription-editor" id="prescription-editor">
+        <!-- Форма добавления / редактирования назначения -->
         <div class="prescription-editor-row">
             <div class="prescription-field">
                 <label class="prescription-label-small" for="rx-name">Название препарата</label>
@@ -2366,14 +2515,16 @@ button:active {
                 Добавить
             </button>
         </div>
-    </div>
 
-    <!-- Список назначений -->
-    <div class="prescriptions-list-header">
-        Добавленные назначения
-    </div>
-    <div id="prescriptions_list" class="prescriptions-list">
-        <div class="prescriptions-empty">Пока нет назначений.</div>
+        <!-- Список назначений ВНУТРИ той же карточки -->
+        <div class="prescriptions-list-wrapper">
+            <div class="prescriptions-list-header">
+                Добавленные назначения
+            </div>
+            <div id="prescriptions_list" class="prescriptions-list">
+                <div class="prescriptions-empty">Пока нет назначений.</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -2383,12 +2534,11 @@ button:active {
 </div>
 
 <div class="section" id="section-result">
-    <h2>Сформированный текст</h2>
+    <h2>📝 Сформированный текст</h2>
     <div id="result-container">
         <div id="result" contenteditable="true"></div>
     </div>
 </div>
-
 
     </div>
   </div>

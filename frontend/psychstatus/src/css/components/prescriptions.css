@@ -292,3 +292,18 @@
         transform: translateY(0);
     }
 }
+
+.prescriptions-list-wrapper {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(148, 163, 184, 0.35); /* тонкая граница между формой и списком */
+}
+
+.prescriptions-list-header {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.prescriptions-list {
+    margin-top: 4px;
+}

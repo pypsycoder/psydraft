@@ -1,0 +1,80 @@
+.fancy-header {
+    position: relative;
+    overflow: hidden;
+    padding: 25px 30px;
+    border-radius: 0;
+    color: white;
+}
+
+/* Квадратный conic-gradient по центру */
+.fancy-header::before {
+    content: "";
+    position: absolute;
+
+    /* квадрат намного больше, чем экран */
+    width: 300vmax;
+    height: 300vmax;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background: conic-gradient(
+        from 160deg,
+        #ffd36f,
+        #ff9f75,
+        #fd6d76,
+        #6fe7e1,
+        #9de3b5,
+        #ffd36f
+    );
+
+    z-index: -1;
+}
+
+.fancy-header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: radial-gradient(
+        circle at center,
+        rgba(255,255,255,0.07) 0%,
+        rgba(255,255,255,0) 45%
+    );
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    pointer-events: none;
+    z-index: -1;
+}
+
+
+/* Лого */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Иконка мозга */
+.logo-icon {
+    font-size: 36px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+}
+
+/* Текст PsyStatus */
+.logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+
+    text-shadow:
+        0 2px 4px rgba(0,0,0,0.35),
+        0 0 8px rgba(255,255,255,0.25);
+}
