@@ -74,13 +74,31 @@ function generateText() {
         let text = '';
 
         // Блоки с жирными заголовками
-        text += '<strong>Жалобы:</strong> ' + (complaints || '&nbsp;') + '<br><br>';
-        text += '<strong>Анамнез заболевания:</strong> ' + (anamnesis || '&nbsp;') + '<br><br>';
-        text += '<strong>Состояние на учете в ПНД и наркологическом диспансере:</strong> ' + (dispensary_status || '&nbsp;') + '<br>';
-        text += '<strong>Лечение у психиатра или нарколога:</strong> ' + (dispensary_treatment || '&nbsp;') + '<br>';
-        text += '<strong>Считает себя больным в течение (дней):</strong> ' + (ill_days || '__') + '<br>';
-        text += '<strong>Самостоятельное лечение:</strong> ' + (self_treatment || '&nbsp;') + '<br>';
-        text += '<strong>Динамика заболевания:</strong> ' + (dynamics || '&nbsp;') + '<br><br>';
+        text += '<strong>Жалобы:</strong> ' + (complaints || '&nbsp;') + '<br>';
+        text += '<strong>Анамнез заболевания:</strong> ' + (anamnesis || '&nbsp;') + '<br>';
+
+        // НЕОБЯЗАТЕЛЬНЫЕ БЛОКИ
+        if (dispensary_status) {
+            text += '<strong>Состояние на учете в ПНД и наркологическом диспансере:</strong> ' + dispensary_status + '<br>';
+        }
+
+        if (dispensary_treatment) {
+            text += '<strong>Лечение у психиатра или нарколога:</strong> ' + dispensary_treatment + '<br>';
+        }
+
+        if (ill_days) {
+            text += '<strong>Считает себя больным в течение (дней):</strong> ' + ill_days + '<br>';
+        }
+
+        if (self_treatment) {
+            text += '<strong>Самостоятельное лечение:</strong> ' + self_treatment + '<br>';
+        }
+
+        if (dynamics) {
+            text += '<strong>Динамика заболевания:</strong> ' + dynamics + '<br>';
+        }
+
+        // Остальные обязательные
         text += '<strong>Анамнез жизни:</strong> ' + (life_history || '&nbsp;') + '<br><br>';
 
         text += '<strong>Психический статус</strong><br>';
@@ -89,6 +107,7 @@ function generateText() {
         if (consciousness) {
             psLine1 += 'Сознание ' + consciousness + '. ';
         }
+
         if (behavior) {
             psLine1 += 'Поведение: ' + behavior + '. ';
         }
@@ -119,9 +138,9 @@ function generateText() {
         }
 
         let thinkingParts = [];
-        if (thinking_tempo) thinkingParts.push(thinking_tempo);
-        if (thinking_productivity) thinkingParts.push(thinking_productivity);
-        if (thinking_sequence) thinkingParts.push(thinking_sequence);
+        if (thinking_tempo) thinkingParts.push('темп мышления ' + thinking_tempo);
+        if (thinking_productivity) thinkingParts.push('продуктивность мышления ' + thinking_productivity);
+        if (thinking_sequence) thinkingParts.push('последовательность мышления ' + thinking_sequence);
         if (thinking_goal) thinkingParts.push(thinking_goal);
         if (thinking_disorders) thinkingParts.push('с признаками: ' + thinking_disorders);
         if (thinking_mobility) thinkingParts.push('подвижность мышления: ' + thinking_mobility);
@@ -184,35 +203,33 @@ function generateText() {
 
         // Воля
         if (will) {
-            text += 'Воля: ' + will + '.<br>';
+            text += 'Волевые качества: ' + will + '. ';
         }
         if (motor) {
-            text += 'Двигательная сфера: ' + motor + '.<br>';
+            text += 'Двигательная сфера: ' + motor + '. ';
         }
         if (distance) {
-            text += 'Чувство дистанции ' + distance + '.<br>';
+            text += 'Чувство дистанции ' + distance + '. ';
         }
         if (insight) {
-            text += 'Критика к своему заболеванию ' + insight + '.<br>';
+            text += 'Критика к своему заболеванию ' + insight + '. ';
         }
         if (future_plans) {
-            text += 'Планы на будущее ' + future_plans + '.<br>';
+            text += 'Планы на будущее ' + future_plans + '. ';
         }
         if (seizures) {
             text += 'Эпилептиформные пароксизмы: ' + seizures + '.<br>';
         }
         if (sleep) {
-            text += 'Сон: ' + sleep + '.<br>';
+            text += 'Сон: ' + sleep + '. ';
         }
         if (appetite) {
-            text += 'Аппетит ' + appetite + '.<br>';
+            text += 'Аппетит ' + appetite + '. ';
         }
-
-        text += '<br><strong>Диагноз и рекомендации</strong><br><br>';
 
         // Диагноз
         const diagnosisHtml = diagnosis ? diagnosis.replace(/\n/g, '<br>') : '&nbsp;';
-        text += '<strong>Диагноз (МКБ-10):</strong><br>' + diagnosisHtml + '<br><br>';
+        text += '<br><strong>Диагноз (МКБ-10):</strong><br>' + diagnosisHtml + '<br><br>';
 
         // Рекомендации
         const recHtml = recommendations ? recommendations.replace(/\n/g, '<br>') : '&nbsp;';
