@@ -87,7 +87,7 @@ function generateText() {
         }
 
         if (ill_days) {
-            text += '<strong>Считает себя больным в течение (дней):</strong> ' + ill_days + '<br>';
+            text += '<strong>Считает себя больным в течение:</strong> ' + ill_days + 'дней.<br>';
         }
 
         if (self_treatment) {
@@ -151,13 +151,13 @@ function generateText() {
         }
 
         if (ideas) {
-            text += 'Идеи: ' + ideas + '.<br>';
+            text += 'Идеи: ' + ideas + '. ';
         }
         if (judgment) {
-            text += 'Суждения: ' + judgment + '.<br>';
+            text += 'Суждения: ' + judgment + '. ';
         }
         if (intellect) {
-            text += 'Интеллект ' + intellect + '.<br>';
+            text += 'Интеллект ' + intellect + '. ';
         }
         if (vocabulary) {
             text += 'Словарный запас ' + vocabulary + '.<br>';

@@ -1960,7 +1960,7 @@ button:active {
                 </details>
 
                 <label style="margin-top: 12px;">Обманы восприятия (свободный текст):</label>
-                <textarea id="perception_hallucinations">Во время приема обманы восприятия не выявляет</textarea>
+                <textarea id="perception_hallucinations">Во время приема обманы восприятия не выявляет, в прошлом отрицает.</textarea>
 
             </div>
 
@@ -2094,7 +2094,7 @@ button:active {
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием тревоги" onchange="updateMultiSummary('emotions')">с преобладанием тревоги</label>
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием депрессивных" onchange="updateMultiSummary('emotions')">с преобладанием депрессивных</label>
                         <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием раздражительности" onchange="updateMultiSummary('emotions')">с преобладанием раздражительности</label>
-                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием гипертимии" onchange="updateMultiSummary('emotions')">тусклые</label>
+                        <label class="checkbox-item"><input type="checkbox" name="emotions" value="с преобладанием гипертимии" onchange="updateMultiSummary('emotions')">с преобладанием гипертимии</label>
                         <!-- ... остальные варианты ... -->
                         <label class="checkbox-item">
                             <input
@@ -4228,7 +4228,7 @@ function collectPrescriptionsText() {
         }
 
         if (ill_days) {
-            text += '<strong>Считает себя больным в течение (дней):</strong> ' + ill_days + '<br>';
+            text += '<strong>Считает себя больным в течение:</strong> ' + ill_days + 'дней.<br>';
         }
 
         if (self_treatment) {
@@ -4292,13 +4292,13 @@ function collectPrescriptionsText() {
         }
 
         if (ideas) {
-            text += 'Идеи: ' + ideas + '.<br>';
+            text += 'Идеи: ' + ideas + '. ';
         }
         if (judgment) {
-            text += 'Суждения: ' + judgment + '.<br>';
+            text += 'Суждения: ' + judgment + '. ';
         }
         if (intellect) {
-            text += 'Интеллект ' + intellect + '.<br>';
+            text += 'Интеллект ' + intellect + '. ';
         }
         if (vocabulary) {
             text += 'Словарный запас ' + vocabulary + '.<br>';
