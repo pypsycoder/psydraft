@@ -87,7 +87,7 @@ function generateText() {
         }
 
         if (ill_days) {
-            text += '<strong>Считает себя больным в течение:</strong> ' + ill_days + 'дней.<br>';
+            text += '<strong>Считает себя больным в течение:</strong> ' + ill_days + '.<br>';
         }
 
         if (self_treatment) {
