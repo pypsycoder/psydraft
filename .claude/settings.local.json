@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_ICD-10_Codes__search_codes",
+      "Bash(python build.py)",
+      "Bash(python -c \"import build; build.build\\(\\)\")",
+      "Bash(python -c \":*)",
+      "Bash(PYTHONIOENCODING=utf-8 python build.py)"
+    ]
+  }
+}

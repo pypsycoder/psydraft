@@ -16,6 +16,9 @@
     display: flex;
     flex-direction: column;
 
+    max-height: calc(100vh - 24px);
+    overflow: hidden;
+
     animation: slideIn 0.35s ease-out;
     transition:
         width var(--transition-fast),
@@ -77,6 +80,15 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+}
+
+.sidebar-nav::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
 }
 
 .sidebar-group-title {

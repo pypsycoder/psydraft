@@ -1,0 +1,235 @@
+/* ===== NOSOLOGY ADVISOR — компонент нозологического советника ===== */
+
+/* Trigger */
+.nosology-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0 16px;
+}
+
+.nosology-run-btn {
+    padding: 8px 20px;
+    border-radius: 999px;
+    border: none;
+    background: var(--accent, #007aff);
+    color: #fff;
+    font-size: 15px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.nosology-run-btn:hover { opacity: 0.85; }
+.nosology-run-btn:active { opacity: 0.70; }
+
+.nosology-hint {
+    font-size: 13px;
+    color: var(--text-secondary, #8e8e93);
+}
+
+/* Empty state */
+.nosology-empty {
+    color: var(--text-secondary, #8e8e93);
+    font-size: 15px;
+    padding: 12px 0;
+}
+
+/* Results list */
+.nosology-results {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Card base */
+.nosology-card {
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1.5px solid #e5e5ea;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    animation: fadeInUp 0.25s ease-out;
+}
+
+.nosology-card--high { border-color: rgba(52, 199, 89, 0.50); }
+.nosology-card--mid  { border-color: rgba(255, 149, 0, 0.50); }
+.nosology-card--low  { border-color: #e5e5ea; }
+
+/* Card header */
+.nosology-card__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    cursor: pointer;
+    user-select: none;
+    padding: 2px 0;
+}
+
+.nosology-card__header:not(.nosology-card__header--collapsed) {
+    margin-bottom: 8px;
+}
+
+.nosology-card__toggle {
+    font-size: 12px;
+    color: var(--text-secondary, #8e8e93);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* Checkbox для добавления диагноза */
+.nosology-card__select {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.nosology-card__checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--accent, #007aff);
+}
+
+.nosology-card__code {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.nosology-card--high .nosology-card__code {
+    background: rgba(52, 199, 89, 0.15);
+    color: #1a7a32;
+}
+
+.nosology-card--mid .nosology-card__code {
+    background: rgba(255, 149, 0, 0.15);
+    color: #8a4800;
+}
+
+.nosology-card--low .nosology-card__code {
+    background: rgba(142, 142, 147, 0.15);
+    color: #555;
+}
+
+.nosology-card__name {
+    font-weight: 600;
+    font-size: 15px;
+    flex: 1;
+    color: #1c1c1e;
+}
+
+.nosology-card__score-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary, #8e8e93);
+    flex-shrink: 0;
+}
+
+/* Score bar */
+.nosology-card__score-bar {
+    height: 5px;
+    border-radius: 999px;
+    background: #f0f0f5;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.nosology-card__score-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+.nosology-card--high .nosology-card__score-fill { background: #34c759; }
+.nosology-card--mid  .nosology-card__score-fill { background: #ff9500; }
+.nosology-card--low  .nosology-card__score-fill { background: #8e8e93; }
+
+/* Criteria list */
+.nosology-card__criteria {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.nosology-card__criterion {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.nosology-card__criterion::before {
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.nosology-card__criterion--met {
+    color: #1a7a32;
+}
+
+.nosology-card__criterion--met::before {
+    content: '✓';
+    color: #34c759;
+}
+
+.nosology-card__criterion--unmet {
+    color: #6e6e73;
+}
+
+.nosology-card__criterion--unmet::before {
+    content: '✗';
+    color: #c7c7cc;
+}
+
+/* Clarify section */
+.nosology-card__clarify {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #fffbf0;
+    border: 1px solid rgba(255, 149, 0, 0.25);
+}
+
+.nosology-card__clarify-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #8a4800;
+    margin-bottom: 6px;
+}
+
+.nosology-card__clarify-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.nosology-card__clarify-item {
+    font-size: 13px;
+    color: #6e6e73;
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.nosology-card__clarify-item::before {
+    content: '?';
+    font-weight: 700;
+    color: #ff9500;
+    flex-shrink: 0;
+}

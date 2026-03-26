@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python frontend/psychstatus/build.py)",
+      "Bash(python -c \"import os; os.environ[''PYTHONIOENCODING'']=''utf-8''\")",
+      "Bash(python -c \"import subprocess; result = subprocess.run\\([''python'', ''frontend/psychstatus/build.py''], capture_output=True, text=True, encoding=''utf-8'', cwd=''d:/PROJECT/psydraft''\\); print\\(result.stdout\\); print\\(result.stderr\\)\")",
+      "Bash(PYTHONUTF8=1 python frontend/psychstatus/build.py)",
+      "Bash(echo \"exit: $?\")",
+      "mcp__claude_ai_ICD-10_Codes__search_codes"
+    ]
+  }
+}

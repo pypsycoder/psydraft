@@ -7,5 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
         initRecommendationCards();
     }
 
+    if (typeof initNosologyAdvisor === 'function') {
+        initNosologyAdvisor();
+    }
+
     // Additional UI initialization can be placed here
 });
