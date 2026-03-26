@@ -234,6 +234,9 @@ const GROUP_ORDER = [
 
 let activeGroup = 'sleep'; // "Сон" по умолчанию
 
+// Персистентное состояние выбранных рекомендаций: { recId: 'short'|'full' }
+const selectedRecs = {};
+
 function getGroups() {
     const groupsSet = new Set();
     RECOMMENDATIONS_LIBRARY.forEach(item => {
@@ -358,6 +361,29 @@ function renderRecommendations() {
         container.appendChild(card);
     });
 
+    // восстанавливаем состояние выбранных рекомендаций
+    Object.entries(selectedRecs).forEach(([id, mode]) => {
+        const card = container.querySelector(`.rec-card[data-rec-id="${id}"]`);
+        if (!card) return; // карточка в другой группе — пропускаем
+
+        const checkbox = card.querySelector('.rec-toggle');
+        const modesBlock = card.querySelector('.rec-modes');
+        const textBlock = card.querySelector('.rec-text');
+        if (!checkbox || !modesBlock || !textBlock) return;
+
+        checkbox.checked = true;
+        card.dataset.mode = mode;
+
+        const radios = modesBlock.querySelectorAll('input[type="radio"]');
+        radios.forEach((r) => { r.disabled = false; });
+
+        const radioToCheck = modesBlock.querySelector(`input[value="${mode}"]`);
+        if (radioToCheck) radioToCheck.checked = true;
+
+        setRecText(id, mode);
+        textBlock.style.display = 'block';
+    });
+
     // после перерисовки карточек пересчитываем счётчик
     updateSelectedCount();
 }
@@ -408,12 +434,14 @@ function onRecommendationCardsChange(event) {
                 setRecText(id, mode);
             }
 
+            selectedRecs[id] = mode;
             textBlock.style.display = 'block';
         } else {
             radios.forEach((r) => {
                 r.disabled = true;
                 r.checked = false;
             });
+            delete selectedRecs[id];
             textBlock.style.display = 'none';
             textBlock.textContent = '';
         }
@@ -429,6 +457,7 @@ function onRecommendationCardsChange(event) {
 
         const mode = target.value;
         card.dataset.mode = mode;
+        if (selectedRecs[id] !== undefined) selectedRecs[id] = mode;
         setRecText(id, mode);
     }
 }
@@ -451,10 +480,7 @@ function updateSelectedCount() {
     const counter = document.getElementById('recommendations-selected-count');
     if (!counter) return;
 
-    const count =
-        document.querySelectorAll('.rec-card .rec-toggle:checked').length;
-
-    counter.textContent = String(count);
+    counter.textContent = String(Object.keys(selectedRecs).length);
 }
 
 // == Сбор выбранных рекомендаций в текстовое поле ==
@@ -463,16 +489,9 @@ function collectSelectedRecommendations() {
     const textarea = document.getElementById('recommendations');
     if (!textarea) return;
 
-    const cards = document.querySelectorAll('.rec-card');
     const texts = [];
 
-    cards.forEach((card) => {
-        const checkbox = card.querySelector('.rec-toggle');
-        if (!checkbox || !checkbox.checked) return;
-
-        const id = card.dataset.recId;
-        const mode = card.dataset.mode || 'short';
-
+    Object.entries(selectedRecs).forEach(([id, mode]) => {
         const item = RECOMMENDATIONS_LIBRARY.find((r) => r.id === id);
         if (!item) return;
 
