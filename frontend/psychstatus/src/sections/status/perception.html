@@ -1,5 +1,36 @@
 <div id="status-perception" class="status-subsection">
-                <h3>👁️ Обманы восприятия</h3>
+                <h3>👁️ Обманы ощущений и восприятия</h3>
+
+                <!-- Нарушения ощущений -->
+                <details class="perception-group" id="sensations_group">
+                    <summary class="perception-summary">Нарушения ощущений</summary>
+                    <div class="perception-inner">
+                        <div class="perception-columns">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="sensation_disorder" value="гиперестезия" onchange="toggleSensationDescription()">
+                                Гиперестезия
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="sensation_disorder" value="гипестезия" onchange="toggleSensationDescription()">
+                                Гипестезия
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="sensation_disorder" value="анестезия" onchange="toggleSensationDescription()">
+                                Анестезия
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="sensation_disorder" value="сенестопатии" onchange="toggleSensationDescription()">
+                                Сенестопатии
+                            </label>
+                        </div>
+                        <div class="perception-row" id="sensation_description_row" style="display:none; margin-top:6px;">
+                            <input type="text"
+                                   id="senestopathy_description"
+                                   class="perception-description"
+                                   placeholder="Описание (характер, локализация ощущений)">
+                        </div>
+                    </div>
+                </details>
 
                 <!-- Иллюзии -->
                 <details class="perception-group" id="illusions_group">

@@ -78,11 +78,11 @@ function generateText() {
         // Блоки с жирными заголовками
         text += '<strong>Жалобы:</strong> ' + (complaints || '&nbsp;') + '<br><br>';
         text += '<strong>Анамнез заболевания:</strong> ' + (anamnesis || '&nbsp;') + '<br><br>';
-        text += '<strong>Состояние на учете в ПНД и наркологическом диспансере:</strong> ' + (dispensary_status || '&nbsp;') + '<br>';
-        text += '<strong>Лечение в ПНД и наркологическом диспансере:</strong> ' + (dispensary_treatment || '&nbsp;') + '<br>';
-        text += '<strong>Считает себя больным в течение (дней):</strong> ' + (ill_days || '__') + '<br>';
-        text += '<strong>Самостоятельное лечение:</strong> ' + (self_treatment || '&nbsp;') + '<br>';
-        text += '<strong>Динамика заболевания:</strong> ' + (dynamics || '&nbsp;') + '<br><br>';
+        if (dispensary_status) text += '<strong>Состояние на учете в ПНД и наркологическом диспансере:</strong> ' + dispensary_status + '<br>';
+        if (dispensary_treatment) text += '<strong>Лечение в ПНД и наркологическом диспансере:</strong> ' + dispensary_treatment + '<br>';
+        if (ill_days) text += '<strong>Считает себя больным в течение (дней):</strong> ' + ill_days + '<br>';
+        if (self_treatment) text += '<strong>Самостоятельное лечение:</strong> ' + self_treatment + '<br>';
+        if (dynamics) text += '<strong>Динамика заболевания:</strong> ' + dynamics + '<br>';
         text += '<strong>Анамнез жизни:</strong> ' + (life_history || '&nbsp;') + '<br><br>';
 
         text += '<strong>Психический статус</strong><br>';
@@ -226,11 +226,9 @@ function generateText() {
             }
         }
 
-        text += '<br><strong>Диагноз и рекомендации</strong><br><br>';
-
         // Диагноз
         const diagnosisHtml = diagnosis ? diagnosis.replace(/\n/g, '<br>') : '&nbsp;';
-        text += '<strong>Диагноз (МКБ-10):</strong><br>' + diagnosisHtml + '<br><br>';
+        text += '<br><strong>Диагноз (МКБ-10):</strong>' + diagnosisHtml + '<br><br>';
 
         // Рекомендации
         const recHtml = recommendations ? recommendations.replace(/\n/g, '<br>') : '&nbsp;';

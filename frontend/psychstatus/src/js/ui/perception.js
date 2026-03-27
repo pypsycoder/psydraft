@@ -1,3 +1,9 @@
+    function toggleSensationDescription() {
+        const anyChecked = document.querySelector('input[name="sensation_disorder"]:checked') !== null;
+        const row = document.getElementById('sensation_description_row');
+        if (row) row.style.display = anyChecked ? '' : 'none';
+    }
+
     function collectCheckboxDescriptions(selector) {
         const items = [];
         document.querySelectorAll(selector).forEach(cb => {
@@ -50,6 +56,20 @@
 
     function collectPerceptionText() {
         const parts = [];
+
+        // Нарушения ощущений
+        const sensationItems = [];
+        document.querySelectorAll('input[name="sensation_disorder"]:checked').forEach(cb => {
+            if (cb.value === 'сенестопатии') {
+                const desc = document.getElementById('senestopathy_description')?.value.trim();
+                sensationItems.push(desc ? 'сенестопатии — ' + desc : 'сенестопатии');
+            } else {
+                sensationItems.push(cb.value);
+            }
+        });
+        if (sensationItems.length) {
+            parts.push('нарушения ощущений: ' + sensationItems.join(', '));
+        }
 
         // Иллюзии
         const illusions = collectIllusionsText();
