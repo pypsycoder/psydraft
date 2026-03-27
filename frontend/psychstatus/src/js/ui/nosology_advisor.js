@@ -101,6 +101,23 @@ function computeDepressiveSeverity(symptoms, coreMet, additionalMet) {
     return 'F32.0';
 }
 
+function computeBARManicSeverity(symptoms, _coreMet, _additionalMet) {
+    var hasPsychotic = symptoms.idea_delusional ||
+        (symptoms._hasAnyHallucination &&
+         (symptoms.hall_type_true || symptoms.hall_type_pseudo));
+    if (hasPsychotic) return 'F31.2';
+    return 'F31.1';
+}
+
+function computeBARDepressiveSeverity(symptoms, coreMet, additionalMet) {
+    var hasPsychotic = symptoms.idea_delusional ||
+        (symptoms._hasAnyHallucination &&
+         (symptoms.hall_type_true || symptoms.hall_type_pseudo));
+    if (hasPsychotic && symptoms.mood === 'сниженное') return 'F31.5';
+    if (coreMet >= 3 && additionalMet >= 4) return 'F31.4';
+    return 'F31.3';
+}
+
 var NOSOLOGY_DB = [
 
     // ── F32 ДЕПРЕССИВНЫЙ ЭПИЗОД ──────────────────────────────
@@ -207,9 +224,9 @@ var NOSOLOGY_DB = [
         criteria: [
             {
                 id: 'man_mood',
-                label: 'Повышенное настроение',
+                label: 'Повышенное или гневливое (раздражительное) настроение',
                 weight: 'core', capturable: true,
-                met: function(s) { return s.mood === 'повышенное'; }
+                met: function(s) { return s.mood === 'повышенное' || s.mood === 'гневливое'; }
             },
             {
                 id: 'man_activity',
@@ -237,7 +254,10 @@ var NOSOLOGY_DB = [
                 id: 'man_sleep',
                 label: 'Снижение потребности во сне',
                 weight: 'additional', capturable: true,
-                met: function(s) { return s.sleep.indexOf('отсутствует') !== -1; }
+                met: function(s) {
+                    return s.sleep.indexOf('отсутствует') !== -1 ||
+                           s.sleep.indexOf('снижение потребности во сне') !== -1;
+                }
             },
             {
                 id: 'man_overvalued',
@@ -260,10 +280,10 @@ var NOSOLOGY_DB = [
                 met: function(s) { return s._attentionImpaired; }
             },
             {
-                id: 'man_instability',
-                label: 'Неустойчивость эмоций',
+                id: 'man_aggression',
+                label: 'Агрессия / раздражительность (при гневливой мании)',
                 weight: 'additional', capturable: true,
-                met: function(s) { return s.emotions_stability === 'неустойчивые'; }
+                met: function(s) { return s.aggression === 'в адрес окружающих'; }
             },
         ]
     },
@@ -641,43 +661,258 @@ var NOSOLOGY_DB = [
         ]
     },
 
-    // ── F31 БИПОЛЯРНОЕ АФФЕКТИВНОЕ РАССТРОЙСТВО ──────────────
+    // ── F31.0  БАР — ГИПОМАНИАКАЛЬНЫЙ ЭПИЗОД ─────────────────
     {
-        code: 'F31',
-        name: 'Биполярное аффективное расстройство',
+        code: 'F31.0',
+        name: 'Биполярное расстройство, гипоманиакальный эпизод',
+        severityFn: function(_s, _c, _a) { return 'F31.0'; },
         criteria: [
             {
-                id: 'bar_current_mood',
-                label: 'Выраженное изменение настроения (текущий эпизод)',
-                weight: 'additional', capturable: true,
-                met: function(s) {
-                    return s.mood === 'повышенное' || s.mood === 'сниженное';
-                }
+                id: 'bar_hypo_mood',
+                label: 'Повышенное или гневливое настроение',
+                weight: 'core', capturable: true,
+                met: function(s) { return s.mood === 'повышенное' || s.mood === 'гневливое'; }
             },
             {
-                id: 'bar_thinking',
-                label: 'Изменение темпа мышления',
-                weight: 'additional', capturable: true,
-                met: function(s) {
-                    return s.thinking_tempo === 'ускорен' ||
-                           s.thinking_tempo === 'замедлен';
-                }
+                id: 'bar_hypo_activity',
+                label: 'Повышенная активность / энергичность',
+                weight: 'core', capturable: false, met: null
             },
             {
-                id: 'bar_instability',
-                label: 'Неустойчивость эмоций',
-                weight: 'additional', capturable: true,
-                met: function(s) { return s.emotions_stability === 'неустойчивые'; }
+                id: 'bar_hypo_duration',
+                label: 'Длительность ≥ 4 дней без выраженного нарушения функционирования',
+                weight: 'core', capturable: false, met: null
             },
             {
                 id: 'bar_episodes',
-                label: 'Два и более эпизодов в анамнезе (хотя бы один гипоманиакальный/маниакальный)',
+                label: '≥ 2 эпизодов в анамнезе',
                 weight: 'core', capturable: false, met: null
             },
             {
                 id: 'bar_polarity',
                 label: 'Смена полюса настроения в анамнезе',
                 weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'bar_hypo_thinking',
+                label: 'Ускорение мышления',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s.thinking_tempo === 'ускорен'; }
+            },
+            {
+                id: 'bar_hypo_sleep',
+                label: 'Снижение потребности во сне',
+                weight: 'additional', capturable: true,
+                met: function(s) {
+                    return s.sleep.indexOf('снижение потребности во сне') !== -1 ||
+                           s.sleep.indexOf('отсутствует') !== -1;
+                }
+            },
+            {
+                id: 'bar_hypo_overvalued',
+                label: 'Сверхценные идеи',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s.idea_overvalued; }
+            },
+            {
+                id: 'bar_hypo_distance',
+                label: 'Снижение или отсутствие чувства дистанции',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s.distance === 'снижено' || s.distance === 'отсутствует'; }
+            },
+            {
+                id: 'bar_hypo_distractibility',
+                label: 'Повышенная отвлекаемость',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s._attentionImpaired; }
+            },
+            {
+                id: 'bar_hypo_no_psychosis',
+                label: 'Отсутствие психотических симптомов',
+                weight: 'additional', capturable: false, met: null
+            },
+        ]
+    },
+
+    // ── F31.1/F31.2  БАР — МАНИАКАЛЬНЫЙ ЭПИЗОД ───────────────
+    {
+        code: 'F31.1',
+        name: 'Биполярное расстройство, маниакальный эпизод',
+        severityFn: computeBARManicSeverity,
+        criteria: [
+            {
+                id: 'bar_man_mood',
+                label: 'Повышенное или гневливое (раздражительное) настроение',
+                weight: 'core', capturable: true,
+                met: function(s) { return s.mood === 'повышенное' || s.mood === 'гневливое'; }
+            },
+            {
+                id: 'bar_man_activity',
+                label: 'Повышенная активность / возбуждение',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'bar_man_duration',
+                label: 'Длительность ≥ 7 дней',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'bar_episodes',
+                label: '≥ 2 эпизодов в анамнезе',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'bar_polarity',
+                label: 'Смена полюса настроения в анамнезе',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'bar_man_thinking',
+                label: 'Ускорение мышления',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s.thinking_tempo === 'ускорен'; }
+            },
+            {
+                id: 'bar_man_productivity',
+                label: 'Повышенная продуктивность мышления',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s.thinking_productivity === 'повышена'; }
+            },
+            {
+                id: 'bar_man_sleep',
+                label: 'Снижение потребности во сне',
+                weight: 'additional', capturable: true,
+                met: function(s) {
+                    return s.sleep.indexOf('снижение потребности во сне') !== -1 ||
+                           s.sleep.indexOf('отсутствует') !== -1;
+                }
+            },
+            {
+                id: 'bar_man_overvalued',
+                label: 'Сверхценные идеи / идеи грандиозности',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s.idea_overvalued; }
+            },
+            {
+                id: 'bar_man_distance',
+                label: 'Снижение или отсутствие чувства дистанции',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s.distance === 'снижено' || s.distance === 'отсутствует'; }
+            },
+            {
+                id: 'bar_man_distractibility',
+                label: 'Повышенная отвлекаемость',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s._attentionImpaired; }
+            },
+            {
+                id: 'bar_man_aggression',
+                label: 'Агрессия / раздражительность (при гневливой мании)',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s.aggression === 'в адрес окружающих'; }
+            },
+        ]
+    },
+
+    // ── F31.3–F31.5  БАР — ДЕПРЕССИВНЫЙ ЭПИЗОД ───────────────
+    {
+        code: 'F31.3',
+        name: 'Биполярное расстройство, депрессивный эпизод',
+        severityFn: computeBARDepressiveSeverity,
+        criteria: [
+            {
+                id: 'bar_dep_mood',
+                label: 'Сниженное настроение',
+                weight: 'core', capturable: true,
+                met: function(s) { return s.mood === 'сниженное'; }
+            },
+            {
+                id: 'bar_dep_anhedonia',
+                label: 'Ангедония / утрата интересов',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'bar_dep_energy',
+                label: 'Снижение энергии',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'bar_dep_duration',
+                label: 'Длительность ≥ 2 недель',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'bar_episodes',
+                label: '≥ 2 эпизодов в анамнезе',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'bar_polarity',
+                label: 'Смена полюса настроения в анамнезе',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'bar_dep_emotions',
+                label: 'Аффект с преобладанием депрессии',
+                weight: 'additional', capturable: true,
+                met: function(s) {
+                    return s.emotions.indexOf('с преобладанием депрессии') !== -1 ||
+                           s.emotions.indexOf('тусклые') !== -1 ||
+                           s.emotions.indexOf('однообразные') !== -1 ||
+                           s.emotions.indexOf('монотонные') !== -1;
+                }
+            },
+            {
+                id: 'bar_dep_thinking',
+                label: 'Замедление мышления / снижение продуктивности',
+                weight: 'additional', capturable: true,
+                met: function(s) {
+                    return s.thinking_tempo === 'замедлен' ||
+                           s.thinking_productivity === 'снижена';
+                }
+            },
+            {
+                id: 'bar_dep_sleep',
+                label: 'Нарушения сна',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s._sleepDisturbed; }
+            },
+            {
+                id: 'bar_dep_appetite',
+                label: 'Снижение аппетита / анорексия',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s.appetite === 'снижен' || s.appetite === 'анорексия'; }
+            },
+            {
+                id: 'bar_dep_suicidal',
+                label: 'Суицидальные мысли или планы',
+                weight: 'additional', capturable: true,
+                met: function(s) {
+                    return s.suicidal_thoughts === 'присутствуют' ||
+                           s.suicidal_plans === 'присутствуют';
+                }
+            },
+            {
+                id: 'bar_dep_attention',
+                label: 'Снижение концентрации внимания',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s._attentionImpaired; }
+            },
+            {
+                id: 'bar_dep_affective_ideas',
+                label: 'Аффективно обусловленные идеи (вина, самообвинение)',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s.idea_affective; }
+            },
+            {
+                id: 'bar_dep_selfesteem',
+                label: 'Снижение самооценки, идеи малоценности',
+                weight: 'additional', capturable: false, met: null
+            },
+            {
+                id: 'bar_dep_pessimism',
+                label: 'Безнадёжность, пессимизм',
+                weight: 'additional', capturable: false, met: null
             },
         ]
     },
@@ -762,6 +997,123 @@ function matchNosologies(symptoms) {
 
 // ── D. Рендеринг ─────────────────────────────────────────────
 
+// Карта: id критерия → { scrollTo: id-элемента, expand: [id-multicheck-body, ...] }
+var CRITERION_ANCHOR = {
+    dep_mood:               { scrollTo: 'status-mood' },
+    dep_emotions_dep:       { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+    dep_thinking_slow:      { scrollTo: 'status-thinking' },
+    dep_sleep:              { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+    dep_appetite:           { scrollTo: 'status-sleep-appetite' },
+    dep_suicidal:           { scrollTo: 'status-mood' },
+    dep_attention:          { scrollTo: 'status-attention',       expand: ['attention_body'] },
+    dep_affective_ideas:    { scrollTo: 'ideas-block' },
+
+    man_mood:               { scrollTo: 'status-mood' },
+    man_thinking_fast:      { scrollTo: 'status-thinking' },
+    man_productivity:       { scrollTo: 'status-thinking' },
+    man_sleep:              { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+    man_overvalued:         { scrollTo: 'ideas-block' },
+    man_distance:           { scrollTo: 'status-insight' },
+    man_distractibility:    { scrollTo: 'status-attention',       expand: ['attention_body'] },
+    man_aggression:         { scrollTo: 'status-mood' },
+
+    sz_delusion:            { scrollTo: 'ideas-block' },
+    sz_pseudo:              { scrollTo: 'hallucinations_group' },
+    sz_auditory_true:       { scrollTo: 'hallucinations_group' },
+    sz_automatism:          { scrollTo: 'psychic_automatism_group' },
+    sz_thinking_disorder:   { scrollTo: 'status-thinking',        expand: ['thinking_disorders_body'] },
+    sz_flat_affect:         { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+    sz_inadequate_affect:   { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+    sz_no_insight:          { scrollTo: 'status-insight' },
+
+    f23_delusion:           { scrollTo: 'ideas-block' },
+    f23_hallucinations:     { scrollTo: 'hallucinations_group' },
+    f23_instability:        { scrollTo: 'status-mood' },
+    f23_thinking_seq:       { scrollTo: 'status-thinking' },
+
+    gad_anxiety:            { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+    gad_instability:        { scrollTo: 'status-mood' },
+    gad_sleep:              { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+    gad_attention:          { scrollTo: 'status-attention',       expand: ['attention_body'] },
+    gad_irritability:       { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+
+    ocd_obsessions:         { scrollTo: 'ideas-block' },
+    ocd_rigid:              { scrollTo: 'status-thinking',        expand: ['thinking_mobility_body'] },
+    ocd_attention:          { scrollTo: 'status-attention',       expand: ['attention_body'] },
+    ocd_sleep:              { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+
+    ptsd_sleep:             { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+    ptsd_attention:         { scrollTo: 'status-attention',       expand: ['attention_body'] },
+    ptsd_anxiety:           { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+    ptsd_suicidal:          { scrollTo: 'status-mood' },
+
+    eupd_instability:       { scrollTo: 'status-mood' },
+    eupd_irritability:      { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+    eupd_autoaggression:    { scrollTo: 'status-mood' },
+    eupd_suicidal_thoughts: { scrollTo: 'status-mood' },
+    eupd_suicidal_plans:    { scrollTo: 'status-mood' },
+    eupd_history:           { scrollTo: 'status-mood',            expand: ['suicide_history_body'] },
+    eupd_sleep:             { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+
+    // BAR — гипоманиакальный эпизод
+    bar_hypo_mood:              { scrollTo: 'status-mood' },
+    bar_hypo_thinking:          { scrollTo: 'status-thinking' },
+    bar_hypo_sleep:             { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+    bar_hypo_overvalued:        { scrollTo: 'ideas-block' },
+    bar_hypo_distance:          { scrollTo: 'status-insight' },
+    bar_hypo_distractibility:   { scrollTo: 'status-attention',       expand: ['attention_body'] },
+
+    // BAR — маниакальный эпизод
+    bar_man_mood:               { scrollTo: 'status-mood' },
+    bar_man_thinking:           { scrollTo: 'status-thinking' },
+    bar_man_productivity:       { scrollTo: 'status-thinking' },
+    bar_man_sleep:              { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+    bar_man_overvalued:         { scrollTo: 'ideas-block' },
+    bar_man_distance:           { scrollTo: 'status-insight' },
+    bar_man_distractibility:    { scrollTo: 'status-attention',       expand: ['attention_body'] },
+    bar_man_aggression:         { scrollTo: 'status-mood' },
+
+    // BAR — депрессивный эпизод
+    bar_dep_mood:               { scrollTo: 'status-mood' },
+    bar_dep_emotions:           { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+    bar_dep_thinking:           { scrollTo: 'status-thinking' },
+    bar_dep_sleep:              { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+    bar_dep_appetite:           { scrollTo: 'status-sleep-appetite' },
+    bar_dep_suicidal:           { scrollTo: 'status-mood' },
+    bar_dep_attention:          { scrollTo: 'status-attention',       expand: ['attention_body'] },
+    bar_dep_affective_ideas:    { scrollTo: 'ideas-block' },
+};
+
+function scrollToFormSection(criterionId) {
+    var anchor = CRITERION_ANCHOR[criterionId];
+    if (!anchor) return;
+
+    // Раскрыть multicheck-группы
+    if (anchor.expand) {
+        anchor.expand.forEach(function(bodyId) {
+            var body = document.getElementById(bodyId);
+            if (body && !body.classList.contains('open')) {
+                body.classList.add('open');
+            }
+        });
+    }
+
+    var target = document.getElementById(anchor.scrollTo);
+    if (!target) return;
+
+    // Если цель — <details>, раскрыть её и всех предков
+    var el = target;
+    while (el) {
+        if (el.tagName === 'DETAILS') el.open = true;
+        el = el.parentElement;
+    }
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    target.classList.add('nosology-anchor-highlight');
+    setTimeout(function() { target.classList.remove('nosology-anchor-highlight'); }, 2000);
+}
+
 function addDiagnosisCode(code, name, checked) {
     var field = document.getElementById('diagnosis');
     if (!field) return;
@@ -782,6 +1134,34 @@ function addDiagnosisCode(code, name, checked) {
             field.value = lines.join('\n');
         }
     }
+}
+
+function makeCriterionLabel(c) {
+    if (!CRITERION_ANCHOR[c.id]) {
+        var span = document.createElement('span');
+        span.textContent = c.label;
+        return span;
+    }
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'nosology-criterion-link';
+    btn.title = 'Перейти к полю в форме';
+    btn.innerHTML = c.label + '<span class="nosology-criterion-link__icon">↗</span>';
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        scrollToFormSection(c.id);
+    });
+    return btn;
+}
+
+// Хранилище отмеченных чекбоксов "Уточнить у пациента"
+var _checkedClarifyLabels = {};
+
+// Публичная функция — вызывается из generateText() в builder.js
+function getCheckedClarifyTexts() {
+    return Object.keys(_checkedClarifyLabels).map(function(k) {
+        return _checkedClarifyLabels[k];
+    });
 }
 
 function buildNosologyCard(result) {
@@ -852,14 +1232,14 @@ function buildNosologyCard(result) {
     result.metList.forEach(function(c) {
         var li = document.createElement('li');
         li.className = 'nosology-card__criterion nosology-card__criterion--met';
-        li.textContent = c.label;
+        li.appendChild(makeCriterionLabel(c));
         ul.appendChild(li);
     });
 
     result.unmetList.forEach(function(c) {
         var li = document.createElement('li');
         li.className = 'nosology-card__criterion nosology-card__criterion--unmet';
-        li.textContent = c.label;
+        li.appendChild(makeCriterionLabel(c));
         ul.appendChild(li);
     });
 
@@ -875,17 +1255,36 @@ function buildNosologyCard(result) {
         title.textContent = 'Уточнить у пациента (не отражено в форме):';
         clarify.appendChild(title);
 
-        var cul = document.createElement('ul');
-        cul.className = 'nosology-card__clarify-list';
+        var grid = document.createElement('div');
+        grid.className = 'nosology-card__clarify-grid';
 
         result.clarifyList.forEach(function(c) {
-            var li = document.createElement('li');
-            li.className = 'nosology-card__clarify-item';
-            li.textContent = c.label;
-            cul.appendChild(li);
+            var lbl = document.createElement('label');
+            lbl.className = 'nosology-card__clarify-item';
+
+            var cbItem = document.createElement('input');
+            cbItem.type = 'checkbox';
+            cbItem.className = 'nosology-card__clarify-checkbox';
+
+            (function(criterion) {
+                var key = result.code + '__' + criterion.id;
+                cbItem.addEventListener('change', function() {
+                    if (cbItem.checked) {
+                        _checkedClarifyLabels[key] = criterion.label;
+                    } else {
+                        delete _checkedClarifyLabels[key];
+                    }
+                });
+            }(c));
+
+            var txt = document.createElement('span');
+            txt.textContent = c.label;
+            lbl.appendChild(cbItem);
+            lbl.appendChild(txt);
+            grid.appendChild(lbl);
         });
 
-        clarify.appendChild(cul);
+        clarify.appendChild(grid);
         body.appendChild(clarify);
     }
 

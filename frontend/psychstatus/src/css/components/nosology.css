@@ -210,26 +210,66 @@
     margin-bottom: 6px;
 }
 
-.nosology-card__clarify-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+.nosology-card__clarify-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 14px;
 }
 
 .nosology-card__clarify-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    cursor: pointer;
     font-size: 13px;
     color: #6e6e73;
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
+    line-height: 1.4;
 }
 
-.nosology-card__clarify-item::before {
-    content: '?';
-    font-weight: 700;
-    color: #ff9500;
+.nosology-card__clarify-item:hover {
+    color: #1c1c1e;
+}
+
+.nosology-card__clarify-checkbox {
+    margin-top: 2px;
     flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    accent-color: var(--accent, #007aff);
+    cursor: pointer;
+}
+
+/* Criterion link button */
+.nosology-criterion-link {
+    all: unset;
+    cursor: pointer;
+    display: inline;
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+}
+
+.nosology-criterion-link:hover {
+    text-decoration-style: solid;
+    opacity: 0.8;
+}
+
+.nosology-criterion-link__icon {
+    font-size: 10px;
+    margin-left: 3px;
+    opacity: 0.5;
+    vertical-align: super;
+}
+
+/* Highlight for scrolled-to section */
+@keyframes nosologyHighlight {
+    0%   { box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.3); }
+    40%  { box-shadow: 0 0 0 6px rgba(0, 122, 255, 0.15); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 122, 255, 0); }
+}
+
+.nosology-anchor-highlight {
+    animation: nosologyHighlight 2s ease-out forwards;
+    border-radius: 8px;
 }

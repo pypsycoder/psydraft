@@ -64,6 +64,8 @@ function generateText() {
 
         // Сон, аппетит
         const sleep = getCheckedTextByName('sleep');
+        const sleepHours = document.getElementById('sleep_hours').value.trim();
+        const sleepDays  = document.getElementById('sleep_days').value.trim();
         const appetite = document.getElementById('appetite').value || '';
 
         // Диагноз, рекомендации, назначения
@@ -201,11 +203,27 @@ function generateText() {
         if (seizures) {
             text += 'Эпилептиформные пароксизмы: ' + seizures + '.<br>';
         }
-        if (sleep) {
-            text += 'Сон: ' + sleep + '.<br>';
+        if (sleep || sleepHours) {
+            let sleepText = sleep || '';
+            if (sleepHours) {
+                const durStr = 'в среднем ' + sleepHours + ' ч' +
+                               (sleepDays ? ' за ' + sleepDays + ' дн.' : '');
+                sleepText = sleepText ? sleepText + ', ' + durStr : durStr;
+            }
+            text += 'Сон: ' + sleepText + '.<br>';
         }
         if (appetite) {
             text += 'Аппетит ' + appetite + '.<br>';
+        }
+
+        // Уточнённые у пациента пункты из нозологического советника
+        if (typeof getCheckedClarifyTexts === 'function') {
+            var clarifyTexts = getCheckedClarifyTexts();
+            if (clarifyTexts.length > 0) {
+                clarifyTexts.forEach(function(label) {
+                    text += label + '.<br>';
+                });
+            }
         }
 
         text += '<br><strong>Диагноз и рекомендации</strong><br><br>';
