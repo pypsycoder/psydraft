@@ -201,8 +201,56 @@
             title: 'Социальная активность',
             short: 'Поддерживать социальные контакты',
             full: 'Поддерживать посильный уровень общения с близкими и знакомыми, избегая длительной социальной изоляции.'
-        }
-    ];
+        },
+
+    // === ОБСЛЕДОВАНИЯ (таблицы) ===
+
+    // Инструментальные исследования
+    {id: 'exam_eeg',         group: 'instrumental', uiType: 'table', title: 'ЭЭГ',                                   indication: 'Эпилептические приступы, подозрение на органическое поражение ЦНС, дифдиагностика'},
+    {id: 'exam_mri_brain',   group: 'instrumental', uiType: 'table', title: 'МРТ головного мозга',                   indication: 'Очаговая симптоматика, впервые выявленный психоз'},
+    {id: 'exam_ct_brain',    group: 'instrumental', uiType: 'table', title: 'КТ головного мозга',                    indication: 'Экстренная альтернатива МРТ'},
+    {id: 'exam_uzdс',        group: 'instrumental', uiType: 'table', title: 'УЗДС сосудов головы и шеи',             indication: 'ЦВБ, когнитивный дефицит'},
+    {id: 'exam_ecg',         group: 'instrumental', uiType: 'table', title: 'ЭКГ',                                   indication: 'Контроль QTc при антипсихотиках и трициклических антидепрессантах'},
+    {id: 'exam_holter',      group: 'instrumental', uiType: 'table', title: 'Суточный мониторинг ЭКГ (Холтер)',      indication: 'Жалобы на перебои в работе сердца, синкопе'},
+    {id: 'exam_xray_chest',  group: 'instrumental', uiType: 'table', title: 'Рентгенография органов грудной клетки', indication: 'Скрининг, подготовка к госпитализации'},
+    {id: 'exam_echo',        group: 'instrumental', uiType: 'table', title: 'ЭхоКГ',                                 indication: 'Кардиальная патология'},
+    {id: 'exam_uzi_abdom',   group: 'instrumental', uiType: 'table', title: 'УЗИ органов брюшной полости',           indication: 'Гепатотоксичность на фоне вальпроатов, клозапина'},
+    {id: 'exam_uzi_thyroid', group: 'instrumental', uiType: 'table', title: 'УЗИ щитовидной железы',                indication: 'Структурная патология ЩЖ, пальпаторные изменения, узловой зоб, длительная терапия литием'},
+
+    // Лабораторные исследования
+    {id: 'lab_cbc',           group: 'laboratory', uiType: 'table', title: 'ОАК с лейкоцитарной формулой',                                                    indication: 'Базовый скрининг; обязателен при клозапине — риск агранулоцитоза'},
+    {id: 'lab_ua',            group: 'laboratory', uiType: 'table', title: 'ОАМ',                                                                              indication: 'Базовый скрининг'},
+    {id: 'lab_biochem',       group: 'laboratory', uiType: 'table', title: 'Биохимия крови (АЛТ, АСТ, креатинин, мочевина, билирубин, глюкоза, общий белок)', indication: 'Функция печени/почек, базовый'},
+    {id: 'lab_electrolytes',  group: 'laboratory', uiType: 'table', title: 'Натрий, калий',                                                                    indication: 'Карбамазепин (риск гипонатриемии), литий (контроль электролитного баланса)'},
+    {id: 'lab_lipids',        group: 'laboratory', uiType: 'table', title: 'Липидный профиль',                                                                 indication: 'Атипичные антипсихотики, метаболический синдром'},
+    {id: 'lab_glucose',       group: 'laboratory', uiType: 'table', title: 'Глюкоза натощак',                                                                  indication: 'Атипичные антипсихотики (особенно клозапин, оланзапин)'},
+    {id: 'lab_hba1c',         group: 'laboratory', uiType: 'table', title: 'Гликированный гемоглобин',                                                         indication: 'Нарушение углеводного обмена'},
+    {id: 'lab_thyroid',       group: 'laboratory', uiType: 'table', title: 'ТТГ, Т4 свободный',                                                                indication: 'Депрессия, биполярное расстройство, терапия литием'},
+    {id: 'lab_prolactin',     group: 'laboratory', uiType: 'table', title: 'Пролактин',                                                                        indication: 'Антипсихотики, галакторея, нарушение менструального цикла'},
+    {id: 'lab_valproate',     group: 'laboratory', uiType: 'table', title: 'Концентрация вальпроатов в крови',                                                 indication: 'Контроль терапии'},
+    {id: 'lab_lithium',       group: 'laboratory', uiType: 'table', title: 'Концентрация лития в крови',                                                       indication: 'Контроль терапии'},
+    {id: 'lab_carbamazepine', group: 'laboratory', uiType: 'table', title: 'Концентрация карбамазепина в крови',                                               indication: 'Контроль терапии'},
+    {id: 'lab_lamotrigine',   group: 'laboratory', uiType: 'table', title: 'Концентрация ламотриджина в крови',                                                indication: 'Контроль терапии при БАР, эпилепсии'},
+    {id: 'lab_hiv',           group: 'laboratory', uiType: 'table', title: 'ВИЧ, RW, гепатиты B и C',                                                         indication: 'Скрининг при первичном приёме, госпитализации'},
+    {id: 'lab_b12',           group: 'laboratory', uiType: 'table', title: 'Витамин B12, фолиевая кислота',                                                    indication: 'Когнитивный дефицит, депрессия'},
+    {id: 'lab_coag',          group: 'laboratory', uiType: 'table', title: 'Коагулограмма',                                                                    indication: 'Вальпроаты (риск кровотечений), предоперационная подготовка'},
+
+    // Консультации специалистов (медицинские)
+    {id: 'cons_neurologist',       group: 'consultations', uiType: 'table', title: 'Невролог',              indication: 'Очаговая симптоматика, эпиприступы, когнитивный дефицит'},
+    {id: 'cons_therapist',         group: 'consultations', uiType: 'table', title: 'Терапевт',              indication: 'Соматическая коморбидность'},
+    {id: 'cons_endocrinologist',   group: 'consultations', uiType: 'table', title: 'Эндокринолог',          indication: 'Метаболический синдром, патология щитовидной железы'},
+    {id: 'cons_cardiologist',      group: 'consultations', uiType: 'table', title: 'Кардиолог',             indication: 'Удлинение QTc, аритмии'},
+    {id: 'cons_narcologist',       group: 'consultations', uiType: 'table', title: 'Нарколог',              indication: 'Злоупотребление ПАВ/алкоголем, двойной диагноз'},
+    {id: 'cons_ophthalmologist',   group: 'consultations', uiType: 'table', title: 'Офтальмолог',           indication: 'Фенотиазины, длительная антипсихотическая терапия'},
+    {id: 'cons_gynecologist',      group: 'consultations', uiType: 'table', title: 'Гинеколог',             indication: 'Гиперпролактинемия, нарушение менструального цикла'},
+    {id: 'cons_gastroenterologist',group: 'consultations', uiType: 'table', title: 'Гастроэнтеролог',       indication: 'Нарушение функции печени на фоне терапии'},
+    {id: 'cons_psychotherapist',   group: 'consultations', uiType: 'table', title: 'Психотерапевт (врач)',  indication: 'Психотерапевтическое сопровождение'},
+
+    // Немедицинские специалисты
+    {id: 'cons_med_psychologist',  group: 'nonmedical', uiType: 'table', title: 'Клиничекский психолог',  indication: 'Нейропсихологическое тестирование, патопсихологическое исследование, психодиагностика'},
+    {id: 'cons_clin_psychologist', group: 'nonmedical', uiType: 'table', title: 'Психолог',  indication: 'Психологическая коррекция, работа с копингом, психообразование'},
+    {id: 'cons_social_worker',     group: 'nonmedical', uiType: 'table', title: 'Социальный работник',   indication: 'Реабилитация, социальная дезадаптация, юридические вопросы'},
+];
 
 // === ЛОГИКА КАРТОЧЕК РЕКОМЕНДАЦИЙ ===
 
@@ -215,7 +263,11 @@ const GROUP_LABELS = {
     depression: "Депрессия",
     psychosis: "Психоз",
     substance: "ПАВ",
-    extra: "Дополнительно"
+    extra: "Дополнительно",
+    instrumental:  "Инструментальные",
+    laboratory:    "Лабораторные",
+    consultations: "Консультации",
+    nonmedical:    "Немед. специалисты"
 };
 // Порядок отражения групп
 
@@ -226,7 +278,11 @@ const GROUP_ORDER = [
     "depression",
     "psychosis",
     "substance",
-    "extra"
+    "extra",
+    "instrumental",
+    "laboratory",
+    "consultations",
+    "nonmedical"
 ];
 
 
@@ -314,6 +370,17 @@ function getSortedFilteredRecommendations() {
 
 // == Рендер карточек рекомендаций ==
 
+// Группы, которые отображаются таблицей
+const TABLE_GROUPS = new Set(['instrumental', 'laboratory', 'consultations', 'nonmedical']);
+// Порядок секций при сборе текста
+const EXAM_GROUP_ORDER = ['instrumental', 'laboratory', 'consultations', 'nonmedical'];
+const EXAM_GROUP_LABELS = {
+    instrumental:  'Инструментальные исследования',
+    laboratory:    'Лабораторные исследования',
+    consultations: 'Консультации специалистов',
+    nonmedical:    'Немедицинские специалисты'
+};
+
 function renderRecommendations() {
     const container = document.getElementById('recommendation-cards');
     if (!container || !Array.isArray(RECOMMENDATIONS_LIBRARY)) return;
@@ -321,8 +388,11 @@ function renderRecommendations() {
     container.innerHTML = '';
 
     const items = getSortedFilteredRecommendations();
+    const cardItems  = items.filter(i => !TABLE_GROUPS.has(i.group));
+    const tableItems = items.filter(i =>  TABLE_GROUPS.has(i.group));
 
-    items.forEach((item) => {
+    // --- Карточки (существующая логика) ---
+    cardItems.forEach((item) => {
         const card = document.createElement('div');
         card.className = 'rec-card';
         card.dataset.recId = item.id;
@@ -361,10 +431,10 @@ function renderRecommendations() {
         container.appendChild(card);
     });
 
-    // восстанавливаем состояние выбранных рекомендаций
+    // Восстанавливаем состояние карточек
     Object.entries(selectedRecs).forEach(([id, mode]) => {
         const card = container.querySelector(`.rec-card[data-rec-id="${id}"]`);
-        if (!card) return; // карточка в другой группе — пропускаем
+        if (!card) return;
 
         const checkbox = card.querySelector('.rec-toggle');
         const modesBlock = card.querySelector('.rec-modes');
@@ -384,8 +454,61 @@ function renderRecommendations() {
         textBlock.style.display = 'block';
     });
 
-    // после перерисовки карточек пересчитываем счётчик
+    // --- Таблицы обследований ---
+    if (tableItems.length > 0) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'rec-table-wrapper';
+
+        if (activeGroup === 'all') {
+            // сгруппировать по group в нашем порядке
+            const grouped = {};
+            tableItems.forEach(item => {
+                if (!grouped[item.group]) grouped[item.group] = [];
+                grouped[item.group].push(item);
+            });
+            EXAM_GROUP_ORDER.forEach(group => {
+                if (!grouped[group]) return;
+                const heading = document.createElement('h4');
+                heading.className = 'exam-section-heading';
+                heading.textContent = EXAM_GROUP_LABELS[group];
+                wrapper.appendChild(heading);
+                wrapper.appendChild(buildExamTable(grouped[group]));
+            });
+        } else {
+            wrapper.appendChild(buildExamTable(tableItems));
+        }
+
+        container.appendChild(wrapper);
+    }
+
     updateSelectedCount();
+}
+
+// Строит таблицу для набора элементов-обследований
+function buildExamTable(items) {
+    const table = document.createElement('table');
+    table.className = 'exam-table';
+
+    const thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th></th><th>Название</th><th>Показание</th></tr>';
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    items.forEach(item => {
+        const tr = document.createElement('tr');
+        const isChecked = !!selectedRecs[item.id];
+        if (isChecked) tr.classList.add('exam-row--checked');
+        tr.innerHTML = `
+            <td class="exam-cb-cell">
+                <input type="checkbox" class="rec-toggle" data-rec-id="${item.id}"${isChecked ? ' checked' : ''}>
+            </td>
+            <td class="exam-name">${item.title}</td>
+            <td class="exam-indication">${item.indication || ''}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    return table;
 }
 
 // == Инициализация карточек (один раз) ==
@@ -406,6 +529,21 @@ function initRecommendationCards() {
 function onRecommendationCardsChange(event) {
     const target = event.target;
     if (!target) return;
+
+    // Чекбоксы в таблицах обследований
+    if (target.classList.contains('rec-toggle') && !target.closest('.rec-card')) {
+        const id = target.dataset.recId;
+        const row = target.closest('tr');
+        if (target.checked) {
+            selectedRecs[id] = 'short';
+            if (row) row.classList.add('exam-row--checked');
+        } else {
+            delete selectedRecs[id];
+            if (row) row.classList.remove('exam-row--checked');
+        }
+        updateSelectedCount();
+        return;
+    }
 
     const card = target.closest('.rec-card');
     if (!card) return;
@@ -489,17 +627,33 @@ function collectSelectedRecommendations() {
     const textarea = document.getElementById('recommendations');
     if (!textarea) return;
 
-    const texts = [];
+    const regularTexts = [];
+    const examSections = {};
 
     Object.entries(selectedRecs).forEach(([id, mode]) => {
         const item = RECOMMENDATIONS_LIBRARY.find((r) => r.id === id);
         if (!item) return;
 
-        const text = mode === 'full' ? item.full : item.short;
-        texts.push(`${texts.length + 1}. ${text}`);
+        if (TABLE_GROUPS.has(item.group)) {
+            if (!examSections[item.group]) examSections[item.group] = [];
+            examSections[item.group].push(item.title);
+        } else {
+            const text = mode === 'full' ? item.full : item.short;
+            regularTexts.push(text);
+        }
     });
 
-    textarea.value = texts.join('\n');
+    const lines = [];
+    regularTexts.forEach((text, i) => lines.push(`${i + 1}. ${text}`));
+
+    EXAM_GROUP_ORDER.forEach(group => {
+        if (!examSections[group] || examSections[group].length === 0) return;
+        if (lines.length > 0) lines.push('');
+        lines.push('<strong>' + EXAM_GROUP_LABELS[group] + ':</strong>');
+        examSections[group].forEach((name, i) => lines.push(`${i + 1}. ${name}`));
+    });
+
+    textarea.value = lines.join('\n');
 }
 
 // == Общая инициализация библиотеки рекомендаций ==

@@ -1,3 +1,21 @@
+/* ===== ФИЛЬТРЫ-ЗАКЛАДКИ ===== */
+
+.group-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 6px;
+    margin-bottom: 14px;
+}
+
+.group-filter-btn {
+    margin-right: 0;          /* перекрываем глобальный margin-right кнопок */
+    padding: 7px 14px;
+    font-size: 14px;
+    border-radius: 999px;
+    line-height: 1;
+}
+
+
 /* ===== СЕТКА КАРТОЧЕК ===== */
 
 .rec-grid {
@@ -96,4 +114,97 @@
     color: #fff;
     font-size: 14px;
     cursor: pointer;
+}
+
+/* ===== ТАБЛИЦЫ ОБСЛЕДОВАНИЙ ===== */
+
+/* Обёртка занимает всю ширину грида */
+.rec-table-wrapper {
+    grid-column: 1 / -1;
+    margin: 4px 0 8px;
+}
+
+/* Заголовок секции при «Все» */
+.exam-section-heading {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary, #555);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 16px 0 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.exam-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    table-layout: fixed;
+}
+
+.exam-table thead th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-secondary, #888);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 10px 6px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.exam-table thead th:first-child {
+    width: 36px;
+    padding-left: 4px;
+}
+
+.exam-table thead th:nth-child(2) { width: 40%; }
+.exam-table thead th:nth-child(3) { width: auto; }
+
+.exam-table tbody tr {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    transition: background 0.15s;
+}
+
+.exam-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.exam-table tbody tr:hover {
+    background: rgba(0, 122, 255, 0.04);
+}
+
+.exam-table tbody tr.exam-row--checked {
+    background: rgba(0, 122, 255, 0.07);
+}
+
+.exam-cb-cell {
+    width: 36px;
+    padding: 8px 4px 8px 4px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.exam-cb-cell input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.exam-name {
+    padding: 8px 10px 8px 0;
+    vertical-align: middle;
+    font-weight: 500;
+    color: var(--text-primary, #1a1a1a);
+    word-break: break-word;
+}
+
+.exam-indication {
+    padding: 8px 4px 8px 0;
+    vertical-align: middle;
+    color: var(--text-secondary, #666);
+    font-size: 13px;
+    word-break: break-word;
 }

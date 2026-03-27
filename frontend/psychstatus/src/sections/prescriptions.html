@@ -6,13 +6,18 @@
         <div class="prescription-editor-row">
             <div class="prescription-field">
                 <label class="prescription-label-small" for="rx-name">Название препарата</label>
-                <input
-                    type="text"
-                    id="rx-name"
-                    class="rx-input-wide"
-                    placeholder="например, Сертралин"
-                    autocomplete="off"
-                >
+                <div class="rx-drug-wrap">
+                    <input
+                        type="text"
+                        id="rx-name"
+                        class="rx-input-wide"
+                        placeholder="например, Сертралин"
+                        autocomplete="off"
+                        oninput="searchRxDrug()"
+                        onkeydown="handleRxDrugKey(event)"
+                    >
+                    <div id="rx-drug-results" class="rx-drug-results"></div>
+                </div>
             </div>
 
             <div class="prescription-field prescription-field-inline">
