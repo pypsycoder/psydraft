@@ -7,7 +7,7 @@ function generateText() {
         const ill_days = document.getElementById('ill_days').value.trim();
         const self_treatment = document.getElementById('self_treatment').value.trim();
         const dynamics = document.getElementById('dynamics').value.trim();
-        const life_history = document.getElementById('life_history').value.trim();
+        const life_history = collectLifeHistoryText();
 
         // ПСИХСТАТУС
         //  Сознание и общение
@@ -79,7 +79,7 @@ function generateText() {
         text += '<strong>Жалобы:</strong> ' + (complaints || '&nbsp;') + '<br><br>';
         text += '<strong>Анамнез заболевания:</strong> ' + (anamnesis || '&nbsp;') + '<br><br>';
         if (dispensary_status) text += '<strong>Состояние на учете в ПНД и наркологическом диспансере:</strong> ' + dispensary_status + '<br>';
-        if (dispensary_treatment) text += '<strong>Лечение в ПНД и наркологическом диспансере:</strong> ' + dispensary_treatment + '<br>';
+        if (dispensary_treatment) text += '<strong>Лечение у психиатра, нарколога, психотерапевта:</strong> ' + dispensary_treatment + '<br>';
         if (ill_days) text += '<strong>Считает себя больным в течение (дней):</strong> ' + ill_days + '<br>';
         if (self_treatment) text += '<strong>Самостоятельное лечение:</strong> ' + self_treatment + '<br>';
         if (dynamics) text += '<strong>Динамика заболевания:</strong> ' + dynamics + '<br>';
@@ -232,7 +232,7 @@ function generateText() {
 
         // Рекомендации
         const recHtml = recommendations ? recommendations.replace(/\n/g, '<br>') : '&nbsp;';
-        text += '<strong>Рекомендации:</strong><br>' + recHtml + '<br><br>';
+        text += '<strong>Рекомендации:</strong><br>' + recHtml + '<br>';
 
         // Назначения
         const prescHtml = prescriptionsText || '&nbsp;';

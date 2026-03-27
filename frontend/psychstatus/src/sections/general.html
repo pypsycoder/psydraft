@@ -10,9 +10,14 @@
         <textarea id="anamnesis"></textarea>
 
         <label>Состояние на учете в ПНД и наркологическом диспансере:</label>
-        <textarea id="dispensary_status"></textarea>
+        <select id="dispensary_status">
+            <option value="">— выбрать —</option>
+            <option>состоит</option>
+            <option>не состоит</option>
+            <option>наблюдается у частных специалистов</option>
+        </select>
 
-        <label>Лечение в ПНД и наркологическом диспансере:</label>
+        <label>Лечение у психиатра, нарколога, психотерапевта:</label>
         <textarea id="dispensary_treatment"></textarea>
 
         <label>Считает себя больным в течение (дней):</label>
@@ -24,8 +29,7 @@
         <label>Динамика заболевания:</label>
         <textarea id="dynamics"></textarea>
 
-        <label>Анамнез жизни:</label>
-        <textarea id="life_history"></textarea>
+        <!-- INCLUDE life_history_block.html -->
 
     </div>
 </div>

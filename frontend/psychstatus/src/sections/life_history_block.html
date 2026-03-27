@@ -1,0 +1,169 @@
+<details class="perception-group" id="life-history-block">
+    <summary class="perception-summary" style="font-weight:700; font-size:15px;">Анамнез жизни</summary>
+    <div class="perception-inner">
+
+    <!-- 1. Наследственность -->
+    <details class="perception-group" id="lh_heredity_group">
+        <summary class="perception-summary">Наследственность</summary>
+        <div class="perception-inner">
+            <div class="perception-columns">
+                <label class="checkbox-item"><input type="checkbox" name="lh_heredity" value="не отягощена" onchange="lhToggleHeredityDesc()"> Не отягощена</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_heredity" value="психические заболевания" onchange="lhToggleHeredityDesc()"> Психические заболевания</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_heredity" value="алкоголизм / наркомания" onchange="lhToggleHeredityDesc()"> Алкоголизм / наркомания</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_heredity" value="суициды" onchange="lhToggleHeredityDesc()"> Суициды</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_heredity" value="эпилепсия" onchange="lhToggleHeredityDesc()"> Эпилепсия</label>
+            </div>
+            <div id="lh_heredity_desc_row" style="display:none; margin-top:6px;">
+                <input type="text" id="lh_heredity_desc" class="perception-description" style="width:100%;" placeholder="Уточнить (кто, что)">
+            </div>
+        </div>
+    </details>
+
+    <!-- 2. Ранний анамнез -->
+    <details class="perception-group" id="lh_early_group">
+        <summary class="perception-summary">Ранний анамнез</summary>
+        <div class="perception-inner">
+            <div class="perception-columns">
+                <label class="checkbox-item"><input type="checkbox" name="lh_early" value="без особенностей"> Без особенностей</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_early" value="патология беременности / родов"> Патология беременности / родов</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_early" value="задержка развития"> Задержка развития</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_early" value="ЧМТ в детстве"> ЧМТ в детстве</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_early" value="судороги в детстве"> Судороги в детстве</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_early" value="нейроинфекции (менингит, энцефалит)"> Нейроинфекции (менингит, энцефалит)</label>
+            </div>
+        </div>
+    </details>
+
+    <!-- 3+4+5. Образование / Трудовая деятельность / Семейное положение -->
+    <div class="subgroup-grid">
+        <div>
+            <label>Образование:</label>
+            <select id="lh_education">
+                <option value="">— выбрать —</option>
+                <option>неполное среднее</option>
+                <option>среднее</option>
+                <option>среднее специальное</option>
+                <option>незаконченное высшее</option>
+                <option>высшее</option>
+            </select>
+            <label class="checkbox-item" style="margin-top:8px; font-weight:400;">
+                <input type="checkbox" id="lh_special_school"> Обучался в коррекционной школе
+            </label>
+        </div>
+        <div>
+            <label>Трудовая деятельность:</label>
+            <select id="lh_employment">
+                <option value="">— выбрать —</option>
+                <option>работает</option>
+                <option>не работает</option>
+                <option>инвалид</option>
+                <option>пенсионер</option>
+                <option>студент</option>
+                <option>декретный отпуск</option>
+            </select>
+            <input type="text" id="lh_employment_desc" placeholder="профессия / уточнение" style="margin-top:6px;">
+        </div>
+        <div>
+            <label>Семейное положение:</label>
+            <select id="lh_marital">
+                <option value="">— выбрать —</option>
+                <option>не замужем / холост</option>
+                <option>замужем / женат</option>
+                <option>гражданский брак</option>
+                <option>в разводе</option>
+                <option>вдова / вдовец</option>
+            </select>
+            <div style="margin-top:8px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <label class="checkbox-item" style="font-weight:400; margin:0;">
+                    <input type="checkbox" id="lh_has_children" onchange="lhToggleChildren()"> Есть дети
+                </label>
+                <input type="number" id="lh_children_count" min="1" max="20" placeholder="кол-во"
+                    style="display:none; width:80px; margin-top:0;">
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Перенесённые заболевания и травмы -->
+    <details class="perception-group" id="lh_illness_group">
+        <summary class="perception-summary">Перенесённые заболевания и травмы</summary>
+        <div class="perception-inner">
+            <div class="perception-columns">
+                <label class="checkbox-item"><input type="checkbox" name="lh_illness" value="отрицает"> Отрицает</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_illness" value="ЧМТ"> ЧМТ</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_illness" value="нейроинфекции"> Нейроинфекции</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_illness" value="эпилепсия"> Эпилепсия</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_illness" value="сосудистые заболевания"> Сосудистые заболевания</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_illness" value="эндокринные заболевания"> Эндокринные заболевания</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_illness" value="хронические соматические"> Хронические соматические</label>
+            </div>
+            <input type="text" id="lh_illness_desc" class="perception-description" style="margin-top:6px; width:100%;" placeholder="Уточнение (что, когда)">
+        </div>
+    </details>
+
+    <!-- 7. Алкоголь + Курение -->
+    <div class="subgroup-grid">
+        <div>
+            <label>Алкоголь:</label>
+            <select id="lh_alcohol">
+                <option value="">— выбрать —</option>
+                <option>не употребляет</option>
+                <option>эпизодически</option>
+                <option>злоупотребляет</option>
+                <option>зависимость (алкоголизм)</option>
+                <option>ремиссия</option>
+            </select>
+        </div>
+        <div>
+            <label>Курение:</label>
+            <select id="lh_smoking">
+                <option value="">— выбрать —</option>
+                <option>не курит</option>
+                <option>курит</option>
+                <option>бросил</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 8. ПАВ / Наркотики -->
+    <details class="perception-group" id="lh_substances_group">
+        <summary class="perception-summary">ПАВ / Наркотики</summary>
+        <div class="perception-inner">
+            <div class="perception-columns">
+                <label class="checkbox-item"><input type="checkbox" name="lh_substances" value="отрицает"> Отрицает</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_substances" value="употреблял в прошлом"> Употреблял в прошлом</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_substances" value="употребляет в настоящее время"> Употребляет</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_substances" value="зависимость"> Зависимость</label>
+                <label class="checkbox-item"><input type="checkbox" name="lh_substances" value="ремиссия"> Ремиссия</label>
+            </div>
+            <input type="text" id="lh_substances_desc" class="perception-description" style="margin-top:6px; width:100%;" placeholder="Вид ПАВ, уточнение">
+        </div>
+    </details>
+
+    <!-- 9. Аллергия + Судимость -->
+    <div class="subgroup-grid">
+        <div>
+            <label>Аллергия:</label>
+            <select id="lh_allergy" onchange="lhToggleAllergyDesc()">
+                <option value="">— выбрать —</option>
+                <option>не отмечает</option>
+                <option>есть</option>
+            </select>
+            <input type="text" id="lh_allergy_desc" placeholder="На что (препараты, вещества)" style="display:none; margin-top:6px;">
+        </div>
+        <div>
+            <label>Судимость:</label>
+            <select id="lh_conviction" onchange="lhToggleConvictionDesc()">
+                <option value="">— выбрать —</option>
+                <option>не было</option>
+                <option>была</option>
+            </select>
+            <input type="text" id="lh_conviction_desc" placeholder="Уточнение" style="display:none; margin-top:6px;">
+        </div>
+    </div>
+
+    <!-- Дополнения -->
+    <label>Дополнения к анамнезу жизни:</label>
+    <textarea id="life_history_extra" placeholder="дополнительные сведения"></textarea>
+
+    </div>
+</details>
