@@ -22,6 +22,18 @@ function generateText() {
         const answers = getCheckedTextByName('answers');
         const speech = document.getElementById('speech').value || '';
 
+        // Ориентировка
+        const getOrient = (name) => {
+            const checked = document.querySelector(`input[name="${name}"]:checked`);
+            return checked ? checked.value : '';
+        };
+        const orient_personality = getOrient('orient_personality');
+        const orient_personality_comment = document.getElementById('orient_personality_comment')?.value.trim() || '';
+        const orient_place = getOrient('orient_place');
+        const orient_place_comment = document.getElementById('orient_place_comment')?.value.trim() || '';
+        const orient_time = getOrient('orient_time');
+        const orient_time_comment = document.getElementById('orient_time_comment')?.value.trim() || '';
+
         // Мышление
         const thinking_tempo = document.getElementById('thinking_tempo').value || '';
         const thinking_productivity = document.getElementById('thinking_productivity').value || '';
@@ -77,7 +89,7 @@ function generateText() {
         let text = '';
 
         // Блоки с жирными заголовками
-        text += '<strong>Жалобы:</strong> ' + (complaints || '&nbsp;') + '<br><br>';
+        text += '<strong>Жалобы:</strong> ' + (complaints || 'активно не предъявляет') + '<br><br>';
         text += '<strong>Анамнез заболевания:</strong> ' + (anamnesis || '&nbsp;') + '<br><br>';
         if (dispensary_status) text += '<strong>Состояние на учете в ПНД и наркологическом диспансере:</strong> ' + dispensary_status + '<br>';
         if (dispensary_treatment) text += '<strong>Лечение у психиатра, нарколога, психотерапевта:</strong> ' + dispensary_treatment + '<br>';
@@ -87,6 +99,32 @@ function generateText() {
         text += '<strong>Анамнез жизни:</strong> ' + (life_history || '&nbsp;') + '<br><br>';
 
         text += '<strong>Психический статус</strong><br>';
+
+        // Ориентировка — группируем одинаковые ответы
+        const orientDims = [
+            { label: 'в собственной личности', val: orient_personality, comment: orient_personality_comment },
+            { label: 'в месте',                val: orient_place,       comment: orient_place_comment },
+            { label: 'во времени',             val: orient_time,        comment: orient_time_comment },
+        ].filter(d => d.val);
+        if (orientDims.length > 0) {
+            // группируем: те у кого нет комментария — по значению; с комментарием — всегда отдельно
+            const groups = {};
+            const singles = [];
+            orientDims.forEach(d => {
+                if (d.comment) {
+                    singles.push(d.label + ' — ' + d.val + ' (' + d.comment + ')');
+                } else {
+                    if (!groups[d.val]) groups[d.val] = [];
+                    groups[d.val].push(d.label);
+                }
+            });
+            const parts = [];
+            Object.entries(groups).forEach(([val, labels]) => {
+                parts.push(labels.join(', ') + ' — ' + val);
+            });
+            singles.forEach(s => parts.push(s));
+            text += 'Ориентировка: ' + parts.join('; ') + '.<br>';
+        }
 
         let psLine1 = '';
         if (consciousness) {

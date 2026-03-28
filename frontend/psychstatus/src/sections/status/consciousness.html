@@ -1,18 +1,56 @@
 <div id="status-consciousness" class="status-subsection">
                 <h3>🧠 Сознание</h3>
-                <div class="subgroup-grid">
-                    <div>
-                        <label>Сознание:</label>
-                        <select id="consciousness">
-                            <option value="">— выбрать —</option>
-                            <option>не помрачено</option>
-                            <option>помрачено (делирий)</option>
-                            <option>помрачено (онейроид)</option>
-                            <option>помрачено (сумеречное)</option>
-                            <option>помрачено (аменция)</option>
-                        </select>
-                    </div>
+                <div class="orientation-table-wrap" style="margin-bottom:14px;">
+                    <label style="font-weight:600;">Ориентировка:</label>
+                    <table style="width:100%;border-collapse:collapse;margin-top:6px;font-size:0.95em;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left;padding:6px 10px;border-bottom:2px solid var(--border,#ddd);min-width:90px;"></th>
+                                <th style="text-align:center;padding:6px 10px;border-bottom:2px solid var(--border,#ddd);">Полностью</th>
+                                <th style="text-align:center;padding:6px 10px;border-bottom:2px solid var(--border,#ddd);">Частично</th>
+                                <th style="text-align:center;padding:6px 10px;border-bottom:2px solid var(--border,#ddd);">Дезориентирован(а)</th>
+                                <th style="text-align:left;padding:6px 10px;border-bottom:2px solid var(--border,#ddd);">Комментарий</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding:6px 10px;">Личность</td>
+                                <td style="text-align:center;padding:6px 10px;"><input type="radio" name="orient_personality" value="полностью"></td>
+                                <td style="text-align:center;padding:6px 10px;"><input type="radio" name="orient_personality" value="частично"></td>
+                                <td style="text-align:center;padding:6px 10px;"><input type="radio" name="orient_personality" value="дезориентирован(а)"></td>
+                                <td style="padding:6px 10px;"><input type="text" id="orient_personality_comment" placeholder="комментарий..." style="width:100%;box-sizing:border-box;"></td>
+                            </tr>
+                            <tr style="background:var(--surface-alt,#f9f9f9);">
+                                <td style="padding:6px 10px;">Место</td>
+                                <td style="text-align:center;padding:6px 10px;"><input type="radio" name="orient_place" value="полностью"></td>
+                                <td style="text-align:center;padding:6px 10px;"><input type="radio" name="orient_place" value="частично"></td>
+                                <td style="text-align:center;padding:6px 10px;"><input type="radio" name="orient_place" value="дезориентирован(а)"></td>
+                                <td style="padding:6px 10px;"><input type="text" id="orient_place_comment" placeholder="комментарий..." style="width:100%;box-sizing:border-box;"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px 10px;">Время</td>
+                                <td style="text-align:center;padding:6px 10px;"><input type="radio" name="orient_time" value="полностью"></td>
+                                <td style="text-align:center;padding:6px 10px;"><input type="radio" name="orient_time" value="частично"></td>
+                                <td style="text-align:center;padding:6px 10px;"><input type="radio" name="orient_time" value="дезориентирован(а)"></td>
+                                <td style="padding:6px 10px;"><input type="text" id="orient_time_comment" placeholder="комментарий..." style="width:100%;box-sizing:border-box;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
+                <div>
+                    <label>Сознание:</label>
+                    <select id="consciousness">
+                        <option value="">— выбрать —</option>
+                        <option>не помрачено</option>
+                        <option>помрачено (делирий)</option>
+                        <option>помрачено (онейроид)</option>
+                        <option>помрачено (сумеречное)</option>
+                        <option>помрачено (аменция)</option>
+                    </select>
+                </div>
+
+                <div class="subgroup-grid" style="margin-top:14px;">
                     <div class="multicheck-group" data-name="appearance">
                         <div class="multicheck-header" onclick="toggleMultiGroup('appearance')">
                             <span class="multicheck-label">Внешний вид (можно несколько)</span>
@@ -149,7 +187,8 @@
                         <label class="checkbox-item"><input type="checkbox" name="conversation" value="по-деловому" onchange="updateMultiSummary('conversation')">по-деловому</label>
                         <label class="checkbox-item"><input type="checkbox" name="conversation" value="косно" onchange="updateMultiSummary('conversation')">косно</label>
                         <label class="checkbox-item"><input type="checkbox" name="conversation" value="стандартно" onchange="updateMultiSummary('conversation')">стандартно</label>
-                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="с применением жаргона" onchange="updateMultiSummary('conversation')">с применением жаргона</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="неохотно" onchange="updateMultiSummary('conversation')">неохотно</label>
+                        <label class="checkbox-item"><input type="checkbox" name="conversation" value="охотно" onchange="updateMultiSummary('conversation')">охотно</label>
                     </div>
                 </div>
 
