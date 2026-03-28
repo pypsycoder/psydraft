@@ -1,5 +1,66 @@
 /* Блок управления назначениями / раздел ℞ */
 
+/* ── Уведомление о мониторинге ──────────────────────────────── */
+
+#rx-monitoring-notice {
+    display: none;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #eef4ff;
+    border: 1px solid #b3cfff;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.rx-mn-body {
+    flex: 1;
+}
+
+.rx-mn-added {
+    color: #1a4fa0;
+}
+
+.rx-mn-alert {
+    margin-top: 5px;
+    color: #8a3a00;
+    font-size: 12px;
+}
+
+.rx-mn-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    font-size: 13px;
+    padding: 0 2px;
+    line-height: 1;
+    margin-top: 1px;
+}
+
+.rx-mn-close:hover {
+    color: #333;
+}
+
+.rx-mn-goto {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #1a4fa0;
+    font-size: 12px;
+    padding: 0;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.rx-mn-goto:hover {
+    color: #0033aa;
+}
+
 #section-prescriptions .prescription-editor,
 #section-prescriptions .prescription-editor input,
 #section-prescriptions .prescription-editor textarea,

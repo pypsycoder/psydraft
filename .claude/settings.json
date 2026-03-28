@@ -7,7 +7,9 @@
       "Bash(PYTHONUTF8=1 python frontend/psychstatus/build.py)",
       "Bash(echo \"exit: $?\")",
       "mcp__claude_ai_ICD-10_Codes__search_codes",
-      "Bash(PYTHONIOENCODING=utf-8 python frontend/psychstatus/build.py)"
+      "Bash(PYTHONIOENCODING=utf-8 python frontend/psychstatus/build.py)",
+      "Bash(python -c \"import os; os.path.exists\\(''''frontend/psychstatus/dist/psychstatus.html''''\\) and print\\(''''dist exists''''\\)\")",
+      "Bash(grep -c \"activeGroup = ''all''\\\\|_gotoMonitoringSection\\\\|rx-mn-goto\" d:/PROJECT/psydraft/frontend/psychstatus/dist/psychstatus.html)"
     ]
   }
 }

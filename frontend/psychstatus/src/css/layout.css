@@ -245,7 +245,8 @@ body.sidebar-collapsed .sidebar-toggle {
 /* Поля внутри карточки чуть крупнее и с нормальным фокусом */
 .section-card textarea,
 .section-card input[type="text"],
-.section-card input[type="number"] {
+.section-card input[type="number"],
+.section-card .recommendations-editable {
     font-size: 15px;
     padding: 8px 10px;
     border-radius: 10px;
@@ -254,10 +255,19 @@ body.sidebar-collapsed .sidebar-toggle {
 
 .section-card textarea:focus,
 .section-card input[type="text"]:focus,
-.section-card input[type="number"]:focus {
+.section-card input[type="number"]:focus,
+.section-card .recommendations-editable:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 2px rgba(0,122,255,0.15);
+}
+
+.recommendations-editable {
+    min-height: 120px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    cursor: text;
 }
 
 /* --- Глобальное правило для всех верхнеуровневых секций --- */

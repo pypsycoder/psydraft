@@ -70,7 +70,7 @@ function generateText() {
 
         // Диагноз, рекомендации, назначения
         const diagnosis = document.getElementById('diagnosis').value.trim();
-        const recommendations = document.getElementById('recommendations').value.trim();
+        const recommendations = document.getElementById('recommendations').innerHTML.trim();
         const prescriptionsText = collectPrescriptionsText();
 
         let text = '';
@@ -234,9 +234,9 @@ function generateText() {
         const recHtml = recommendations ? recommendations.replace(/\n/g, '<br>') : '&nbsp;';
         text += '<strong>Рекомендации:</strong><br>' + recHtml + '<br>';
 
-        // Назначения
+        // Препараты
         const prescHtml = prescriptionsText || '&nbsp;';
-        text += '<strong>Назначения:</strong><br>' + prescHtml + '<br>';
+        text += '<br><strong>Препараты:</strong><br>' + prescHtml + '<br>';
 
         document.getElementById('result').innerHTML = text;
     }

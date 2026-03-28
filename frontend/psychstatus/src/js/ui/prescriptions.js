@@ -223,6 +223,14 @@ function onRxSubmit() {
 
     renderPrescriptionsList();
     clearPrescriptionForm();
+
+    if (typeof applyDrugMonitoring === 'function') {
+        applyDrugMonitoring(formData.name);
+    }
+
+    if (typeof collectSelectedRecommendations === 'function') {
+        collectSelectedRecommendations();
+    }
 }
 
 // Рендер списка назначений

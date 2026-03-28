@@ -221,7 +221,7 @@
     {id: 'lab_cbc',           group: 'laboratory', uiType: 'table', title: 'ОАК с лейкоцитарной формулой',                                                    indication: 'Базовый скрининг; обязателен при клозапине — риск агранулоцитоза'},
     {id: 'lab_ua',            group: 'laboratory', uiType: 'table', title: 'ОАМ',                                                                              indication: 'Базовый скрининг'},
     {id: 'lab_biochem',       group: 'laboratory', uiType: 'table', title: 'Биохимия крови (АЛТ, АСТ, креатинин, мочевина, билирубин, глюкоза, общий белок)', indication: 'Функция печени/почек, базовый'},
-    {id: 'lab_electrolytes',  group: 'laboratory', uiType: 'table', title: 'Натрий, калий',                                                                    indication: 'Карбамазепин (риск гипонатриемии), литий (контроль электролитного баланса)'},
+    {id: 'lab_electrolytes',  group: 'laboratory', uiType: 'table', title: 'Натрий, калий крови',                                                                    indication: 'Карбамазепин (риск гипонатриемии), литий (контроль электролитного баланса)'},
     {id: 'lab_lipids',        group: 'laboratory', uiType: 'table', title: 'Липидный профиль',                                                                 indication: 'Атипичные антипсихотики, метаболический синдром'},
     {id: 'lab_glucose',       group: 'laboratory', uiType: 'table', title: 'Глюкоза натощак',                                                                  indication: 'Атипичные антипсихотики (особенно клозапин, оланзапин)'},
     {id: 'lab_hba1c',         group: 'laboratory', uiType: 'table', title: 'Гликированный гемоглобин',                                                         indication: 'Нарушение углеводного обмена'},
@@ -653,7 +653,7 @@ function collectSelectedRecommendations() {
         examSections[group].forEach((name, i) => lines.push(`${i + 1}. ${name}`));
     });
 
-    textarea.value = lines.join('\n');
+    textarea.innerHTML = lines.join('<br>');
 }
 
 // == Общая инициализация библиотеки рекомендаций ==
