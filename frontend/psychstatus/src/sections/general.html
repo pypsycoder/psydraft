@@ -20,8 +20,15 @@
         <label>Лечение у психиатра, нарколога, психотерапевта:</label>
         <textarea id="dispensary_treatment"></textarea>
 
-        <label>Считает себя больным в течение (дней):</label>
-        <input type="number" id="ill_days" min="0" placeholder="например, 30">
+        <label>Считает себя больным в течение:</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="number" id="ill_days" min="0" placeholder="например, 30" style="width:140px;">
+            <select id="ill_days_unit">
+                <option value="дней">дней</option>
+                <option value="месяцев">месяцев</option>
+                <option value="лет">лет</option>
+            </select>
+        </div>
 
         <label>Самостоятельное лечение:</label>
         <textarea id="self_treatment"></textarea>

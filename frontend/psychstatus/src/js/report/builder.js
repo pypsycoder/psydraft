@@ -5,6 +5,7 @@ function generateText() {
         const dispensary_status = document.getElementById('dispensary_status').value.trim();
         const dispensary_treatment = document.getElementById('dispensary_treatment').value.trim();
         const ill_days = document.getElementById('ill_days').value.trim();
+        const ill_days_unit = document.getElementById('ill_days_unit')?.value || 'дней';
         const self_treatment = document.getElementById('self_treatment').value.trim();
         const dynamics = document.getElementById('dynamics').value.trim();
         const life_history = collectLifeHistoryText();
@@ -80,7 +81,7 @@ function generateText() {
         text += '<strong>Анамнез заболевания:</strong> ' + (anamnesis || '&nbsp;') + '<br><br>';
         if (dispensary_status) text += '<strong>Состояние на учете в ПНД и наркологическом диспансере:</strong> ' + dispensary_status + '<br>';
         if (dispensary_treatment) text += '<strong>Лечение у психиатра, нарколога, психотерапевта:</strong> ' + dispensary_treatment + '<br>';
-        if (ill_days) text += '<strong>Считает себя больным в течение (дней):</strong> ' + ill_days + '<br>';
+        if (ill_days) text += '<strong>Считает себя больным в течение:</strong> ' + ill_days + ' ' + ill_days_unit + '<br>';
         if (self_treatment) text += '<strong>Самостоятельное лечение:</strong> ' + self_treatment + '<br>';
         if (dynamics) text += '<strong>Динамика заболевания:</strong> ' + dynamics + '<br>';
         text += '<strong>Анамнез жизни:</strong> ' + (life_history || '&nbsp;') + '<br><br>';

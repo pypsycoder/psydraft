@@ -1913,8 +1913,15 @@ button:active {
         <label>Лечение у психиатра, нарколога, психотерапевта:</label>
         <textarea id="dispensary_treatment"></textarea>
 
-        <label>Считает себя больным в течение (дней):</label>
-        <input type="number" id="ill_days" min="0" placeholder="например, 30">
+        <label>Считает себя больным в течение:</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="number" id="ill_days" min="0" placeholder="например, 30" style="width:140px;">
+            <select id="ill_days_unit">
+                <option value="дней">дней</option>
+                <option value="месяцев">месяцев</option>
+                <option value="лет">лет</option>
+            </select>
+        </div>
 
         <label>Самостоятельное лечение:</label>
         <textarea id="self_treatment"></textarea>
@@ -7604,6 +7611,7 @@ function collectPrescriptionsText() {
         const dispensary_status = document.getElementById('dispensary_status').value.trim();
         const dispensary_treatment = document.getElementById('dispensary_treatment').value.trim();
         const ill_days = document.getElementById('ill_days').value.trim();
+        const ill_days_unit = document.getElementById('ill_days_unit')?.value || 'дней';
         const self_treatment = document.getElementById('self_treatment').value.trim();
         const dynamics = document.getElementById('dynamics').value.trim();
         const life_history = collectLifeHistoryText();
@@ -7679,7 +7687,7 @@ function collectPrescriptionsText() {
         text += '<strong>Анамнез заболевания:</strong> ' + (anamnesis || '&nbsp;') + '<br><br>';
         if (dispensary_status) text += '<strong>Состояние на учете в ПНД и наркологическом диспансере:</strong> ' + dispensary_status + '<br>';
         if (dispensary_treatment) text += '<strong>Лечение у психиатра, нарколога, психотерапевта:</strong> ' + dispensary_treatment + '<br>';
-        if (ill_days) text += '<strong>Считает себя больным в течение (дней):</strong> ' + ill_days + '<br>';
+        if (ill_days) text += '<strong>Считает себя больным в течение:</strong> ' + ill_days + ' ' + ill_days_unit + '<br>';
         if (self_treatment) text += '<strong>Самостоятельное лечение:</strong> ' + self_treatment + '<br>';
         if (dynamics) text += '<strong>Динамика заболевания:</strong> ' + dynamics + '<br>';
         text += '<strong>Анамнез жизни:</strong> ' + (life_history || '&nbsp;') + '<br><br>';
