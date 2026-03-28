@@ -12,7 +12,13 @@
     --accent: #007aff;
     --accent-soft: rgba(0,122,255,0.15);
     --text-main: #111111;
+    --text-primary: #111111;
     --text-secondary: #6e6e73;
+    --text-heading: #1f2937;
+    --bg-section-heading: #f2f3f5;
+    --border-input: #ced0d8;
+    --bg-input-disabled: #f9fafb;
+    --text-disabled: #9ca3af;
     --shadow-card: 0 8px 20px rgba(0,0,0,0.05);
     --radius-card: 14px;
     --transition-fast: 0.2s ease;
@@ -68,6 +74,43 @@ body {
 .main {
     flex: 1;
     min-width: 0;
+}
+
+/* ================== PRINT ================== */
+
+@media print {
+    .sidebar,
+    .buttons,
+    .group-filters,
+    .library-footer,
+    .nosology-advisor,
+    #rx-monitoring-notice,
+    .page-footer {
+        display: none !important;
+    }
+
+    .layout {
+        display: block;
+        padding: 0;
+    }
+
+    .section-card,
+    .section {
+        box-shadow: none;
+        border: none;
+        break-inside: avoid;
+    }
+
+    #result-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    body {
+        background: #fff;
+        font-size: 13px;
+        color: #000;
+    }
 }
 
     /* ================== SIDEBAR ================== */
@@ -282,20 +325,24 @@ body.sidebar-collapsed .sidebar-toggle {
 
 .section {
     margin-bottom: 28px;
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
 }
 
 /* Заголовок секции на сером фоне */
 .section > h2,
 .section-heading {
-    margin: 0 0 10px;
-    padding: 8px 14px;
+    margin: 0 0 12px;
+    padding: 10px 14px;
 
     font-size: 20px;
     font-weight: 700;
 
     border-radius: 12px;
-    background: #f2f3f5;   /* светлый серый */
-    color: #1f2937;        /* тёмно-серый текст */
+    background: var(--bg-section-heading);
+    color: var(--text-heading);
 }
 
 /* Белая карточка под заголовком */
@@ -342,29 +389,6 @@ body.sidebar-collapsed .sidebar-toggle {
     cursor: text;
 }
 
-/* --- Глобальное правило для всех верхнеуровневых секций --- */
-
-.section {
-    margin-bottom: 28px;
-
-    /* сбрасываем старый белый фон, который прилип к section */
-    background: transparent !important;
-    padding: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* Заголовок секции (серый фон, как в iOS) */
-.section > h2 {
-    margin: 0 0 12px;
-    padding: 10px 14px;
-    font-size: 20px;
-    font-weight: 700;
-    border-radius: 12px;
-    background: #f2f3f5;
-    color: #1f2937;
-}
-
 /* ==== Суицидальное поведение в анамнезе ==== */
 
 .suicide-history {
@@ -397,54 +421,85 @@ body.sidebar-collapsed .sidebar-toggle {
 
 /* ================== MOBILE: раскладка ================== */
 
+/* Bottom nav скрыт на десктопе */
+.bottom-nav {
+    display: none;
+}
+
 @media (max-width: 768px) {
-    .layout {
-        flex-direction: row;
-        padding: 8px 8px 24px;
-        gap: 10px;
-        align-items: flex-start;
-    }
-
-    /* Сайдбар — узкая иконочная колонка сбоку */
+    /* Десктопный сайдбар скрывается */
     .sidebar {
-        width: 56px;
-        min-width: 56px;
-        padding-inline: 6px;
-        position: sticky;
-        top: 8px;
-        max-height: calc(100vh - 16px);
-        border-radius: 14px;
-        flex-shrink: 0;
-    }
-
-    /* Скрываем текстовые элементы */
-    .sidebar-title,
-    .sidebar-group-title,
-    .sidebar-link-label {
         display: none;
     }
 
-    /* Центрируем иконки */
-    .sidebar-link {
+    /* Контент занимает всю ширину, отступ снизу под bottom bar */
+    .layout {
+        padding: 8px 12px 80px;
+        gap: 0;
+    }
+
+    /* ======== BOTTOM NAV ======== */
+
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+
+        height: 60px;
+        padding: 0 4px;
+
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        gap: 2px;
+    }
+
+    .bottom-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .bottom-nav-link {
+        display: flex;
+        align-items: center;
         justify-content: center;
-        padding-inline: 0;
-        padding: 6px 0;
+
+        min-width: 32px;
+        height: 100%;
+        padding: 0 2px;
+        border-radius: 10px;
+        flex-shrink: 0;
+
+        text-decoration: none;
+        color: var(--text-secondary);
+        transition: background 0.12s ease, color 0.12s ease;
     }
 
-    .sidebar-header {
-        justify-content: center;
+    .bottom-nav-link:hover {
+        background: rgba(0, 0, 0, 0.04);
     }
 
-    .sidebar-link-icon {
-        flex: 0 0 36px;
-        height: 36px;
-        font-size: 22px;
+    .bottom-nav-link.active {
+        color: var(--accent);
+        background: rgba(0, 122, 255, 0.08);
     }
 
-    /* Кнопка сворачивания — по центру */
-    .sidebar-toggle {
-        width: 34px;
-        height: 34px;
+    .bottom-nav-icon {
+        font-size: 20px;
+        line-height: 1;
+    }
+
+    .bottom-nav-label {
+        display: none;
     }
 }
 
@@ -456,17 +511,7 @@ body.sidebar-collapsed .sidebar-toggle {
     font-size: 14px;
 }
 
-    .section {
-    background: var(--bg-card);
-    border-radius: var(--radius-card);
-    padding: 16px 18px 18px;
-    margin-bottom: 18px;
-    box-shadow: var(--shadow-card);
-    border: 1px solid var(--border-card);
-    animation: fadeInUp 0.35s ease-out;
-}
-
-h2 {
+    h2 {
     font-size: 20px;
     margin-top: 0;
     margin-bottom: 10px;
@@ -498,7 +543,7 @@ h2 {
     font-weight: 600;
     margin-top: 12px;
     display: block;
-    color: #1c1c1e;
+    color: var(--text-primary);
 }
 
 textarea,
@@ -511,10 +556,10 @@ input[type="number"] {
     padding: 8px 10px;
     margin-top: 6px;
     border-radius: 10px;
-    border: 1px solid #ced0d8;
+    border: 1px solid var(--border-input);
     background: #ffffff;
     box-sizing: border-box;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), transform 0.1s ease;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
 }
 
 /* Описание рядом с чекбоксом: не на всю ширину, а занимать оставшееся место */
@@ -539,7 +584,6 @@ input:focus {
     outline: none;
     box-shadow: 0 0 0 3px var(--accent-soft);
     background: #ffffff;
-    transform: translateY(-1px);
 }
 
 select {
@@ -560,6 +604,13 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
+/* Срок болезни: число + единица */
+.ill-days-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 /* Sleep duration inline row */
 .sleep-duration-row {
     display: flex;
@@ -572,7 +623,7 @@ input[type="number"] {
 .sleep-duration-label {
     font-weight: 600;
     font-size: 15px;
-    color: #1c1c1e;
+    color: var(--text-primary);
     margin: 0;
     flex-shrink: 0;
 }
@@ -653,7 +704,7 @@ button:active {
 
     .checkbox-item {
     font-size: 15px;
-    color: #1c1c1e;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -909,10 +960,10 @@ button:active {
 /* ===== СЕТКА КАРТОЧЕК ===== */
 
 .rec-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 16px !important;
-    margin: 12px 0 20px !important;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 12px 0 20px;
 }
 
 /* Одна колонка только на совсем узких экранах */
@@ -1018,7 +1069,7 @@ button:active {
 .exam-section-heading {
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-secondary, #555);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin: 16px 0 6px;
@@ -1087,14 +1138,14 @@ button:active {
     padding: 8px 10px 8px 0;
     vertical-align: middle;
     font-weight: 500;
-    color: var(--text-primary, #1a1a1a);
+    color: var(--text-primary);
     word-break: break-word;
 }
 
 .exam-indication {
     padding: 8px 4px 8px 0;
     vertical-align: middle;
-    color: var(--text-secondary, #666);
+    color: var(--text-secondary);
     font-size: 13px;
     word-break: break-word;
 }
@@ -1805,7 +1856,7 @@ button:active {
 
     <div class="sidebar-nav">
         <div class="sidebar-group-title">Жалобы и анамнез</div>
-        <a href="#section-general" class="sidebar-link sidebar-link--active">
+        <a href="#section-general" class="sidebar-link active">
             <span class="sidebar-link-icon">📋</span>
             <span class="sidebar-link-label">Общие разделы</span>
         </a>
@@ -1864,11 +1915,11 @@ button:active {
             <span class="sidebar-link-label">Диагноз и рекомендации</span>
         </a>
         <a href="#section-prescriptions" class="sidebar-link">
-            <span class="sidebar-link-icon">℞</span>
+            <span class="sidebar-link-icon">💊</span>
             <span class="sidebar-link-label">Назначения</span>
         </a>
         <a href="#section-result" class="sidebar-link">
-            <span class="sidebar-link-icon">📝</span>
+            <span class="sidebar-link-icon">🖋️</span>
             <span class="sidebar-link-label">Сформированный текст</span>
         </a>
     </div>
@@ -1914,7 +1965,7 @@ button:active {
         <textarea id="dispensary_treatment"></textarea>
 
         <label>Считает себя больным в течение:</label>
-        <div style="display:flex;gap:8px;align-items:center;">
+        <div class="ill-days-row">
             <input type="number" id="ill_days" min="0" placeholder="например, 30" style="width:140px;">
             <select id="ill_days_unit">
                 <option value="дней">дней</option>
@@ -3172,7 +3223,7 @@ button:active {
 </div>
 
       <div class="section" id="section-prescriptions">
-    <h2>℞ Назначения</h2>
+    <h2>💊 Назначения</h2>
 
     <!-- Карточка добавления / редактирования назначения -->
     <div class="prescription-editor" id="prescription-editor">
@@ -3370,7 +3421,7 @@ button:active {
 </div>
 
 <div class="section" id="section-result">
-    <h2>Сформированный текст</h2>
+    <h2>🖋️ Сформированный текст</h2>
     <div id="result-container">
         <div id="result" contenteditable="true"></div>
     </div>
@@ -3379,6 +3430,26 @@ button:active {
 
     </div>
   </div>
+
+  <!-- Мобильная навигация (bottom bar, только <768px) -->
+  <nav class="bottom-nav" aria-label="Мобильная навигация">
+    <a href="#section-general"      class="bottom-nav-link active" data-nav><span class="bottom-nav-icon">📋</span><span class="bottom-nav-label">Жалобы</span></a>
+    <a href="#status-consciousness" class="bottom-nav-link" data-nav><span class="bottom-nav-icon">🧠</span><span class="bottom-nav-label">Сознание</span></a>
+    <a href="#status-thinking"      class="bottom-nav-link" data-nav><span class="bottom-nav-icon">💭</span><span class="bottom-nav-label">Мышление</span></a>
+    <a href="#status-intellect"     class="bottom-nav-link" data-nav><span class="bottom-nav-icon">📚</span><span class="bottom-nav-label">Интеллект</span></a>
+    <a href="#status-perception"    class="bottom-nav-link" data-nav><span class="bottom-nav-icon">👁️</span><span class="bottom-nav-label">Восприятие</span></a>
+    <a href="#status-memory"        class="bottom-nav-link" data-nav><span class="bottom-nav-icon">🧩</span><span class="bottom-nav-label">Память</span></a>
+    <a href="#status-mood"          class="bottom-nav-link" data-nav><span class="bottom-nav-icon">🙂</span><span class="bottom-nav-label">Настроение</span></a>
+    <a href="#status-motor"         class="bottom-nav-link" data-nav><span class="bottom-nav-icon">🏃</span><span class="bottom-nav-label">Моторика</span></a>
+    <a href="#status-attention"     class="bottom-nav-link" data-nav><span class="bottom-nav-icon">🎯</span><span class="bottom-nav-label">Внимание</span></a>
+    <a href="#status-insight"       class="bottom-nav-link" data-nav><span class="bottom-nav-icon">🔍</span><span class="bottom-nav-label">Критика</span></a>
+    <a href="#status-sleep-appetite" class="bottom-nav-link" data-nav><span class="bottom-nav-icon">🌙</span><span class="bottom-nav-label">Сон</span></a>
+    <a href="#section-nosology"     class="bottom-nav-link" data-nav><span class="bottom-nav-icon">🔬</span><span class="bottom-nav-label">Советник</span></a>
+    <a href="#section-diagnosis"    class="bottom-nav-link" data-nav><span class="bottom-nav-icon">📊</span><span class="bottom-nav-label">Диагноз</span></a>
+    <a href="#section-prescriptions" class="bottom-nav-link" data-nav><span class="bottom-nav-icon">💊</span><span class="bottom-nav-label">Назначения</span></a>
+    <a href="#section-result"       class="bottom-nav-link" data-nav><span class="bottom-nav-icon">🖋️</span><span class="bottom-nav-label">Итог</span></a>
+</nav>
+
 
   <!-- Модалки и низ страницы -->
   <footer style="
@@ -3439,15 +3510,19 @@ function saveState(state) {
 }
 
 function initSidebar() {
-    const links = document.querySelectorAll('.sidebar-link');
-    if (!links.length) return;
+    // Объединяем ссылки десктопного сайдбара и мобильного bottom-nav
+    const allLinks = document.querySelectorAll('.sidebar-link, .bottom-nav-link');
+    if (!allLinks.length) return;
 
-    links.forEach((link) => {
+    allLinks.forEach((link) => {
         link.addEventListener('click', () => {
-            // снимаем выделение со всех
-            links.forEach((l) => l.classList.remove('sidebar-link--active'));
-            // ставим на кликнутый
-            link.classList.add('sidebar-link--active');
+            const href = link.getAttribute('href');
+            // Снимаем active со всех ссылок обеих навигаций
+            allLinks.forEach((l) => l.classList.remove('active'));
+            // Ставим active на все ссылки с совпадающим href (десктоп + мобайл)
+            allLinks.forEach((l) => {
+                if (l.getAttribute('href') === href) l.classList.add('active');
+            });
         });
     });
 }

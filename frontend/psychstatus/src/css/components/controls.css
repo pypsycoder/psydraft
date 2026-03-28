@@ -2,7 +2,7 @@ label {
     font-weight: 600;
     margin-top: 12px;
     display: block;
-    color: #1c1c1e;
+    color: var(--text-primary);
 }
 
 textarea,
@@ -15,10 +15,10 @@ input[type="number"] {
     padding: 8px 10px;
     margin-top: 6px;
     border-radius: 10px;
-    border: 1px solid #ced0d8;
+    border: 1px solid var(--border-input);
     background: #ffffff;
     box-sizing: border-box;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), transform 0.1s ease;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
 }
 
 /* Описание рядом с чекбоксом: не на всю ширину, а занимать оставшееся место */
@@ -43,7 +43,6 @@ input:focus {
     outline: none;
     box-shadow: 0 0 0 3px var(--accent-soft);
     background: #ffffff;
-    transform: translateY(-1px);
 }
 
 select {
@@ -64,6 +63,13 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
+/* Срок болезни: число + единица */
+.ill-days-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 /* Sleep duration inline row */
 .sleep-duration-row {
     display: flex;
@@ -76,7 +82,7 @@ input[type="number"] {
 .sleep-duration-label {
     font-weight: 600;
     font-size: 15px;
-    color: #1c1c1e;
+    color: var(--text-primary);
     margin: 0;
     flex-shrink: 0;
 }

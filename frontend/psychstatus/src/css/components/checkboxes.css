@@ -1,6 +1,6 @@
 .checkbox-item {
     font-size: 15px;
-    color: #1c1c1e;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 6px;

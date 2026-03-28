@@ -19,10 +19,10 @@
 /* ===== СЕТКА КАРТОЧЕК ===== */
 
 .rec-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 16px !important;
-    margin: 12px 0 20px !important;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 12px 0 20px;
 }
 
 /* Одна колонка только на совсем узких экранах */
@@ -128,7 +128,7 @@
 .exam-section-heading {
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-secondary, #555);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin: 16px 0 6px;
@@ -197,14 +197,14 @@
     padding: 8px 10px 8px 0;
     vertical-align: middle;
     font-weight: 500;
-    color: var(--text-primary, #1a1a1a);
+    color: var(--text-primary);
     word-break: break-word;
 }
 
 .exam-indication {
     padding: 8px 4px 8px 0;
     vertical-align: middle;
-    color: var(--text-secondary, #666);
+    color: var(--text-secondary);
     font-size: 13px;
     word-break: break-word;
 }

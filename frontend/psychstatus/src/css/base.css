@@ -5,7 +5,13 @@
     --accent: #007aff;
     --accent-soft: rgba(0,122,255,0.15);
     --text-main: #111111;
+    --text-primary: #111111;
     --text-secondary: #6e6e73;
+    --text-heading: #1f2937;
+    --bg-section-heading: #f2f3f5;
+    --border-input: #ced0d8;
+    --bg-input-disabled: #f9fafb;
+    --text-disabled: #9ca3af;
     --shadow-card: 0 8px 20px rgba(0,0,0,0.05);
     --radius-card: 14px;
     --transition-fast: 0.2s ease;
@@ -61,4 +67,41 @@ body {
 .main {
     flex: 1;
     min-width: 0;
+}
+
+/* ================== PRINT ================== */
+
+@media print {
+    .sidebar,
+    .buttons,
+    .group-filters,
+    .library-footer,
+    .nosology-advisor,
+    #rx-monitoring-notice,
+    .page-footer {
+        display: none !important;
+    }
+
+    .layout {
+        display: block;
+        padding: 0;
+    }
+
+    .section-card,
+    .section {
+        box-shadow: none;
+        border: none;
+        break-inside: avoid;
+    }
+
+    #result-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    body {
+        background: #fff;
+        font-size: 13px;
+        color: #000;
+    }
 }

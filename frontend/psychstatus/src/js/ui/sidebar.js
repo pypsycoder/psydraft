@@ -3,15 +3,19 @@ function toggleSidebar() {
 }
 
 function initSidebar() {
-    const links = document.querySelectorAll('.sidebar-link');
-    if (!links.length) return;
+    // Объединяем ссылки десктопного сайдбара и мобильного bottom-nav
+    const allLinks = document.querySelectorAll('.sidebar-link, .bottom-nav-link');
+    if (!allLinks.length) return;
 
-    links.forEach((link) => {
+    allLinks.forEach((link) => {
         link.addEventListener('click', () => {
-            // снимаем выделение со всех
-            links.forEach((l) => l.classList.remove('sidebar-link--active'));
-            // ставим на кликнутый
-            link.classList.add('sidebar-link--active');
+            const href = link.getAttribute('href');
+            // Снимаем active со всех ссылок обеих навигаций
+            allLinks.forEach((l) => l.classList.remove('active'));
+            // Ставим active на все ссылки с совпадающим href (десктоп + мобайл)
+            allLinks.forEach((l) => {
+                if (l.getAttribute('href') === href) l.classList.add('active');
+            });
         });
     });
 }
