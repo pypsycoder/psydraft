@@ -1,23 +1,56 @@
 <div id="status-motor" class="status-subsection">
                 <h3>🏃 Двигательная сфера</h3>
+
                 <label>Волевые качества:</label>
-                <select id="will">
+                <select id="will" onchange="toggleWillDisorders()">
                     <option value="">— выбрать —</option>
                     <option>сохранены</option>
-                    <option>снижены</option>
+                    <option>нарушены</option>
                     <option>не развиты</option>
                 </select>
+                <div id="will_disorders_block" style="display:none; margin-top:8px;">
+                    <div class="perception-columns">
+                        <label class="checkbox-item"><input type="checkbox" name="will_disorders" value="гипобулия">Гипобулия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="will_disorders" value="абулия">Абулия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="will_disorders" value="парабулия">Парабулия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="will_disorders" value="гипербулия">Гипербулия</label>
+                    </div>
+                    <input type="text" id="will_description" placeholder="Описание нарушений воли" style="margin-top:6px; width:100%;">
+                </div>
 
                 <label>Двигательная сфера:</label>
-                <textarea id="motor" placeholder="замедленная/ускоренная моторика, кататонические симптомы и др."></textarea>
+                <textarea id="motor" placeholder="замедленная/ускоренная моторика и др."></textarea>
 
-                <label>Эпилептиформные пароксизмы:</label>
-                <select id="seizures">
+                <div style="margin-top:10px;">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="catatonia_flag" onchange="toggleCatatonia()">
+                        <span>Кататонические симптомы</span>
+                    </label>
+                    <div id="catatonia_block" style="display:none; margin-top:8px;">
+                        <div class="perception-columns">
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="ступор">Ступор</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="кататоническое возбуждение">Кататоническое возбуждение</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="негативизм">Негативизм</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="мутизм">Мутизм</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="стереотипии">Стереотипии</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="эхопраксия">Эхопраксия</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="эхолалия">Эхолалия</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="восковая гибкость">Восковая гибкость</label>
+                        </div>
+                    </div>
+                </div>
+
+                <label style="margin-top:12px;">Эпилептиформные пароксизмы:</label>
+                <select id="seizures" onchange="toggleSeizuresDescription()">
                     <option value="">— выбрать —</option>
                     <option>отрицает</option>
                     <option>отмечались в прошлом</option>
                     <option>наблюдаются</option>
                 </select>
+                <div id="seizures_description_block" style="display:none; margin-top:6px;">
+                    <textarea id="seizures_description" placeholder="Описание пароксизмов (тип, частота, длительность)"></textarea>
+                </div>
             </div>
 
-            
+
+

@@ -69,11 +69,16 @@ function generateText() {
 
         // Мотивация, двигательна сфера, планы, судороги
         const will = document.getElementById('will').value || '';
+        const will_disorders = getCheckedTextByName('will_disorders');
+        const will_description = document.getElementById('will_description')?.value.trim() || '';
         const motor = document.getElementById('motor').value.trim();
+        const catatonia_flag = document.getElementById('catatonia_flag')?.checked || false;
+        const catatonia = catatonia_flag ? getCheckedTextByName('catatonia') : '';
         const distance = document.getElementById('distance').value || '';
         const insight = document.getElementById('insight').value || '';
         const future_plans = document.getElementById('future_plans').value || '';
         const seizures = document.getElementById('seizures').value || '';
+        const seizures_description = document.getElementById('seizures_description')?.value.trim() || '';
 
         // Сон, аппетит
         const sleep = getCheckedTextByName('sleep');
@@ -225,10 +230,18 @@ function generateText() {
 
         // Воля
         if (will) {
-            text += 'Воля: ' + will + '.<br>';
+            let willText = 'Воля: ' + will;
+            if (will === 'нарушены') {
+                if (will_disorders) willText += ' (' + will_disorders + ')';
+                if (will_description) willText += '; ' + will_description;
+            }
+            text += willText + '.<br>';
         }
         if (motor) {
             text += 'Двигательная сфера: ' + motor + '.<br>';
+        }
+        if (catatonia_flag) {
+            text += 'Кататонические симптомы: ' + (catatonia || 'отмечаются') + '.<br>';
         }
         if (distance) {
             text += 'Чувство дистанции ' + distance + '.<br>';
@@ -240,7 +253,9 @@ function generateText() {
             text += 'Планы на будущее ' + future_plans + '.<br>';
         }
         if (seizures) {
-            text += 'Эпилептиформные пароксизмы: ' + seizures + '.<br>';
+            let seizuresText = 'Эпилептиформные пароксизмы: ' + seizures;
+            if (seizures_description) seizuresText += ' — ' + seizures_description;
+            text += seizuresText + '.<br>';
         }
         if (sleep || sleepHours) {
             let sleepText = sleep || '';

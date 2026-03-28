@@ -2966,27 +2966,60 @@ button:active {
 
     <div id="status-motor" class="status-subsection">
                 <h3>🏃 Двигательная сфера</h3>
+
                 <label>Волевые качества:</label>
-                <select id="will">
+                <select id="will" onchange="toggleWillDisorders()">
                     <option value="">— выбрать —</option>
                     <option>сохранены</option>
-                    <option>снижены</option>
+                    <option>нарушены</option>
                     <option>не развиты</option>
                 </select>
+                <div id="will_disorders_block" style="display:none; margin-top:8px;">
+                    <div class="perception-columns">
+                        <label class="checkbox-item"><input type="checkbox" name="will_disorders" value="гипобулия">Гипобулия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="will_disorders" value="абулия">Абулия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="will_disorders" value="парабулия">Парабулия</label>
+                        <label class="checkbox-item"><input type="checkbox" name="will_disorders" value="гипербулия">Гипербулия</label>
+                    </div>
+                    <input type="text" id="will_description" placeholder="Описание нарушений воли" style="margin-top:6px; width:100%;">
+                </div>
 
                 <label>Двигательная сфера:</label>
-                <textarea id="motor" placeholder="замедленная/ускоренная моторика, кататонические симптомы и др."></textarea>
+                <textarea id="motor" placeholder="замедленная/ускоренная моторика и др."></textarea>
 
-                <label>Эпилептиформные пароксизмы:</label>
-                <select id="seizures">
+                <div style="margin-top:10px;">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="catatonia_flag" onchange="toggleCatatonia()">
+                        <span>Кататонические симптомы</span>
+                    </label>
+                    <div id="catatonia_block" style="display:none; margin-top:8px;">
+                        <div class="perception-columns">
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="ступор">Ступор</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="кататоническое возбуждение">Кататоническое возбуждение</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="негативизм">Негативизм</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="мутизм">Мутизм</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="стереотипии">Стереотипии</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="эхопраксия">Эхопраксия</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="эхолалия">Эхолалия</label>
+                            <label class="checkbox-item"><input type="checkbox" name="catatonia" value="восковая гибкость">Восковая гибкость</label>
+                        </div>
+                    </div>
+                </div>
+
+                <label style="margin-top:12px;">Эпилептиформные пароксизмы:</label>
+                <select id="seizures" onchange="toggleSeizuresDescription()">
                     <option value="">— выбрать —</option>
                     <option>отрицает</option>
                     <option>отмечались в прошлом</option>
                     <option>наблюдаются</option>
                 </select>
+                <div id="seizures_description_block" style="display:none; margin-top:6px;">
+                    <textarea id="seizures_description" placeholder="Описание пароксизмов (тип, частота, длительность)"></textarea>
+                </div>
             </div>
 
-            
+
+
 
     <div id="status-insight" class="status-subsection">
                 <h3>🔍 Критика к своему заболеванию</h3>
@@ -3763,6 +3796,24 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+    function toggleWillDisorders() {
+    const val = document.getElementById('will').value;
+    const block = document.getElementById('will_disorders_block');
+    if (block) block.style.display = (val === 'нарушены') ? 'block' : 'none';
+}
+
+function toggleCatatonia() {
+    const cb = document.getElementById('catatonia_flag');
+    const block = document.getElementById('catatonia_block');
+    if (block) block.style.display = cb.checked ? 'block' : 'none';
+}
+
+function toggleSeizuresDescription() {
+    const val = document.getElementById('seizures').value;
+    const block = document.getElementById('seizures_description_block');
+    if (block) block.style.display = (val === 'отмечались в прошлом' || val === 'наблюдаются') ? 'block' : 'none';
+}
 
         function toggleSensationDescription() {
         const anyChecked = document.querySelector('input[name="sensation_disorder"]:checked') !== null;
@@ -7714,11 +7765,16 @@ function collectPrescriptionsText() {
 
         // Мотивация, двигательна сфера, планы, судороги
         const will = document.getElementById('will').value || '';
+        const will_disorders = getCheckedTextByName('will_disorders');
+        const will_description = document.getElementById('will_description')?.value.trim() || '';
         const motor = document.getElementById('motor').value.trim();
+        const catatonia_flag = document.getElementById('catatonia_flag')?.checked || false;
+        const catatonia = catatonia_flag ? getCheckedTextByName('catatonia') : '';
         const distance = document.getElementById('distance').value || '';
         const insight = document.getElementById('insight').value || '';
         const future_plans = document.getElementById('future_plans').value || '';
         const seizures = document.getElementById('seizures').value || '';
+        const seizures_description = document.getElementById('seizures_description')?.value.trim() || '';
 
         // Сон, аппетит
         const sleep = getCheckedTextByName('sleep');
@@ -7870,10 +7926,18 @@ function collectPrescriptionsText() {
 
         // Воля
         if (will) {
-            text += 'Воля: ' + will + '.<br>';
+            let willText = 'Воля: ' + will;
+            if (will === 'нарушены') {
+                if (will_disorders) willText += ' (' + will_disorders + ')';
+                if (will_description) willText += '; ' + will_description;
+            }
+            text += willText + '.<br>';
         }
         if (motor) {
             text += 'Двигательная сфера: ' + motor + '.<br>';
+        }
+        if (catatonia_flag) {
+            text += 'Кататонические симптомы: ' + (catatonia || 'отмечаются') + '.<br>';
         }
         if (distance) {
             text += 'Чувство дистанции ' + distance + '.<br>';
@@ -7885,7 +7949,9 @@ function collectPrescriptionsText() {
             text += 'Планы на будущее ' + future_plans + '.<br>';
         }
         if (seizures) {
-            text += 'Эпилептиформные пароксизмы: ' + seizures + '.<br>';
+            let seizuresText = 'Эпилептиформные пароксизмы: ' + seizures;
+            if (seizures_description) seizuresText += ' — ' + seizures_description;
+            text += seizuresText + '.<br>';
         }
         if (sleep || sleepHours) {
             let sleepText = sleep || '';
