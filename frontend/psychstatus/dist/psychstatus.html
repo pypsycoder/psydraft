@@ -32,6 +32,28 @@ body {
     line-height: 1.5;
 }
 
+/* ================== MOBILE: базовые шрифты ================== */
+
+@media (max-width: 768px) {
+    body {
+        font-size: 18px;
+    }
+
+    .section-card textarea,
+    .section-card input[type="text"],
+    .section-card input[type="number"],
+    .section-card .recommendations-editable {
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+
+    .section > h2,
+    .section-heading {
+        font-size: 22px;
+        padding: 10px 14px;
+    }
+}
+
 /* ================== LAYOUT ================== */
 
 .layout {
@@ -371,6 +393,59 @@ body.sidebar-collapsed .sidebar-toggle {
 .suicide-inline-input:disabled {
     background-color: #f9fafb;
     color: #9ca3af;
+}
+
+/* ================== MOBILE: раскладка ================== */
+
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: row;
+        padding: 8px 8px 24px;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    /* Сайдбар — узкая иконочная колонка сбоку */
+    .sidebar {
+        width: 56px;
+        min-width: 56px;
+        padding-inline: 6px;
+        position: sticky;
+        top: 8px;
+        max-height: calc(100vh - 16px);
+        border-radius: 14px;
+        flex-shrink: 0;
+    }
+
+    /* Скрываем текстовые элементы */
+    .sidebar-title,
+    .sidebar-group-title,
+    .sidebar-link-label {
+        display: none;
+    }
+
+    /* Центрируем иконки */
+    .sidebar-link {
+        justify-content: center;
+        padding-inline: 0;
+        padding: 6px 0;
+    }
+
+    .sidebar-header {
+        justify-content: center;
+    }
+
+    .sidebar-link-icon {
+        flex: 0 0 36px;
+        height: 36px;
+        font-size: 22px;
+    }
+
+    /* Кнопка сворачивания — по центру */
+    .sidebar-toggle {
+        width: 34px;
+        height: 34px;
+    }
 }
 
     /* Apple Health inspired theme accents */

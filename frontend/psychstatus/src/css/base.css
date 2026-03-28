@@ -25,6 +25,28 @@ body {
     line-height: 1.5;
 }
 
+/* ================== MOBILE: базовые шрифты ================== */
+
+@media (max-width: 768px) {
+    body {
+        font-size: 18px;
+    }
+
+    .section-card textarea,
+    .section-card input[type="text"],
+    .section-card input[type="number"],
+    .section-card .recommendations-editable {
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+
+    .section > h2,
+    .section-heading {
+        font-size: 22px;
+        padding: 10px 14px;
+    }
+}
+
 /* ================== LAYOUT ================== */
 
 .layout {
