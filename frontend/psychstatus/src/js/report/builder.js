@@ -165,26 +165,26 @@ function generateText() {
         }
 
         let thinkingParts = [];
-        if (thinking_tempo) thinkingParts.push(thinking_tempo);
-        if (thinking_productivity) thinkingParts.push(thinking_productivity);
-        if (thinking_sequence) thinkingParts.push(thinking_sequence);
+        if (thinking_tempo) thinkingParts.push('темп ' + thinking_tempo);
+        if (thinking_productivity) thinkingParts.push('продуктивность ' + thinking_productivity);
+        if (thinking_sequence) thinkingParts.push('последовательность ' + thinking_sequence);
         if (thinking_goal) thinkingParts.push(thinking_goal);
         if (thinking_disorders) thinkingParts.push('с признаками: ' + thinking_disorders);
-        if (thinking_mobility) thinkingParts.push('подвижность мышления: ' + thinking_mobility);
+        if (thinking_mobility) thinkingParts.push('подвижность: ' + thinking_mobility);
         if (abstraction) thinkingParts.push('абстрагирование ' + abstraction);
 
         if (thinkingParts.length > 0) {
-            text += 'Мышление ' + thinkingParts.join(', ') + '.<br>';
+            text += 'Мышление: ' + thinkingParts.join(', ') + '.<br>';
         }
 
         if (ideas) {
-            text += 'Идеи: ' + ideas + '.<br>';
+            text += 'Идеи: ' + ideas + '. ';
         }
         if (judgment) {
-            text += 'Суждения: ' + judgment + '.<br>';
+            text += 'Суждения: ' + judgment + '. ';
         }
         if (intellect) {
-            text += 'Интеллект ' + intellect + '.<br>';
+            text += 'Интеллект ' + intellect + '. ';
         }
         if (vocabulary) {
             text += 'Словарный запас ' + vocabulary + '.<br>';
@@ -195,13 +195,13 @@ function generateText() {
         }
 
         if (memory) {
-            text += 'Память: ' + memory + '.<br>';
+            text += 'Память: ' + memory + '. ';
         }
         if (amnesia) {
-            text += 'Амнезия: ' + amnesia + '.<br>';
+            text += 'Амнезия: ' + amnesia + '. ';
         }
         if (paramnesia) {
-            text += 'Парамнезии: ' + paramnesia + '.<br>';
+            text += 'Парамнезии: ' + paramnesia + '. ';
         }
         if (attention) {
             text += 'Внимание: ' + attention + '.<br>';

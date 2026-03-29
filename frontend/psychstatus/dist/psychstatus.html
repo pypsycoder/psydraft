@@ -2473,10 +2473,17 @@ button:active {
                         </div>
                         <div class="idea-row">
                             <label class="checkbox-item">
-                                <input type="checkbox" class="idea-checkbox" data-idea-type="навязчивые">
+                                <input type="checkbox" class="idea-checkbox" data-idea-type="навязчивые" id="idea-obsessive-cb">
                                 <span>Навязчивые</span>
                             </label>
                             <input type="text" class="idea-description" data-idea-type="навязчивые" placeholder="Описание содержания идей">
+                        </div>
+                        <div class="idea-row idea-subrow" id="compulsions-subrow" style="display:none; padding-left: 32px;">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="compulsions-checkbox">
+                                <span>Компульсии</span>
+                            </label>
+                            <input type="text" id="compulsions-description" class="idea-description" placeholder="Описание компульсий">
                         </div>
                         <div class="idea-row">
                             <label class="checkbox-item">
@@ -4130,10 +4137,36 @@ function toggleSeizuresDescription() {
                 const type = cb.dataset.ideaType;
                 const descInput = document.querySelector('.idea-description[data-idea-type="' + type + '"]');
                 const desc = descInput ? descInput.value.trim() : '';
-                items.push(desc ? `${type} — ${desc}` : type);
+                let entry = desc ? `${type} — ${desc}` : type;
+
+                if (type === 'навязчивые') {
+                    const compCb = document.getElementById('compulsions-checkbox');
+                    if (compCb && compCb.checked) {
+                        const compDesc = document.getElementById('compulsions-description');
+                        const cd = compDesc ? compDesc.value.trim() : '';
+                        entry += cd ? `; компульсии — ${cd}` : '; компульсии';
+                    }
+                }
+
+                items.push(entry);
             }
         });
         return items.join('; ');
+    }
+
+    function initCompulsionsToggle() {
+        const obsessiveCb = document.getElementById('idea-obsessive-cb');
+        const subrow = document.getElementById('compulsions-subrow');
+        if (!obsessiveCb || !subrow) return;
+        obsessiveCb.addEventListener('change', function () {
+            subrow.style.display = this.checked ? '' : 'none';
+            if (!this.checked) {
+                const compCb = document.getElementById('compulsions-checkbox');
+                if (compCb) compCb.checked = false;
+                const compDesc = document.getElementById('compulsions-description');
+                if (compDesc) compDesc.value = '';
+            }
+        });
     }
 
 
@@ -7936,16 +7969,16 @@ function collectPrescriptionsText() {
         }
 
         let thinkingParts = [];
-        if (thinking_tempo) thinkingParts.push(thinking_tempo);
-        if (thinking_productivity) thinkingParts.push(thinking_productivity);
-        if (thinking_sequence) thinkingParts.push(thinking_sequence);
+        if (thinking_tempo) thinkingParts.push('темп ' + thinking_tempo);
+        if (thinking_productivity) thinkingParts.push('продуктивность ' + thinking_productivity);
+        if (thinking_sequence) thinkingParts.push('последовательность ' + thinking_sequence);
         if (thinking_goal) thinkingParts.push(thinking_goal);
         if (thinking_disorders) thinkingParts.push('с признаками: ' + thinking_disorders);
-        if (thinking_mobility) thinkingParts.push('подвижность мышления: ' + thinking_mobility);
+        if (thinking_mobility) thinkingParts.push('подвижность: ' + thinking_mobility);
         if (abstraction) thinkingParts.push('абстрагирование ' + abstraction);
 
         if (thinkingParts.length > 0) {
-            text += 'Мышление ' + thinkingParts.join(', ') + '.<br>';
+            text += 'Мышление: ' + thinkingParts.join(', ') + '.<br>';
         }
 
         if (ideas) {
@@ -8098,6 +8131,10 @@ function collectPrescriptionsText() {
 
     if (typeof initNosologyAdvisor === 'function') {
         initNosologyAdvisor();
+    }
+
+    if (typeof initCompulsionsToggle === 'function') {
+        initCompulsionsToggle();
     }
 
     // Additional UI initialization can be placed here

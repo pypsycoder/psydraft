@@ -11,5 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
         initNosologyAdvisor();
     }
 
+    if (typeof initCompulsionsToggle === 'function') {
+        initCompulsionsToggle();
+    }
+
     // Additional UI initialization can be placed here
 });
