@@ -4220,6 +4220,9 @@ function collectFormSymptoms() {
         idea_delusional:        idea('бредовые'),
         idea_overvalued:        idea('сверхценные'),
         idea_affective:         idea('аффективно обусловленные'),
+        idea_phobic:            idea('фобии'),
+        compulsions:            !!(document.getElementById('compulsions-checkbox') &&
+                                   document.getElementById('compulsions-checkbox').checked),
 
         // Восприятие
         hallucination_analyzer:     multi('hallucination_analyzer'),
@@ -4647,6 +4650,148 @@ var NOSOLOGY_DB = [
         ]
     },
 
+    // ── F41.2 СМЕШАННОЕ ТРЕВОЖНО-ДЕПРЕССИВНОЕ РАССТРОЙСТВО ──
+    {
+        code: 'F41.2',
+        name: 'Смешанное тревожно-депрессивное расстройство',
+        criteria: [
+            {
+                id: 'mixed_anxiety',
+                label: 'Тревожный компонент',
+                weight: 'core', capturable: true,
+                met: function(s) {
+                    return s.emotions.indexOf('с преобладанием тревоги') !== -1;
+                }
+            },
+            {
+                id: 'mixed_depressive',
+                label: 'Депрессивный компонент',
+                weight: 'core', capturable: true,
+                met: function(s) {
+                    return s.mood === 'сниженное' ||
+                           s.emotions.indexOf('с преобладанием депрессии') !== -1 ||
+                           s.emotions.indexOf('тусклые') !== -1 ||
+                           s.emotions.indexOf('однообразные') !== -1 ||
+                           s.emotions.indexOf('монотонные') !== -1;
+                }
+            },
+            {
+                id: 'mixed_sleep',
+                label: 'Нарушения сна',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s._sleepDisturbed; }
+            },
+            {
+                id: 'mixed_attention',
+                label: 'Снижение концентрации',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s._attentionImpaired; }
+            },
+            {
+                id: 'mixed_thinking',
+                label: 'Замедление мышления / снижение продуктивности',
+                weight: 'additional', capturable: true,
+                met: function(s) {
+                    return s.thinking_tempo === 'замедлен' ||
+                           s.thinking_productivity === 'снижена';
+                }
+            },
+            {
+                id: 'mixed_appetite',
+                label: 'Изменение аппетита',
+                weight: 'additional', capturable: true,
+                met: function(s) {
+                    return s.appetite === 'снижен' ||
+                           s.appetite === 'повышен' ||
+                           s.appetite === 'анорексия';
+                }
+            },
+            {
+                id: 'mixed_irritability',
+                label: 'Раздражительность / эмоциональная неустойчивость',
+                weight: 'additional', capturable: true,
+                met: function(s) {
+                    return s.emotions_stability === 'неустойчивые' ||
+                           s.emotions.indexOf('с преобладанием раздражительности') !== -1;
+                }
+            },
+            {
+                id: 'mixed_subthreshold',
+                label: 'Симптомы тревоги и депрессии по отдельности недостаточны для F32 или F41.1',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'mixed_no_severe',
+                label: 'Нет выраженной суицидальности, психоза, мании/гипомании или тяжёлого депрессивного эпизода',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'mixed_exclusion',
+                label: 'Состояние не объясняется ПАВ, органическим расстройством или соматическим заболеванием',
+                weight: 'additional', capturable: false, met: null
+            },
+        ]
+    },
+
+    // ── F40 ФОБИЧЕСКИЕ ТРЕВОЖНЫЕ РАССТРОЙСТВА ───────────────
+    {
+        code: 'F40',
+        name: 'Фобическое тревожное расстройство',
+        criteria: [
+            {
+                id: 'phobic_fear',
+                label: 'Фобии / страх конкретной ситуации или объекта',
+                weight: 'core', capturable: true,
+                met: function(s) { return s.idea_phobic; }
+            },
+            {
+                id: 'phobic_anxiety',
+                label: 'Тревога в связи с фобическим стимулом',
+                weight: 'additional', capturable: true,
+                met: function(s) {
+                    return s.emotions.indexOf('с преобладанием тревоги') !== -1;
+                }
+            },
+            {
+                id: 'phobic_sleep',
+                label: 'Нарушения сна на фоне тревожного ожидания',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s._sleepDisturbed; }
+            },
+            {
+                id: 'phobic_attention',
+                label: 'Снижение концентрации на фоне тревоги',
+                weight: 'additional', capturable: true,
+                met: function(s) { return s._attentionImpaired; }
+            },
+            {
+                id: 'phobic_subtype',
+                label: 'Уточнить тип: агорафобия, социальная фобия, специфическая фобия',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'phobic_situational',
+                label: 'Тревога возникает преимущественно в определённых ситуациях или при ожидании этих ситуаций',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'phobic_avoidance',
+                label: 'Избегание фобических ситуаций или выраженное дистресс-перенесение',
+                weight: 'core', capturable: false, met: null
+            },
+            {
+                id: 'phobic_autonomic',
+                label: 'Вегетативные симптомы тревоги в фобической ситуации',
+                weight: 'additional', capturable: false, met: null
+            },
+            {
+                id: 'phobic_exclusion',
+                label: 'Симптомы не объясняются бредом, обсессиями, ПТСР, аффективным или органическим расстройством',
+                weight: 'core', capturable: false, met: null
+            },
+        ]
+    },
+
     // ── F42 ОКР ──────────────────────────────────────────────
     {
         code: 'F42',
@@ -4683,7 +4828,8 @@ var NOSOLOGY_DB = [
             {
                 id: 'ocd_compulsions',
                 label: 'Компульсии (навязчивые действия, ритуалы)',
-                weight: 'core', capturable: false, met: null
+                weight: 'core', capturable: true,
+                met: function(s) { return s.compulsions; }
             },
             {
                 id: 'ocd_resistance',
@@ -4742,7 +4888,8 @@ var NOSOLOGY_DB = [
             {
                 id: 'ptsd_flashbacks',
                 label: 'Флэшбэки / навязчивые воспоминания о травме',
-                weight: 'core', capturable: false, met: null
+                weight: 'core', capturable: true,
+                met: function(s) { return s.memory.indexOf('флешбеки') !== -1; }
             },
             {
                 id: 'ptsd_avoidance',
@@ -5094,6 +5241,86 @@ var NOSOLOGY_DB = [
 
 // ── C. Алгоритм сопоставления симптомов ─────────────────────
 
+function passesNosologyEntryRule(nosology, symptoms, metList, coreMet, additionalMet) {
+    function met(id) {
+        return metList.some(function(c) { return c.id === id; });
+    }
+
+    switch (nosology.code) {
+        case 'F32':
+            // МКБ-10: депрессивный эпизод требует типичных депрессивных симптомов
+            // и дополнительных признаков; длительность и часть типичных симптомов
+            // остаются в блоке "уточнить".
+            return met('dep_mood') && additionalMet >= 2;
+
+        case 'F30':
+            // Мания: повышенное/раздражительное настроение плюс несколько
+            // сопутствующих признаков маниакального синдрома.
+            return met('man_mood') && additionalMet >= 2;
+
+        case 'F20.0':
+            // Шизофрения: для входа нужен хотя бы один симптом 1-го ранга /
+            // психотический core-признак; длительность уточняется отдельно.
+            return coreMet >= 1;
+
+        case 'F23':
+            // Острые психотические расстройства: психотический core-признак
+            // плюс изменчивость/нарушение мышления либо несколько психотических
+            // признаков. Острое начало и длительность уточняются отдельно.
+            return coreMet >= 1 && (additionalMet >= 1 || coreMet >= 2);
+
+        case 'F41.1':
+            // ГТР: преобладание тревоги плюс несколько сопутствующих симптомов;
+            // длительность и соматические проявления уточняются отдельно.
+            return met('gad_anxiety') && additionalMet >= 2;
+
+        case 'F41.2':
+            // Смешанное тревожно-депрессивное расстройство: одновременно есть
+            // тревожный и депрессивный компоненты, но врач должен уточнить, что
+            // каждый из них сам по себе не достигает отдельной рубрики.
+            return met('mixed_anxiety') && met('mixed_depressive') && additionalMet >= 1;
+
+        case 'F40':
+            // Фобические тревожные расстройства: ключевой вход — фобический
+            // страх, а тип фобии, ситуационная связанность и избегание
+            // выносятся в обязательные уточнения.
+            return met('phobic_fear');
+
+        case 'F42':
+            // ОКР: обсессии и/или компульсии обязательны для входа.
+            return (met('ocd_obsessions') || met('ocd_compulsions')) && additionalMet >= 1;
+
+        case 'F43.1':
+            // ПТСР не должен появляться только по неспецифическим тревоге/сну:
+            // нужен хотя бы capturable core-признак повторного переживания.
+            return met('ptsd_flashbacks') && additionalMet >= 1;
+
+        case 'F60.3':
+            // Расстройство личности требует устойчивого паттерна; в форме это
+            // приближённо отражается несколькими core-признаками, а начало и
+            // импульсивность остаются для уточнения.
+            return coreMet >= 2;
+
+        case 'F31.0':
+            // БАР, гипоманиакальный эпизод: настроение + признаки гипомании;
+            // эпизодичность/полярность уточняются отдельно.
+            return met('bar_hypo_mood') && additionalMet >= 2;
+
+        case 'F31.1':
+            // БАР, маниакальный эпизод: настроение + более насыщенный
+            // маниакальный синдром; психотичность влияет на подрубрику.
+            return met('bar_man_mood') && additionalMet >= 3;
+
+        case 'F31.3':
+            // БАР, депрессивный эпизод: депрессивный синдром + обязательное
+            // уточнение биполярного анамнеза.
+            return met('bar_dep_mood') && additionalMet >= 2;
+
+        default:
+            return coreMet >= 1;
+    }
+}
+
 function matchNosologies(symptoms) {
     var results = [];
 
@@ -5137,7 +5364,7 @@ function matchNosologies(symptoms) {
             ? Math.round((coreMet + 0.5 * additionalMet) / denominator * 100)
             : 0;
 
-        if (score >= 15 || coreMet >= 1) {
+        if (passesNosologyEntryRule(nosology, symptoms, metList, coreMet, additionalMet)) {
             var displayCode = nosology.code;
             if (nosology.severityFn) {
                 displayCode = nosology.severityFn(symptoms, coreMet, additionalMet);
@@ -5208,6 +5435,19 @@ var CRITERION_ANCHOR = {
     gad_sleep:              { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
     gad_attention:          { scrollTo: 'status-attention',       expand: ['attention_body'] },
     gad_irritability:       { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+
+    mixed_anxiety:          { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+    mixed_depressive:       { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+    mixed_sleep:            { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+    mixed_attention:        { scrollTo: 'status-attention',       expand: ['attention_body'] },
+    mixed_thinking:         { scrollTo: 'status-thinking' },
+    mixed_appetite:         { scrollTo: 'status-sleep-appetite' },
+    mixed_irritability:     { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+
+    phobic_fear:            { scrollTo: 'ideas-block' },
+    phobic_anxiety:         { scrollTo: 'status-mood',            expand: ['emotions_body'] },
+    phobic_sleep:           { scrollTo: 'status-sleep-appetite',  expand: ['sleep_body'] },
+    phobic_attention:       { scrollTo: 'status-attention',       expand: ['attention_body'] },
 
     ocd_obsessions:         { scrollTo: 'ideas-block' },
     ocd_rigid:              { scrollTo: 'status-thinking',        expand: ['thinking_mobility_body'] },
@@ -7982,13 +8222,13 @@ function collectPrescriptionsText() {
         }
 
         if (ideas) {
-            text += 'Идеи: ' + ideas + '.<br>';
+            text += 'Идеи: ' + ideas + '. ';
         }
         if (judgment) {
-            text += 'Суждения: ' + judgment + '.<br>';
+            text += 'Суждения: ' + judgment + '. ';
         }
         if (intellect) {
-            text += 'Интеллект ' + intellect + '.<br>';
+            text += 'Интеллект ' + intellect + '. ';
         }
         if (vocabulary) {
             text += 'Словарный запас ' + vocabulary + '.<br>';
@@ -7999,13 +8239,13 @@ function collectPrescriptionsText() {
         }
 
         if (memory) {
-            text += 'Память: ' + memory + '.<br>';
+            text += 'Память: ' + memory + '. ';
         }
         if (amnesia) {
-            text += 'Амнезия: ' + amnesia + '.<br>';
+            text += 'Амнезия: ' + amnesia + '. ';
         }
         if (paramnesia) {
-            text += 'Парамнезии: ' + paramnesia + '.<br>';
+            text += 'Парамнезии: ' + paramnesia + '. ';
         }
         if (attention) {
             text += 'Внимание: ' + attention + '.<br>';

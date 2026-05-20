@@ -1,4 +1,4 @@
-﻿# PsyDraft — Справочник для Claude Code
+﻿# PsyDraft — Справочник для Codex
 
 ## Что это
 
@@ -10,7 +10,7 @@
 
 ```
 psydraft/
-├── CLAUDE.md                        # этот файл
+├── AGENTS.md                        # этот файл
 ├── README.md                        # пользовательская документация
 ├── frontend/
 │   └── psychstatus/
