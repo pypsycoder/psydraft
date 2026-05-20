@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PsyDraft Sleep — сомнологический прием</title>
+  <style>
+    :root {
+  --bg-main: #f2f2f7;
+  --bg-card: #ffffff;
+  --bg-section-heading: #f2f3f5;
+  --border-card: #e5e5ea;
+  --border-input: #ced0d8;
+  --accent: #007aff;
+  --accent-soft: rgba(0, 122, 255, 0.15);
+  --danger: #b94343;
+  --warning: #c7812d;
+  --text-main: #111111;
+  --text-primary: #111111;
+  --text-secondary: #6e6e73;
+  --text-heading: #1f2937;
+  --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.05);
+  --transition-fast: 0.2s ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  display: flex;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 12px 32px;
+}
+
+.sidebar {
+  position: sticky;
+  top: 12px;
+  width: 240px;
+  max-height: calc(100vh - 24px);
+  align-self: flex-start;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 14px 14px 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.30);
+}
+
+.brand-title {
+  color: var(--text-secondary);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.brand-subtitle,
+.eyebrow,
+.hint {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.nav {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  padding: 2px 4px 8px;
+  scrollbar-width: none;
+}
+
+.nav::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 42px;
+  padding: 7px 9px;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.12s ease, box-shadow 0.12s ease, transform 0.1s ease;
+}
+
+.nav-icon {
+  flex: 0 0 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.nav-link:visited {
+  color: var(--text-primary);
+}
+
+.nav-link:hover {
+  background: rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.35);
+  transform: translateX(1px);
+}
+
+.nav-link.active {
+  background: transparent;
+  box-shadow:
+    0 0 0 2px rgba(59, 130, 246, 0.55),
+    0 4px 10px rgba(59, 130, 246, 0.22);
+  transform: none;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  color: var(--text-heading);
+  line-height: 1.15;
+}
+
+h1 {
+  font-size: 30px;
+  font-weight: 760;
+  letter-spacing: 0;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+h3 {
+  margin-bottom: 6px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.score-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.score-pill {
+  min-width: 92px;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+}
+
+.score-pill span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.score-pill strong {
+  color: var(--accent);
+  font-size: 25px;
+  line-height: 1.1;
+}
+
+.section {
+  margin-bottom: 28px;
+  scroll-margin-top: 16px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--bg-section-heading);
+}
+
+.section-heading span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.section-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 10px 20px rgba(0, 0, 0, 0.03);
+  padding: 14px 16px;
+}
+
+.grid-2,
+.scale-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.scale-layout {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+}
+
+.metric-grid,
+.anthro-grid,
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 12px;
+}
+
+.checkbox-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 18px;
+  row-gap: 8px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.checkbox-grid label,
+.scale-row label,
+.stopbang-row label {
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.metric-grid label {
+  align-items: stretch;
+  text-align: left;
+}
+
+.anthro-grid {
+  align-items: end;
+}
+
+.anthro-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border-input);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--text-main);
+  font-size: 15px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.result:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.15);
+}
+
+input[type="checkbox"] {
+  flex: 0 0 16px;
+  width: auto;
+  margin: 0;
+  margin-top: 2px;
+}
+
+input[readonly] {
+  background: #f9fafb;
+  color: var(--text-secondary);
+}
+
+.bmi-label {
+  display: block;
+  width: 100%;
+  min-height: 24px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  overflow: visible;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.bmi-label:empty {
+  display: none;
+}
+
+.bmi-value--underweight,
+.bmi-label--underweight {
+  background: rgba(0, 122, 255, 0.12);
+  color: #0063d1;
+}
+
+.bmi-value--normal,
+.bmi-label--normal {
+  background: rgba(52, 199, 89, 0.14);
+  color: #1d7f3a;
+}
+
+.bmi-value--overweight,
+.bmi-label--overweight {
+  background: rgba(255, 204, 0, 0.22);
+  color: #8a6500;
+}
+
+.bmi-value--obesity,
+.bmi-label--obesity {
+  background: rgba(185, 67, 67, 0.14);
+  color: var(--danger);
+}
+
+input.bmi-value--underweight,
+input.bmi-value--normal,
+input.bmi-value--overweight,
+input.bmi-value--obesity {
+  font-weight: 700;
+}
+
+.scale-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scale-row,
+.stopbang-row {
+  padding: 9px;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+.scale-row select {
+  margin-top: 7px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 9px 13px;
+  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.18);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast), transform 0.12s ease;
+}
+
+button:hover {
+  background: #0063d1;
+  box-shadow: 0 6px 14px rgba(0, 122, 255, 0.24);
+  transform: translateY(-1px);
+}
+
+button.secondary {
+  background: #ffffff;
+  color: var(--accent);
+  border: 1px solid rgba(0, 122, 255, 0.25);
+  box-shadow: none;
+}
+
+button.secondary:hover {
+  background: rgba(0, 122, 255, 0.06);
+}
+
+.advisor-results {
+  display: grid;
+  gap: 10px;
+}
+
+.advisor-card {
+  padding: 12px;
+  border: 1px solid var(--border-card);
+  border-left: 4px solid var(--accent);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.advisor-card.high {
+  border-left-color: var(--danger);
+}
+
+.advisor-card.mid {
+  border-left-color: var(--warning);
+}
+
+.advisor-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.advisor-score {
+  flex: 0 0 auto;
+  color: var(--text-secondary);
+}
+
+.advisor-card ul {
+  margin: 8px 0 0 20px;
+  padding: 0;
+}
+
+.advisor-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.advisor-add-diagnosis {
+  padding: 7px 10px;
+  font-size: 14px;
+}
+
+.advisor-clarify-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.advisor-clarify-item {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 8px;
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+.advisor-clarify-text {
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.advisor-clarify-note {
+  grid-column: 2;
+  margin-top: 2px;
+  padding: 6px 8px;
+  font-size: 14px;
+}
+
+.diagnosis-search {
+  position: relative;
+}
+
+.field-label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.diagnosis-results {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.diagnosis-results.open {
+  display: block;
+}
+
+.diagnosis-option {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: #ffffff;
+  color: var(--text-primary);
+  display: block;
+  padding: 9px 11px;
+  text-align: left;
+}
+
+.diagnosis-option:hover {
+  background: rgba(0, 122, 255, 0.06);
+  box-shadow: none;
+  transform: none;
+}
+
+.diagnosis-option-code {
+  color: var(--accent);
+  font-weight: 800;
+  margin-right: 6px;
+}
+
+.diagnosis-option-name {
+  color: var(--text-primary);
+}
+
+.diagnosis-selected-panel {
+  min-width: 0;
+}
+
+.diagnosis-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.diagnosis-empty {
+  border: 1px dashed var(--border-card);
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 12px;
+  text-align: center;
+}
+
+.diagnosis-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(0, 122, 255, 0.22);
+  border-radius: 12px;
+  background: rgba(0, 122, 255, 0.05);
+  padding: 10px 10px 10px 12px;
+}
+
+.diagnosis-item-text {
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  min-width: 0;
+}
+
+.diagnosis-delete {
+  border: 1px solid rgba(255, 59, 48, 0.26);
+  background: #ffffff;
+  box-shadow: none;
+  color: #d70015;
+  padding: 7px 10px;
+}
+
+.diagnosis-delete:hover {
+  background: rgba(255, 59, 48, 0.08);
+  box-shadow: none;
+}
+
+.diagnosis-manual {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 10px;
+}
+
+.diagnosis-manual textarea {
+  min-height: 52px;
+}
+
+.hidden-field {
+  display: none;
+}
+
+.checklist-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.plan-card {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px;
+}
+
+.plan-card > label {
+  grid-column: 1 / -1;
+}
+
+.checklist-title {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.tests-checklist,
+.recommendations-checklist,
+.comorbidity-checklist {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+.tests-checklist label,
+.recommendations-checklist label,
+.comorbidity-checklist label {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.compact-checklist {
+  gap: 8px;
+}
+
+.comorbidity-checklist {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.substances-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.substances-table {
+  display: grid;
+  grid-template-columns: minmax(130px, 1.25fr) minmax(92px, 1fr) 92px;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+.substances-head {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.substances-table label {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.substances-table input[type="text"],
+.substances-table input[type="time"] {
+  padding: 6px 8px;
+  font-size: 14px;
+}
+
+.result {
+  min-height: 260px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.time-picker-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 17, 17, 0.28);
+  padding: 16px;
+}
+
+.time-picker-backdrop.open {
+  display: flex;
+}
+
+.time-picker {
+  width: min(360px, 100%);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+  padding: 14px;
+}
+
+.time-picker-header,
+.time-picker-actions,
+.time-picker-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.time-picker-title {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.time-picker-value {
+  color: var(--accent);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.time-picker-close {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+.time-picker-tabs {
+  justify-content: flex-start;
+  margin: 12px 0;
+}
+
+.time-picker-tab {
+  background: #ffffff;
+  color: var(--accent);
+  border: 1px solid rgba(0, 122, 255, 0.25);
+  box-shadow: none;
+}
+
+.time-picker-tab.active {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.time-picker-face {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: #f2f2f7;
+  border: 1px solid var(--border-card);
+}
+
+.time-picker-option {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  padding: 0;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: none;
+  font-size: 14px;
+}
+
+.time-picker-option:hover,
+.time-picker-option.active {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(0, 122, 255, 0.24);
+  transform: none;
+}
+
+.time-picker-actions {
+  justify-content: flex-end;
+}
+
+@media (max-width: 920px) {
+  body {
+    font-size: 18px;
+  }
+
+  .app-shell {
+    display: block;
+    padding: 8px 12px 32px;
+  }
+
+  .sidebar {
+    position: static;
+    width: auto;
+    max-height: none;
+    margin-bottom: 12px;
+  }
+
+  .nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .nav-link {
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  .topbar {
+    display: block;
+  }
+
+  .score-strip {
+    justify-content: flex-start;
+    margin-top: 12px;
+  }
+
+  .grid-2,
+  .plan-card,
+  .scale-layout,
+  .metric-grid,
+  .anthro-grid,
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+    padding: 10px 12px;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 13px;
+  }
+
+  .sidebar,
+  .topbar,
+  .section:not(#result-section) .section-card,
+  .section:not(#result-section) .section-heading,
+  .toolbar {
+    display: none !important;
+  }
+
+  .app-shell {
+    display: block;
+    padding: 0;
+  }
+
+  .section-card,
+  .result {
+    border: none;
+    box-shadow: none;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">S</div>
+    <div>
+      <div class="brand-title">Somnology</div>
+      <div class="brand-subtitle">offline consult</div>
+    </div>
+  </div>
+
+  <nav class="nav" aria-label="Навигация по приему">
+    <a href="#general" class="nav-link active"><span class="nav-icon">📋</span><span>Общее</span></a>
+    <a href="#sleep" class="nav-link"><span class="nav-icon">🌙</span><span>Сон</span></a>
+    <a href="#scales" class="nav-link"><span class="nav-icon">📊</span><span>Шкалы</span></a>
+    <a href="#advisor" class="nav-link"><span class="nav-icon">🔬</span><span>Советник</span></a>
+    <a href="#diagnosis-section" class="nav-link"><span class="nav-icon">🩺</span><span>Диагноз</span></a>
+    <a href="#plan" class="nav-link"><span class="nav-icon">✅</span><span>План</span></a>
+    <a href="#result-section" class="nav-link"><span class="nav-icon">🖋️</span><span>Заключение</span></a>
+  </nav>
+</aside>
+
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">PsyDraft Sleep</p>
+          <h1>Сомнологический прием</h1>
+        </div>
+        <div class="score-strip" aria-live="polite">
+          <div class="score-pill">
+            <span>ISI</span>
+            <strong id="isi-score">0</strong>
+          </div>
+          <div class="score-pill">
+            <span>ESS</span>
+            <strong id="ess-score">0</strong>
+          </div>
+          <div class="score-pill">
+            <span>STOP-Bang</span>
+            <strong id="stopbang-score">0</strong>
+          </div>
+        </div>
+      </header>
+
+      <section class="section" id="general">
+  <div class="section-heading">
+    <span>01</span>
+    <h2>Общие данные</h2>
+  </div>
+  <div class="section-card grid-2">
+    <label>
+      Жалобы
+      <textarea id="complaints" rows="4" placeholder="трудности засыпания, частые пробуждения, дневная сонливость..."></textarea>
+    </label>
+    <label>
+      Анамнез нарушения сна
+      <textarea id="history" rows="4" placeholder="когда началось, динамика, провоцирующие факторы, предыдущее лечение"></textarea>
+    </label>
+    <div class="checklist-panel compact-checklist">
+      <div class="checklist-title">Сопутствующие заболевания</div>
+      <div class="comorbidity-checklist">
+        <label><input type="checkbox" name="comorbidity_option" value="артериальная гипертензия"> <span>АГ</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="ожирение"> <span>Ожирение</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="сахарный диабет"> <span>Сахарный диабет</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="гипотиреоз"> <span>Гипотиреоз</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="ХОБЛ / бронхиальная астма"> <span>ХОБЛ/астма</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="сердечно-сосудистое заболевание"> <span>ССЗ</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="тревожное или депрессивное расстройство"> <span>Тревога/депрессия</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="неврологическое заболевание"> <span>Неврология</span></label>
+      </div>
+      <label>
+        Дополнительно
+        <textarea id="comorbidity_extra" rows="2" placeholder="другие заболевания"></textarea>
+      </label>
+    </div>
+    <div class="substances-panel">
+      <div class="checklist-title">Лекарства и вещества</div>
+      <div class="substances-table">
+        <div class="substances-head">Фактор</div>
+        <div class="substances-head">Количество</div>
+        <div class="substances-head">До сна</div>
+
+        <label><input type="checkbox" name="substance_option" value="кофеин" data-substance-id="caffeine"> <span>Кофеин</span></label>
+        <input type="text" data-substance-amount="caffeine" placeholder="2 чашки">
+        <input type="time" data-substance-time="caffeine">
+
+        <label><input type="checkbox" name="substance_option" value="алкоголь" data-substance-id="alcohol"> <span>Алкоголь</span></label>
+        <input type="text" data-substance-amount="alcohol" placeholder="200 мл">
+        <input type="time" data-substance-time="alcohol">
+
+        <label><input type="checkbox" name="substance_option" value="никотин" data-substance-id="nicotine"> <span>Никотин</span></label>
+        <input type="text" data-substance-amount="nicotine" placeholder="сигареты/вейп">
+        <input type="time" data-substance-time="nicotine">
+
+        <label><input type="checkbox" name="substance_option" value="седативные / снотворные" data-substance-id="sedatives"> <span>Седативные</span></label>
+        <input type="text" data-substance-amount="sedatives" placeholder="название/доза">
+        <input type="time" data-substance-time="sedatives">
+
+        <label><input type="checkbox" name="substance_option" value="антидепрессанты" data-substance-id="antidepressants"> <span>Антидепрессанты</span></label>
+        <input type="text" data-substance-amount="antidepressants" placeholder="название/доза">
+        <input type="time" data-substance-time="antidepressants">
+
+        <label><input type="checkbox" name="substance_option" value="стимуляторы" data-substance-id="stimulants"> <span>Стимуляторы</span></label>
+        <input type="text" data-substance-amount="stimulants" placeholder="название/доза">
+        <input type="time" data-substance-time="stimulants">
+      </div>
+      <label>
+        Дополнительно
+        <textarea id="substances_extra" rows="2" placeholder="другие препараты, БАД, режим приема"></textarea>
+      </label>
+    </div>
+    <div class="anthro-block">
+      <div class="anthro-grid">
+        <label>
+          Вес, кг
+          <input id="weight_kg" type="number" min="20" max="350" step="0.1" placeholder="96">
+        </label>
+        <label>
+          Рост, см
+          <input id="height_cm" type="number" min="80" max="250" step="1" placeholder="178">
+        </label>
+        <label>
+          ИМТ
+          <input id="bmi" type="text" readonly placeholder="рассчитается автоматически">
+        </label>
+      </div>
+      <span id="bmi_label" class="bmi-label"></span>
+    </div>
+    <label>
+      Окружность шеи
+      <input id="neck" type="number" min="20" max="80" step="0.1" placeholder="43">
+    </label>
+  </div>
+</section>
+
+      <section class="section" id="sleep">
+  <div class="section-heading">
+    <span>02</span>
+    <h2>Профиль сна</h2>
+  </div>
+  <div class="section-card">
+    <div class="metric-grid">
+      <label>Отход ко сну<input id="bedtime" type="time"></label>
+      <label>Подъем<input id="waketime" type="time"></label>
+      <label>Латентность сна, мин<input id="latency" type="number" min="0" step="5"></label>
+      <label>Пробуждений за ночь<input id="awakenings" type="number" min="0" max="20" step="1"></label>
+      <label>Длительность пробуждений, мин<input id="awakening_duration" type="number" min="0" max="60" step="5"></label>
+      <label>Общее время сна, ч<input id="total_sleep" type="text" readonly placeholder="рассчитается автоматически"></label>
+      <label>Дневной сон, мин<input id="nap_minutes" type="number" min="0" step="5"></label>
+    </div>
+
+    <div class="checkbox-grid">
+      <label><input type="checkbox" name="sleep_symptom" value="трудности засыпания"> Трудности засыпания</label>
+      <label><input type="checkbox" name="sleep_symptom" value="частые ночные пробуждения"> Частые пробуждения</label>
+      <label><input type="checkbox" name="sleep_symptom" value="ранние утренние пробуждения"> Ранние пробуждения</label>
+      <label><input type="checkbox" name="sleep_symptom" value="неосвежающий сон"> Неосвежающий сон</label>
+      <label><input type="checkbox" name="sleep_symptom" value="выраженная дневная сонливость"> Дневная сонливость</label>
+      <label><input type="checkbox" name="sleep_symptom" value="нерегулярный график сна"> Нерегулярный график</label>
+    </div>
+
+    <div class="checkbox-grid">
+      <label><input type="checkbox" name="breathing_symptom" value="храп"> Храп</label>
+      <label><input type="checkbox" name="breathing_symptom" value="остановки дыхания во сне"> Остановки дыхания</label>
+      <label><input type="checkbox" name="breathing_symptom" value="удушье или нехватка воздуха ночью"> Удушье ночью</label>
+      <label><input type="checkbox" name="breathing_symptom" value="утренние головные боли"> Утренние головные боли</label>
+      <label><input type="checkbox" name="movement_symptom" value="неприятные ощущения в ногах вечером"> Неприятные ощущения в ногах</label>
+      <label><input type="checkbox" name="movement_symptom" value="облегчение при движении ногами"> Облегчение при движении</label>
+      <label><input type="checkbox" name="parasomnia_symptom" value="кошмары"> Кошмары</label>
+      <label><input type="checkbox" name="parasomnia_symptom" value="двигательная активность во сне"> Движения во сне</label>
+      <label><input type="checkbox" name="parasomnia_symptom" value="снохождение или ночные эпизоды поведения"> Снохождение/эпизоды поведения</label>
+      <label><input type="checkbox" name="hypersomnia_symptom" value="катаплексия"> Катаплексия</label>
+      <label><input type="checkbox" name="hypersomnia_symptom" value="сонный паралич"> Сонный паралич</label>
+      <label><input type="checkbox" name="hypersomnia_symptom" value="гипнагогические феномены"> Гипнагогические феномены</label>
+    </div>
+
+    <label>
+      Комментарии к ночным эпизодам
+      <textarea id="sleep_notes" rows="3" placeholder="поведение во сне, свидетели, травматизация, связь с алкоголем/лекарствами"></textarea>
+    </label>
+  </div>
+</section>
+
+      <section class="section" id="scales">
+  <div class="section-heading">
+    <span>03</span>
+    <h2>Шкалы</h2>
+  </div>
+  <div class="section-card scale-layout">
+    <div>
+      <h3>ISI</h3>
+      <p class="hint">Insomnia Severity Index: 0-28.</p>
+      <div class="scale-list" id="isi-items"></div>
+    </div>
+    <div>
+      <h3>ESS</h3>
+      <p class="hint">Epworth Sleepiness Scale: 0-24.</p>
+      <div class="scale-list" id="ess-items"></div>
+    </div>
+    <div>
+      <h3>STOP-Bang</h3>
+      <p class="hint">Скрининг риска обструктивного апноэ сна.</p>
+      <div class="scale-list" id="stopbang-items"></div>
+    </div>
+  </div>
+</section>
+
+      <section class="section" id="advisor">
+  <div class="section-heading">
+    <span>04</span>
+    <h2>Сомнологический советник</h2>
+  </div>
+  <div class="section-card">
+    <div class="toolbar">
+      <button type="button" id="run-advisor">Анализировать</button>
+      <span id="advisor-hint" class="hint"></span>
+    </div>
+    <div id="advisor-results" class="advisor-results"></div>
+  </div>
+</section>
+
+      <section class="section" id="diagnosis-section">
+  <div class="section-heading">
+    <span>05</span>
+    <h2>Диагноз</h2>
+  </div>
+  <div class="section-card">
+    <label class="diagnosis-search">
+      Поиск по сомнологическим диагнозам
+      <input id="diagnosis_search" type="text" autocomplete="off" placeholder="например: инсомния, апноэ, циркадное, нарколепсия">
+      <div id="diagnosis_results" class="diagnosis-results"></div>
+    </label>
+    <div class="diagnosis-selected-panel">
+      <span class="field-label">Выбранные диагнозы</span>
+      <div id="diagnosis_list" class="diagnosis-list" aria-live="polite"></div>
+      <textarea id="diagnosis" class="hidden-field" aria-hidden="true" tabindex="-1"></textarea>
+    </div>
+    <div class="diagnosis-manual">
+      <label>
+        Добавить вручную
+        <textarea id="diagnosis_manual" rows="2" placeholder="например: G47.0 Инсомния, уточнение"></textarea>
+      </label>
+      <button type="button" class="secondary" id="add_manual_diagnosis">Добавить</button>
+    </div>
+  </div>
+</section>
+
+      <section class="section" id="plan">
+  <div class="section-heading">
+    <span>06</span>
+    <h2>План и рекомендации</h2>
+  </div>
+  <div class="section-card plan-card">
+    <div class="checklist-panel">
+      <div class="checklist-title">Рекомендации</div>
+      <div id="recommendations-checklist" class="recommendations-checklist"></div>
+      <label>
+        Дополнительно
+        <textarea id="recommendations_extra" rows="2" placeholder="дополнительные рекомендации"></textarea>
+      </label>
+    </div>
+    <div class="checklist-panel">
+      <div class="checklist-title">Обследования</div>
+      <div id="tests-checklist" class="tests-checklist"></div>
+      <label>
+        Дополнительно
+        <textarea id="tests_extra" rows="2" placeholder="дополнительные обследования или уточнения"></textarea>
+      </label>
+    </div>
+    <label>
+      Лечение / маршрутизация
+      <textarea id="treatment" rows="3" placeholder="CBT-I, CPAP после подтверждения ОАС, коррекция препаратов"></textarea>
+    </label>
+  </div>
+</section>
+
+      <section class="section" id="result-section">
+  <div class="section-heading">
+    <span>07</span>
+    <h2>Заключение</h2>
+  </div>
+  <div class="section-card">
+    <div class="toolbar">
+      <button type="button" id="generate-report">Сформировать текст</button>
+      <button type="button" class="secondary" id="copy-report">Скопировать</button>
+      <button type="button" class="secondary" id="print-report">Печать</button>
+    </div>
+    <div id="result" class="result" contenteditable="true"></div>
+  </div>
+</section>
+
+    </main>
+  </div>
+  <div class="time-picker-backdrop" id="time-picker-backdrop" aria-hidden="true">
+  <div class="time-picker" role="dialog" aria-modal="true" aria-labelledby="time-picker-title">
+    <div class="time-picker-header">
+      <div>
+        <div class="time-picker-title" id="time-picker-title">Выбор времени</div>
+        <div class="time-picker-value" id="time-picker-value">00:00</div>
+      </div>
+      <button type="button" class="time-picker-close" id="time-picker-close" aria-label="Закрыть">×</button>
+    </div>
+    <div class="time-picker-tabs">
+      <button type="button" class="time-picker-tab active" data-time-mode="hours">Часы</button>
+      <button type="button" class="time-picker-tab" data-time-mode="minutes">Минуты</button>
+    </div>
+    <div class="time-picker-face" id="time-picker-face"></div>
+    <div class="time-picker-actions">
+      <button type="button" class="secondary" id="time-picker-clear">Очистить</button>
+      <button type="button" id="time-picker-done">Готово</button>
+    </div>
+  </div>
+</div>
+
+
+  <script>
+    const ISI_ITEMS = [
+  'Трудность засыпания',
+  'Трудность поддержания сна',
+  'Ранние пробуждения',
+  'Удовлетворенность текущим сном',
+  'Заметность проблемы для окружающих',
+  'Беспокойство из-за нарушения сна',
+  'Влияние на дневное функционирование'
+];
+
+const ESS_ITEMS = [
+  'Сидя и читая',
+  'Просмотр телевизора',
+  'Пассивно сидя в общественном месте',
+  'Пассажиром в машине около часа',
+  'Лежа днем после обеда',
+  'Сидя и разговаривая',
+  'Сидя спокойно после обеда без алкоголя',
+  'В машине при остановке в пробке'
+];
+
+const STOPBANG_ITEMS = [
+  ['S', 'Громкий храп'],
+  ['T', 'Усталость / дневная сонливость'],
+  ['O', 'Наблюдались остановки дыхания'],
+  ['P', 'Артериальная гипертензия'],
+  ['B', 'ИМТ > 35 кг/м²'],
+  ['A', 'Возраст > 50 лет'],
+  ['N', 'Окружность шеи > 40 см'],
+  ['G', 'Мужской пол']
+];
+
+const DIAGNOSIS_OPTIONS = [
+  { code: 'G47.0', name: 'Инсомния' },
+  { code: 'G47.1', name: 'Гиперсомния' },
+  { code: 'G47.2', name: 'Нарушения циркадного ритма сна и бодрствования' },
+  { code: 'G47.3', name: 'Апноэ во сне / подозрение на обструктивное апноэ сна' },
+  { code: 'G47.4', name: 'Нарколепсия и катаплексия' },
+  { code: 'G47.5', name: 'Парасомния' },
+  { code: 'G47.8', name: 'Другие нарушения сна' },
+  { code: 'G47.9', name: 'Нарушение сна неуточненное' },
+  { code: 'F51.0', name: 'Инсомния неорганической этиологии' },
+  { code: 'F51.1', name: 'Гиперсомния неорганической этиологии' },
+  { code: 'F51.2', name: 'Расстройство режима сна-бодрствования неорганической этиологии' },
+  { code: 'F51.3', name: 'Снохождение' },
+  { code: 'F51.4', name: 'Ужасы во сне' },
+  { code: 'F51.5', name: 'Кошмары' },
+  { code: 'G25.8', name: 'Синдром беспокойных ног' },
+  { code: 'R06.5', name: 'Ротовое дыхание / храп' },
+  { code: 'R53', name: 'Недомогание и утомляемость' }
+];
+
+let selectedDiagnoses = [];
+
+const TEST_OPTIONS = [
+  { id: 'sleep_diary', label: 'Дневник сна 2 недели', tags: ['G47.0', 'G47.2', 'F51.0', 'F51.2'] },
+  { id: 'actigraphy', label: 'Актиграфия при возможности', tags: ['G47.0', 'G47.2', 'F51.2'] },
+  { id: 'psg', label: 'Полисомнография', tags: ['G47.1', 'G47.3', 'G47.4', 'G47.5'] },
+  { id: 'resp_monitoring', label: 'Кардиореспираторный мониторинг сна', tags: ['G47.3'] },
+  { id: 'mslt', label: 'MSLT после ночной ПСГ', tags: ['G47.1', 'G47.4'] },
+  { id: 'ferritin', label: 'Ферритин, железо, ОЖСС/трансферрин', tags: ['G25.8'] },
+  { id: 'cbc', label: 'ОАК', tags: ['G25.8', 'G47.1', 'R53'] },
+  { id: 'tsh', label: 'ТТГ', tags: ['G47.0', 'G47.1', 'R53'] },
+  { id: 'glucose', label: 'Глюкоза крови / HbA1c по показаниям', tags: ['G47.3', 'R53'] },
+  { id: 'ent', label: 'Консультация ЛОР-врача', tags: ['G47.3', 'R06.5'] },
+  { id: 'neurology', label: 'Консультация невролога', tags: ['G47.4', 'G47.5', 'G25.8'] },
+  { id: 'psychiatry', label: 'Оценка тревоги/депрессии при подозрении на вторичную инсомнию', tags: ['G47.0', 'F51.0', 'F51.1'] },
+  { id: 'video', label: 'Видео ночных эпизодов от родственников при возможности', tags: ['G47.5', 'F51.3', 'F51.4', 'F51.5'] }
+];
+
+const RECOMMENDATION_OPTIONS = [
+  {
+    id: 'sleep_diary',
+    label: 'Вести дневник сна 2 недели с фиксацией времени отхода ко сну, подъема, пробуждений, дневного сна, кофеина/алкоголя и самочувствия днем.',
+    tags: ['G47.0', 'G47.2', 'F51.0', 'F51.2']
+  },
+  {
+    id: 'regular_schedule',
+    label: 'Стабилизировать время подъема, включая выходные; избегать длительного дневного сна и позднего пребывания в постели без сна.',
+    tags: ['G47.0', 'G47.2', 'F51.0', 'F51.2']
+  },
+  {
+    id: 'stimulus_control',
+    label: 'Соблюдать контроль стимулов: использовать кровать преимущественно для сна, вставать при длительном бодрствовании, возвращаться при сонливости.',
+    tags: ['G47.0', 'F51.0']
+  },
+  {
+    id: 'sleep_hygiene',
+    label: 'Оптимизировать гигиену сна: затемнение, тишина, прохладная комната, отказ от кофеина во второй половине дня и алкоголя как средства для сна.',
+    tags: ['G47.0', 'G47.2', 'F51.0', 'F51.2', 'G47.9']
+  },
+  {
+    id: 'cbti',
+    label: 'Рассмотреть CBT-I как метод первой линии при хронической инсомнии; медикаментозную терапию использовать ограниченно и с учетом рисков.',
+    tags: ['G47.0', 'F51.0']
+  },
+  {
+    id: 'osa_weight',
+    label: 'При подозрении на ОАС рекомендовать снижение массы тела при избытке веса, отказ от алкоголя и седативных препаратов перед сном.',
+    tags: ['G47.3']
+  },
+  {
+    id: 'osa_position',
+    label: 'До уточнения диагноза ОАС избегать сна на спине при позиционном ухудшении храпа/апноэ; оценить безопасность вождения при сонливости.',
+    tags: ['G47.3']
+  },
+  {
+    id: 'cpap_route',
+    label: 'При подтверждении клинически значимого ОАС обсудить CPAP/APAP-терапию и подбор маски; контроль приверженности и эффективности.',
+    tags: ['G47.3']
+  },
+  {
+    id: 'rls_iron',
+    label: 'При признаках синдрома беспокойных ног проверить дефицит железа; коррекция ферритина и пересмотр препаратов, усиливающих симптомы.',
+    tags: ['G25.8']
+  },
+  {
+    id: 'rls_behavior',
+    label: 'При RLS ограничить кофеин/алкоголь вечером, избегать недосыпания, использовать умеренную вечернюю активность и растяжку по переносимости.',
+    tags: ['G25.8']
+  },
+  {
+    id: 'hypersomnia_safety',
+    label: 'При выраженной дневной сонливости рекомендовать избегать вождения и опасных работ до уточнения причины и стабилизации состояния.',
+    tags: ['G47.1', 'G47.4']
+  },
+  {
+    id: 'hypersomnia_schedule',
+    label: 'Оценить достаточность ночного сна и регулярность графика; исключить депривацию сна, ОАС и лекарственные причины сонливости.',
+    tags: ['G47.1', 'G47.4', 'R53']
+  },
+  {
+    id: 'circadian_light',
+    label: 'При циркадном нарушении настроить световой режим: яркий свет в целевое утреннее время и ограничение яркого/синего света вечером.',
+    tags: ['G47.2', 'F51.2']
+  },
+  {
+    id: 'circadian_shift',
+    label: 'Сдвиг графика сна проводить постепенно, небольшими шагами; фиксировать эффект по дневнику сна.',
+    tags: ['G47.2', 'F51.2']
+  },
+  {
+    id: 'parasomnia_safety',
+    label: 'При парасомниях обеспечить безопасность спальни: убрать травмоопасные предметы, закрывать окна/двери, предупредить партнера по сну.',
+    tags: ['G47.5', 'F51.3', 'F51.4', 'F51.5']
+  },
+  {
+    id: 'parasomnia_triggers',
+    label: 'При ночных эпизодах исключить провокаторы: недосыпание, алкоголь, стресс, седативные препараты; собрать видео эпизодов при возможности.',
+    tags: ['G47.5', 'F51.3', 'F51.4', 'F51.5']
+  },
+  {
+    id: 'nightmares',
+    label: 'При кошмарах оценить связь с травматическим стрессом, тревогой, депрессией и лекарствами; рассмотреть психотерапевтические подходы.',
+    tags: ['F51.5', 'G47.5']
+  }
+];
+
+const ADVISOR_RULES = [
+  {
+    code: 'G47.0',
+    name: 'Инсомния',
+    checks: [
+      ['Инсомнические жалобы', s => hasAny(s.sleepSymptoms, ['трудности засыпания', 'частые ночные пробуждения', 'ранние утренние пробуждения'])],
+      ['ISI >= 8', s => s.isi >= 8],
+      ['Дневное нарушение / неосвежающий сон', s => s.sleepSymptoms.includes('неосвежающий сон') || s.ess >= 10]
+    ],
+    clarify: ['частота >= 3 ночей в неделю', 'длительность >= 3 месяцев', 'условия сна достаточны', 'исключить вторичную инсомнию']
+  },
+  {
+    code: 'G47.3',
+    name: 'Подозрение на обструктивное апноэ сна',
+    checks: [
+      ['Храп / остановки дыхания', s => hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне'])],
+      ['STOP-Bang >= 3', s => s.stopbang >= 3],
+      ['Дневная сонливость или утренние симптомы', s => s.sleepSymptoms.includes('выраженная дневная сонливость') || s.breathingSymptoms.includes('утренние головные боли')]
+    ],
+    clarify: ['показан КРМ или полисомнография', 'оценить ИМТ, окружность шеи, АГ', 'уточнить безопасность вождения']
+  },
+  {
+    code: 'G25.8',
+    name: 'Синдром беспокойных ног',
+    checks: [
+      ['Неприятные ощущения в ногах вечером', s => s.movementSymptoms.includes('неприятные ощущения в ногах вечером')],
+      ['Облегчение при движении', s => s.movementSymptoms.includes('облегчение при движении ногами')],
+      ['Нарушение сна', s => s.isi >= 8 || s.sleepSymptoms.length > 0]
+    ],
+    clarify: ['ухудшение в покое и вечером/ночью', 'ферритин, железо, ОЖСС', 'лекарственные и неврологические причины']
+  },
+  {
+    code: 'G47.1',
+    name: 'Гиперсомния / нарколептический спектр',
+    checks: [
+      ['ESS >= 11', s => s.ess >= 11],
+      ['Дневная сонливость', s => s.sleepSymptoms.includes('выраженная дневная сонливость')],
+      ['REM-феномены', s => hasAny(s.hypersomniaSymptoms, ['катаплексия', 'сонный паралич', 'гипнагогические феномены'])]
+    ],
+    clarify: ['достаточность ночного сна', 'исключить ОАС и депривацию сна', 'при показаниях ПСГ + MSLT']
+  },
+  {
+    code: 'G47.2',
+    name: 'Нарушение циркадного ритма сна',
+    checks: [
+      ['Нерегулярный график', s => s.sleepSymptoms.includes('нерегулярный график сна')],
+      ['Смещение времени сна', s => !!s.bedtime && !!s.waketime],
+      ['Дневное нарушение', s => s.ess >= 10 || s.isi >= 8]
+    ],
+    clarify: ['дневник сна 2 недели', 'актиграфия при возможности', 'световой режим и график работы']
+  },
+  {
+    code: 'G47.5',
+    name: 'Парасомния',
+    checks: [
+      ['Ночные эпизоды поведения', s => s.parasomniaSymptoms.length > 0],
+      ['Двигательная активность / снохождение / кошмары', s => hasAny(s.parasomniaSymptoms, ['двигательная активность во сне', 'снохождение или ночные эпизоды поведения', 'кошмары'])],
+      ['Клиническое описание эпизодов', s => s.sleepNotes.length > 0]
+    ],
+    clarify: ['время эпизодов: первая/вторая половина ночи', 'травмы и безопасность спальни', 'дифференцировать с эпилепсией и RBD']
+  }
+];
+
+function el(id) {
+  return document.getElementById(id);
+}
+
+function value(id) {
+  const node = el(id);
+  return node ? node.value.trim() : '';
+}
+
+function checkedValues(name) {
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(item => item.value);
+}
+
+function hasAny(values, needles) {
+  return needles.some(needle => values.includes(needle));
+}
+
+function createScaleItems() {
+  const isi = el('isi-items');
+  const ess = el('ess-items');
+  const stopbang = el('stopbang-items');
+
+  ISI_ITEMS.forEach((label, index) => {
+    const row = document.createElement('div');
+    row.className = 'scale-row';
+    row.innerHTML = `<div>${index + 1}. ${label}</div><select data-scale="isi"><option value="0">0 - нет</option><option value="1">1 - слабо</option><option value="2">2 - умеренно</option><option value="3">3 - значительно</option><option value="4">4 - выражено</option></select>`;
+    isi.appendChild(row);
+  });
+
+  ESS_ITEMS.forEach((label, index) => {
+    const row = document.createElement('div');
+    row.className = 'scale-row';
+    row.innerHTML = `<div>${index + 1}. ${label}</div><select data-scale="ess"><option value="0">0 - не заснул бы</option><option value="1">1 - малая вероятность</option><option value="2">2 - умеренная вероятность</option><option value="3">3 - высокая вероятность</option></select>`;
+    ess.appendChild(row);
+  });
+
+  STOPBANG_ITEMS.forEach(([code, label]) => {
+    const row = document.createElement('div');
+    row.className = 'stopbang-row';
+    row.innerHTML = `<label><input type="checkbox" data-scale="stopbang" data-stopbang-code="${code}"> <strong>${code}</strong> ${label}</label>`;
+    stopbang.appendChild(row);
+  });
+}
+
+function createTestsChecklist() {
+  const container = el('tests-checklist');
+  if (!container) return;
+
+  TEST_OPTIONS.forEach(option => {
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="checkbox" name="test_option" value="${escapeHtml(option.label)}" data-test-id="${escapeHtml(option.id)}"> <span>${escapeHtml(option.label)}</span>`;
+    container.appendChild(label);
+  });
+}
+
+function createRecommendationsChecklist() {
+  const container = el('recommendations-checklist');
+  if (!container) return;
+
+  RECOMMENDATION_OPTIONS.forEach(option => {
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="checkbox" name="recommendation_option" value="${escapeHtml(option.label)}" data-rec-id="${escapeHtml(option.id)}"> <span>${escapeHtml(option.label)}</span>`;
+    container.appendChild(label);
+  });
+}
+
+function normalizeSearch(text) {
+  return String(text).toLowerCase().replace(/ё/g, 'е').trim();
+}
+
+function diagnosisMatches(option, query) {
+  if (!query) return true;
+  const haystack = normalizeSearch(`${option.code} ${option.name}`);
+  return normalizeSearch(query).split(/\s+/).every(word => haystack.includes(word));
+}
+
+function renderDiagnosisResults(query) {
+  const container = el('diagnosis_results');
+  if (!container) return;
+
+  const matches = DIAGNOSIS_OPTIONS
+    .filter(option => diagnosisMatches(option, query))
+    .slice(0, 12);
+
+  container.innerHTML = '';
+
+  if (!query || matches.length === 0) {
+    container.classList.remove('open');
+    return;
+  }
+
+  matches.forEach(option => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'diagnosis-option';
+    button.innerHTML = `<span class="diagnosis-option-code">${escapeHtml(option.code)}</span><span class="diagnosis-option-name">${escapeHtml(option.name)}</span>`;
+    button.addEventListener('mousedown', event => {
+      event.preventDefault();
+      selectDiagnosis(option);
+    });
+    container.appendChild(button);
+  });
+
+  container.classList.add('open');
+}
+
+function syncDiagnosisField() {
+  const diagnosis = el('diagnosis');
+  if (diagnosis) diagnosis.value = selectedDiagnoses.join('\n');
+}
+
+function renderSelectedDiagnoses() {
+  const container = el('diagnosis_list');
+  if (!container) return;
+
+  container.innerHTML = '';
+  if (!selectedDiagnoses.length) {
+    const empty = document.createElement('div');
+    empty.className = 'diagnosis-empty';
+    empty.textContent = 'Диагнозы пока не добавлены';
+    container.appendChild(empty);
+    return;
+  }
+
+  selectedDiagnoses.forEach((diagnosisText, index) => {
+    const item = document.createElement('div');
+    item.className = 'diagnosis-item';
+
+    const text = document.createElement('div');
+    text.className = 'diagnosis-item-text';
+    text.textContent = diagnosisText;
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'diagnosis-delete';
+    remove.textContent = 'Удалить';
+    remove.addEventListener('click', () => removeDiagnosis(index));
+
+    item.appendChild(text);
+    item.appendChild(remove);
+    container.appendChild(item);
+  });
+}
+
+function addDiagnosisText(text) {
+  const normalized = String(text).trim();
+  if (!normalized) return false;
+
+  const exists = selectedDiagnoses.some(item => normalizeSearch(item) === normalizeSearch(normalized));
+  if (!exists) {
+    selectedDiagnoses.push(normalized);
+  }
+
+  syncDiagnosisField();
+  renderSelectedDiagnoses();
+  return !exists;
+}
+
+function removeDiagnosis(index) {
+  selectedDiagnoses = selectedDiagnoses.filter((_, itemIndex) => itemIndex !== index);
+  syncDiagnosisField();
+  renderSelectedDiagnoses();
+}
+
+function selectDiagnosis(option) {
+  const entry = `${option.code} ${option.name}`;
+  const search = el('diagnosis_search');
+  addDiagnosisText(entry);
+  if (search) search.value = '';
+  const results = el('diagnosis_results');
+  if (results) results.classList.remove('open');
+  applyTestsForDiagnosis(option.code);
+  applyRecommendationsForDiagnosis(option.code);
+}
+
+function applyTestsForDiagnosis(code) {
+  document.querySelectorAll('input[name="test_option"]').forEach(checkbox => {
+    const option = TEST_OPTIONS.find(item => item.id === checkbox.dataset.testId);
+    if (option && option.tags.includes(code)) {
+      checkbox.checked = true;
+    }
+  });
+}
+
+function applyRecommendationsForDiagnosis(code) {
+  document.querySelectorAll('input[name="recommendation_option"]').forEach(checkbox => {
+    const option = RECOMMENDATION_OPTIONS.find(item => item.id === checkbox.dataset.recId);
+    if (option && option.tags.includes(code)) {
+      checkbox.checked = true;
+    }
+  });
+}
+
+function collectTestsText() {
+  const selected = Array.from(document.querySelectorAll('input[name="test_option"]:checked'))
+    .map(checkbox => checkbox.value);
+  const extra = value('tests_extra');
+  if (extra) selected.push(extra);
+  return selected.join('; ');
+}
+
+function collectComorbidityText() {
+  const selected = Array.from(document.querySelectorAll('input[name="comorbidity_option"]:checked'))
+    .map(checkbox => checkbox.value);
+  const extra = value('comorbidity_extra');
+  if (extra) selected.push(extra);
+  return selected.join('; ');
+}
+
+function collectSubstancesText() {
+  const parts = Array.from(document.querySelectorAll('input[name="substance_option"]:checked'))
+    .map(checkbox => {
+      const id = checkbox.dataset.substanceId;
+      const amount = document.querySelector(`[data-substance-amount="${id}"]`)?.value.trim() || '';
+      const time = document.querySelector(`[data-substance-time="${id}"]`)?.value.trim() || '';
+      const details = [];
+      if (amount) details.push(amount);
+      if (time) details.push(`за ${time} до сна`);
+      return details.length ? `${checkbox.value} (${details.join(', ')})` : checkbox.value;
+    });
+  const extra = value('substances_extra');
+  if (extra) parts.push(extra);
+  return parts.join('; ');
+}
+
+function collectRecommendationsText() {
+  const selected = Array.from(document.querySelectorAll('input[name="recommendation_option"]:checked'))
+    .map(checkbox => checkbox.value);
+  const extra = value('recommendations_extra');
+  if (extra) selected.push(extra);
+  return selected.join('; ');
+}
+
+function sumScale(name) {
+  return Array.from(document.querySelectorAll(`[data-scale="${name}"]`)).reduce((sum, node) => {
+    if (node.type === 'checkbox') return sum + (node.checked ? 1 : 0);
+    return sum + Number(node.value || 0);
+  }, 0);
+}
+
+function updateScores() {
+  updateBmi();
+  updateNeckStopBang();
+  updateTotalSleep();
+  el('isi-score').textContent = String(sumScale('isi'));
+  el('ess-score').textContent = String(sumScale('ess'));
+  el('stopbang-score').textContent = String(sumScale('stopbang'));
+}
+
+function numericValue(id) {
+  const raw = value(id).replace(',', '.');
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function updateBmi() {
+  const heightCm = numericValue('height_cm');
+  const weightKg = numericValue('weight_kg');
+  const bmiField = el('bmi');
+  const bmiCheckbox = document.querySelector('[data-stopbang-code="B"]');
+
+  if (!bmiField) return null;
+
+  if (!heightCm || !weightKg || heightCm <= 0 || weightKg <= 0) {
+    bmiField.value = '';
+    updateBmiLabel(null);
+    if (bmiCheckbox) bmiCheckbox.checked = false;
+    return null;
+  }
+
+  const heightM = heightCm / 100;
+  const bmi = weightKg / (heightM * heightM);
+  const rounded = Math.round(bmi * 10) / 10;
+  bmiField.value = String(rounded).replace('.', ',');
+  updateBmiLabel(rounded);
+
+  if (bmiCheckbox) {
+    bmiCheckbox.checked = rounded > 35;
+  }
+
+  return rounded;
+}
+
+function getBmiCategory(bmi) {
+  if (bmi < 16) {
+    return { label: 'выраженный дефицит массы тела', className: 'bmi-label--underweight', valueClassName: 'bmi-value--underweight' };
+  }
+  if (bmi < 18.5) {
+    return { label: 'дефицит массы тела', className: 'bmi-label--underweight', valueClassName: 'bmi-value--underweight' };
+  }
+  if (bmi < 25) {
+    return { label: 'норма', className: 'bmi-label--normal', valueClassName: 'bmi-value--normal' };
+  }
+  if (bmi < 30) {
+    return { label: 'избыточная масса тела (предожирение)', className: 'bmi-label--overweight', valueClassName: 'bmi-value--overweight' };
+  }
+  if (bmi < 35) {
+    return { label: 'ожирение I степени', className: 'bmi-label--obesity', valueClassName: 'bmi-value--obesity' };
+  }
+  if (bmi < 40) {
+    return { label: 'ожирение II степени', className: 'bmi-label--obesity', valueClassName: 'bmi-value--obesity' };
+  }
+  return { label: 'ожирение III степени', className: 'bmi-label--obesity', valueClassName: 'bmi-value--obesity' };
+}
+
+function updateBmiLabel(bmi) {
+  const bmiLabel = el('bmi_label');
+  const bmiField = el('bmi');
+  if (!bmiLabel) return;
+
+  bmiLabel.className = 'bmi-label';
+  if (bmiField) {
+    bmiField.classList.remove('bmi-value--underweight', 'bmi-value--normal', 'bmi-value--overweight', 'bmi-value--obesity');
+  }
+
+  if (bmi === null || bmi === undefined) {
+    bmiLabel.textContent = '';
+    return;
+  }
+
+  const category = getBmiCategory(bmi);
+  bmiLabel.textContent = category.label;
+  bmiLabel.classList.add(category.className);
+  if (bmiField) {
+    bmiField.classList.add(category.valueClassName);
+  }
+}
+
+function updateNeckStopBang() {
+  const neckCm = numericValue('neck');
+  const neckCheckbox = document.querySelector('[data-stopbang-code="N"]');
+
+  if (!neckCheckbox) return;
+
+  neckCheckbox.checked = !!(neckCm && neckCm > 40);
+}
+
+function timeToMinutes(time) {
+  if (!time || !time.includes(':')) return null;
+  const parts = time.split(':').map(Number);
+  if (parts.length < 2 || !Number.isFinite(parts[0]) || !Number.isFinite(parts[1])) return null;
+  return parts[0] * 60 + parts[1];
+}
+
+function updateTotalSleep() {
+  const totalField = el('total_sleep');
+  if (!totalField) return null;
+
+  const bedtime = timeToMinutes(value('bedtime'));
+  const waketime = timeToMinutes(value('waketime'));
+
+  if (bedtime === null || waketime === null) {
+    totalField.value = '';
+    return null;
+  }
+
+  let timeInBed = waketime - bedtime;
+  if (timeInBed <= 0) timeInBed += 24 * 60;
+
+  const latency = numericValue('latency') || 0;
+  const awakenings = numericValue('awakenings') || 0;
+  const awakeningDuration = numericValue('awakening_duration') || 0;
+  const wakeAfterSleepOnset = awakenings * awakeningDuration;
+  const sleepMinutes = Math.max(0, timeInBed - latency - wakeAfterSleepOnset);
+  const sleepHours = Math.round((sleepMinutes / 60) * 10) / 10;
+
+  totalField.value = String(sleepHours).replace('.', ',');
+  return sleepHours;
+}
+
+function collectState() {
+  return {
+    complaints: value('complaints'),
+    history: value('history'),
+    comorbidity: collectComorbidityText(),
+    substances: collectSubstancesText(),
+    heightCm: value('height_cm'),
+    weightKg: value('weight_kg'),
+    bmi: value('bmi'),
+    neck: value('neck'),
+    bedtime: value('bedtime'),
+    waketime: value('waketime'),
+    latency: value('latency'),
+    awakenings: value('awakenings'),
+    awakeningDuration: value('awakening_duration'),
+    totalSleep: value('total_sleep'),
+    napMinutes: value('nap_minutes'),
+    sleepSymptoms: checkedValues('sleep_symptom'),
+    breathingSymptoms: checkedValues('breathing_symptom'),
+    movementSymptoms: checkedValues('movement_symptom'),
+    parasomniaSymptoms: checkedValues('parasomnia_symptom'),
+    hypersomniaSymptoms: checkedValues('hypersomnia_symptom'),
+    sleepNotes: value('sleep_notes'),
+    isi: sumScale('isi'),
+    ess: sumScale('ess'),
+    stopbang: sumScale('stopbang'),
+    diagnosis: value('diagnosis'),
+    advisorClarifications: collectAdvisorClarificationsText(),
+    recommendations: collectRecommendationsText(),
+    tests: collectTestsText(),
+    treatment: value('treatment')
+  };
+}
+
+function classifyIsi(score) {
+  if (score >= 22) return 'тяжелая инсомния';
+  if (score >= 15) return 'умеренная инсомния';
+  if (score >= 8) return 'субпороговая инсомния';
+  return 'клинически значимой инсомнии по ISI не выявлено';
+}
+
+function classifyEss(score) {
+  if (score >= 16) return 'выраженная дневная сонливость';
+  if (score >= 11) return 'повышенная дневная сонливость';
+  return 'значимой дневной сонливости по ESS не выявлено';
+}
+
+function classifyStopBang(score) {
+  if (score >= 5) return 'высокий риск ОАС';
+  if (score >= 3) return 'промежуточный риск ОАС';
+  return 'низкий риск ОАС';
+}
+
+function runAdvisor() {
+  const state = collectState();
+  const results = ADVISOR_RULES.map(rule => {
+    const met = rule.checks.filter(([, fn]) => fn(state)).map(([label]) => label);
+    const score = Math.round((met.length / rule.checks.length) * 100);
+    return { ...rule, met, score };
+  }).filter(result => result.score >= 34).sort((a, b) => b.score - a.score);
+
+  renderAdvisor(results);
+  results.slice(0, 2).forEach(result => {
+    applyTestsForDiagnosis(result.code);
+    applyRecommendationsForDiagnosis(result.code);
+  });
+  const hint = el('advisor-hint');
+  const now = new Date();
+  hint.textContent = `Обновлено ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  return results;
+}
+
+function renderAdvisor(results) {
+  const container = el('advisor-results');
+  container.innerHTML = '';
+  if (!results.length) {
+    const empty = document.createElement('p');
+    empty.className = 'hint';
+    empty.textContent = 'Недостаточно данных для клинической гипотезы. Заполните профиль сна и шкалы.';
+    container.appendChild(empty);
+    return;
+  }
+
+  results.forEach(result => {
+    const card = document.createElement('div');
+    card.className = `advisor-card ${result.score >= 67 ? 'high' : 'mid'}`;
+    card.dataset.code = result.code;
+    card.dataset.name = result.name;
+    const metItems = result.met.map(item => `<li>${escapeHtml(item)}</li>`).join('');
+    const clarifyItems = result.clarify.map((item, index) => `
+      <label class="advisor-clarify-item">
+        <input type="checkbox" class="advisor-clarify-check">
+        <span class="advisor-clarify-text">${escapeHtml(item)}</span>
+        <input type="text" class="advisor-clarify-note" placeholder="уточнение" data-clarify-index="${index}">
+      </label>
+    `).join('');
+    card.innerHTML = `
+      <div class="advisor-title"><span>${result.code} ${escapeHtml(result.name)}</span><span class="advisor-score">${result.score}%</span></div>
+      <strong>Совпало:</strong><ul>${metItems}</ul>
+      <strong>Уточнить:</strong><div class="advisor-clarify-list">${clarifyItems}</div>
+      <div class="advisor-actions"><button type="button" class="advisor-add-diagnosis">Добавить диагноз</button></div>
+    `;
+    card.querySelector('.advisor-add-diagnosis').addEventListener('click', () => addAdvisorDiagnosis(card));
+    container.appendChild(card);
+  });
+}
+
+function collectAdvisorClarificationsFromCard(card) {
+  return Array.from(card.querySelectorAll('.advisor-clarify-item'))
+    .filter(item => item.querySelector('.advisor-clarify-check')?.checked)
+    .map(item => {
+      const label = item.querySelector('.advisor-clarify-text')?.textContent.trim() || '';
+      const note = item.querySelector('.advisor-clarify-note')?.value.trim() || '';
+      return note ? `${label}: ${note}` : label;
+    })
+    .filter(Boolean);
+}
+
+function collectAdvisorClarificationsText() {
+  const parts = [];
+  document.querySelectorAll('.advisor-card').forEach(card => {
+    const clarifications = collectAdvisorClarificationsFromCard(card);
+    if (clarifications.length) {
+      parts.push(`${card.dataset.code} ${card.dataset.name}: ${clarifications.join('; ')}`);
+    }
+  });
+  return parts.join('; ');
+}
+
+function addAdvisorDiagnosis(card) {
+  const base = `${card.dataset.code} ${card.dataset.name}`;
+  const search = el('diagnosis_search');
+  addDiagnosisText(base);
+  if (search) search.value = '';
+  applyTestsForDiagnosis(card.dataset.code);
+  applyRecommendationsForDiagnosis(card.dataset.code);
+}
+
+function escapeHtml(text) {
+  return String(text).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+}
+
+function line(label, text) {
+  return text ? `<strong>${label}:</strong> ${escapeHtml(text)}<br>` : '';
+}
+
+function multilineLine(label, text) {
+  return text ? `<strong>${label}:</strong><br>${escapeHtml(text).replace(/\n/g, '<br>')}<br>` : '';
+}
+
+function generateReport() {
+  const s = collectState();
+  const sleepProfile = [
+    s.bedtime ? `отход ко сну ${s.bedtime}` : '',
+    s.waketime ? `подъем ${s.waketime}` : '',
+    s.latency ? `латентность сна ${s.latency} мин` : '',
+    s.awakenings ? `пробуждений за ночь: ${s.awakenings}` : '',
+    s.awakeningDuration ? `длительность пробуждений ${s.awakeningDuration} мин` : '',
+    s.totalSleep ? `общее время сна ${s.totalSleep} ч` : '',
+    s.napMinutes ? `дневной сон ${s.napMinutes} мин` : ''
+  ].filter(Boolean).join(', ');
+
+  let html = '';
+  html += '<strong>Сомнологический прием</strong><br><br>';
+  html += line('Жалобы', s.complaints || 'активно не предъявляет');
+  html += line('Анамнез нарушения сна', s.history);
+  html += line('Сопутствующие заболевания', s.comorbidity);
+  html += line('Лекарства и вещества', s.substances);
+  html += line('Антропометрия', [
+    s.heightCm ? `рост ${s.heightCm} см` : '',
+    s.weightKg ? `вес ${s.weightKg} кг` : '',
+    s.bmi ? `ИМТ ${s.bmi}` : '',
+    s.neck ? `окружность шеи ${s.neck}` : ''
+  ].filter(Boolean).join('; '));
+  html += '<br><strong>Профиль сна:</strong> ' + escapeHtml(sleepProfile || 'данные не заполнены') + '<br>';
+  const sleepSymptoms = [
+    ...s.sleepSymptoms,
+    s.advisorClarifications
+  ].filter(Boolean);
+  if (sleepSymptoms.length) html += line('Основные симптомы сна', sleepSymptoms.join(', '));
+  if (s.breathingSymptoms.length) html += line('Дыхание во сне', s.breathingSymptoms.join(', '));
+  if (s.movementSymptoms.length) html += line('Движения / ощущения в конечностях', s.movementSymptoms.join(', '));
+  if (s.parasomniaSymptoms.length) html += line('Парасомнии', s.parasomniaSymptoms.join(', '));
+  if (s.hypersomniaSymptoms.length) html += line('Гиперсомнические признаки', s.hypersomniaSymptoms.join(', '));
+  html += line('Комментарии к ночным эпизодам', s.sleepNotes);
+  html += '<br><strong>Шкалы:</strong><br>';
+  html += `ISI ${s.isi}/28 (${escapeHtml(classifyIsi(s.isi))}).<br>`;
+  html += `ESS ${s.ess}/24 (${escapeHtml(classifyEss(s.ess))}).<br>`;
+  html += `STOP-Bang ${s.stopbang}/8 (${escapeHtml(classifyStopBang(s.stopbang))}).<br>`;
+  html += '<br>';
+  html += multilineLine('Диагноз', s.diagnosis);
+  html += line('Обследования', s.tests);
+  html += line('Рекомендации', s.recommendations);
+  html += line('Лечение / маршрутизация', s.treatment);
+
+  el('result').innerHTML = html;
+}
+
+async function copyReport() {
+  const result = el('result');
+  const text = result.innerText.trim();
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (_e) {
+    const range = document.createRange();
+    range.selectNodeContents(result);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand('copy');
+    selection.removeAllRanges();
+  }
+}
+
+const TIME_PICKER = {
+  input: null,
+  mode: 'hours',
+  hours: 0,
+  minutes: 0
+};
+
+function padTimePart(value) {
+  return String(value).padStart(2, '0');
+}
+
+function syncTimePickerValue() {
+  const valueNode = el('time-picker-value');
+  if (valueNode) {
+    valueNode.textContent = `${padTimePart(TIME_PICKER.hours)}:${padTimePart(TIME_PICKER.minutes)}`;
+  }
+}
+
+function setTimePickerMode(mode) {
+  TIME_PICKER.mode = mode;
+  document.querySelectorAll('.time-picker-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.timeMode === mode);
+  });
+  renderTimePickerFace();
+}
+
+function renderTimePickerFace() {
+  const face = el('time-picker-face');
+  if (!face) return;
+
+  face.innerHTML = '';
+  const values = TIME_PICKER.mode === 'hours'
+    ? Array.from({ length: 24 }, (_item, index) => index)
+    : Array.from({ length: 12 }, (_item, index) => index * 5);
+  const center = 140;
+  const radius = TIME_PICKER.mode === 'hours' ? 112 : 110;
+
+  values.forEach((value, index) => {
+    const angle = ((index / values.length) * 360 - 90) * Math.PI / 180;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'time-picker-option';
+    button.textContent = padTimePart(value);
+    button.style.left = `${center + Math.cos(angle) * radius}px`;
+    button.style.top = `${center + Math.sin(angle) * radius}px`;
+    button.classList.toggle('active', TIME_PICKER.mode === 'hours' ? value === TIME_PICKER.hours : value === TIME_PICKER.minutes);
+    button.addEventListener('click', () => {
+      if (TIME_PICKER.mode === 'hours') {
+        TIME_PICKER.hours = value;
+        setTimePickerMode('minutes');
+      } else {
+        TIME_PICKER.minutes = value;
+        renderTimePickerFace();
+      }
+      syncTimePickerValue();
+    });
+    face.appendChild(button);
+  });
+}
+
+function openTimePicker(input) {
+  TIME_PICKER.input = input;
+  const parsed = (input.value || '00:00').split(':').map(Number);
+  TIME_PICKER.hours = Number.isFinite(parsed[0]) ? parsed[0] : 0;
+  TIME_PICKER.minutes = Number.isFinite(parsed[1]) ? Math.round(parsed[1] / 5) * 5 : 0;
+  if (TIME_PICKER.minutes >= 60) TIME_PICKER.minutes = 55;
+
+  const backdrop = el('time-picker-backdrop');
+  if (backdrop) {
+    backdrop.classList.add('open');
+    backdrop.setAttribute('aria-hidden', 'false');
+  }
+
+  syncTimePickerValue();
+  setTimePickerMode('hours');
+}
+
+function closeTimePicker() {
+  const backdrop = el('time-picker-backdrop');
+  if (backdrop) {
+    backdrop.classList.remove('open');
+    backdrop.setAttribute('aria-hidden', 'true');
+  }
+}
+
+function commitTimePicker() {
+  if (TIME_PICKER.input) {
+    TIME_PICKER.input.value = `${padTimePart(TIME_PICKER.hours)}:${padTimePart(TIME_PICKER.minutes)}`;
+    TIME_PICKER.input.dispatchEvent(new Event('input', { bubbles: true }));
+    TIME_PICKER.input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  closeTimePicker();
+}
+
+function initTimePicker() {
+  document.querySelectorAll('input[type="time"]').forEach(input => {
+    input.addEventListener('focus', event => {
+      event.target.blur();
+      openTimePicker(input);
+    });
+    input.addEventListener('click', event => {
+      event.preventDefault();
+      openTimePicker(input);
+    });
+  });
+
+  document.querySelectorAll('.time-picker-tab').forEach(tab => {
+    tab.addEventListener('click', () => setTimePickerMode(tab.dataset.timeMode));
+  });
+
+  el('time-picker-close')?.addEventListener('click', closeTimePicker);
+  el('time-picker-done')?.addEventListener('click', commitTimePicker);
+  el('time-picker-clear')?.addEventListener('click', () => {
+    if (TIME_PICKER.input) {
+      TIME_PICKER.input.value = '';
+      TIME_PICKER.input.dispatchEvent(new Event('input', { bubbles: true }));
+      TIME_PICKER.input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    closeTimePicker();
+  });
+  el('time-picker-backdrop')?.addEventListener('click', event => {
+    if (event.target === event.currentTarget) closeTimePicker();
+  });
+}
+
+function initNav() {
+  const links = Array.from(document.querySelectorAll('.nav-link'));
+  const sections = links
+    .map(link => document.querySelector(link.getAttribute('href')))
+    .filter(Boolean);
+
+  function setActiveById(id) {
+    links.forEach(item => {
+      item.classList.toggle('active', item.getAttribute('href') === `#${id}`);
+    });
+  }
+
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      const targetId = link.getAttribute('href').slice(1);
+      setActiveById(targetId);
+    });
+  });
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries
+        .filter(entry => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (visible && visible.target.id) {
+        setActiveById(visible.target.id);
+      }
+    }, {
+      root: null,
+      rootMargin: '-22% 0px -62% 0px',
+      threshold: [0.12, 0.25, 0.5, 0.75]
+    });
+
+    sections.forEach(section => observer.observe(section));
+  }
+}
+
+function initDiagnosisSearch() {
+  const search = el('diagnosis_search');
+  if (!search) return;
+
+  renderSelectedDiagnoses();
+
+  search.addEventListener('input', () => renderDiagnosisResults(search.value));
+  search.addEventListener('focus', () => renderDiagnosisResults(search.value));
+
+  const manual = el('diagnosis_manual');
+  const addManual = el('add_manual_diagnosis');
+  if (manual && addManual) {
+    addManual.addEventListener('click', () => {
+      if (addDiagnosisText(manual.value)) {
+        manual.value = '';
+      }
+    });
+  }
+
+  document.addEventListener('click', event => {
+    const results = el('diagnosis_results');
+    if (!results) return;
+    if (!event.target.closest('.diagnosis-search')) {
+      results.classList.remove('open');
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  createScaleItems();
+  createTestsChecklist();
+  createRecommendationsChecklist();
+  updateScores();
+  initNav();
+  initDiagnosisSearch();
+  initTimePicker();
+  document.addEventListener('change', updateScores);
+  document.addEventListener('input', updateScores);
+  el('run-advisor').addEventListener('click', runAdvisor);
+  el('generate-report').addEventListener('click', generateReport);
+  el('copy-report').addEventListener('click', copyReport);
+  el('print-report').addEventListener('click', () => window.print());
+});
+
+  </script>
+</body>
+</html>

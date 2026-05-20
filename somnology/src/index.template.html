@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PsyDraft Sleep — сомнологический прием</title>
+  <style>
+    <!-- INCLUDE css/app.css -->
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- INCLUDE sections/sidebar.html -->
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">PsyDraft Sleep</p>
+          <h1>Сомнологический прием</h1>
+        </div>
+        <div class="score-strip" aria-live="polite">
+          <div class="score-pill">
+            <span>ISI</span>
+            <strong id="isi-score">0</strong>
+          </div>
+          <div class="score-pill">
+            <span>ESS</span>
+            <strong id="ess-score">0</strong>
+          </div>
+          <div class="score-pill">
+            <span>STOP-Bang</span>
+            <strong id="stopbang-score">0</strong>
+          </div>
+        </div>
+      </header>
+
+      <!-- INCLUDE sections/general.html -->
+      <!-- INCLUDE sections/sleep.html -->
+      <!-- INCLUDE sections/scales.html -->
+      <!-- INCLUDE sections/advisor.html -->
+      <!-- INCLUDE sections/diagnosis.html -->
+      <!-- INCLUDE sections/plan.html -->
+      <!-- INCLUDE sections/result.html -->
+    </main>
+  </div>
+  <!-- INCLUDE sections/time_picker.html -->
+
+  <script>
+    <!-- INCLUDE js/app.js -->
+  </script>
+</body>
+</html>

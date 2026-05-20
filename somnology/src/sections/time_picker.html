@@ -1,0 +1,20 @@
+<div class="time-picker-backdrop" id="time-picker-backdrop" aria-hidden="true">
+  <div class="time-picker" role="dialog" aria-modal="true" aria-labelledby="time-picker-title">
+    <div class="time-picker-header">
+      <div>
+        <div class="time-picker-title" id="time-picker-title">Выбор времени</div>
+        <div class="time-picker-value" id="time-picker-value">00:00</div>
+      </div>
+      <button type="button" class="time-picker-close" id="time-picker-close" aria-label="Закрыть">×</button>
+    </div>
+    <div class="time-picker-tabs">
+      <button type="button" class="time-picker-tab active" data-time-mode="hours">Часы</button>
+      <button type="button" class="time-picker-tab" data-time-mode="minutes">Минуты</button>
+    </div>
+    <div class="time-picker-face" id="time-picker-face"></div>
+    <div class="time-picker-actions">
+      <button type="button" class="secondary" id="time-picker-clear">Очистить</button>
+      <button type="button" id="time-picker-done">Готово</button>
+    </div>
+  </div>
+</div>

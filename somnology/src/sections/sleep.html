@@ -1,0 +1,46 @@
+<section class="section" id="sleep">
+  <div class="section-heading">
+    <span>02</span>
+    <h2>Профиль сна</h2>
+  </div>
+  <div class="section-card">
+    <div class="metric-grid">
+      <label>Отход ко сну<input id="bedtime" type="time"></label>
+      <label>Подъем<input id="waketime" type="time"></label>
+      <label>Латентность сна, мин<input id="latency" type="number" min="0" step="5"></label>
+      <label>Пробуждений за ночь<input id="awakenings" type="number" min="0" max="20" step="1"></label>
+      <label>Длительность пробуждений, мин<input id="awakening_duration" type="number" min="0" max="60" step="5"></label>
+      <label>Общее время сна, ч<input id="total_sleep" type="text" readonly placeholder="рассчитается автоматически"></label>
+      <label>Дневной сон, мин<input id="nap_minutes" type="number" min="0" step="5"></label>
+    </div>
+
+    <div class="checkbox-grid">
+      <label><input type="checkbox" name="sleep_symptom" value="трудности засыпания"> Трудности засыпания</label>
+      <label><input type="checkbox" name="sleep_symptom" value="частые ночные пробуждения"> Частые пробуждения</label>
+      <label><input type="checkbox" name="sleep_symptom" value="ранние утренние пробуждения"> Ранние пробуждения</label>
+      <label><input type="checkbox" name="sleep_symptom" value="неосвежающий сон"> Неосвежающий сон</label>
+      <label><input type="checkbox" name="sleep_symptom" value="выраженная дневная сонливость"> Дневная сонливость</label>
+      <label><input type="checkbox" name="sleep_symptom" value="нерегулярный график сна"> Нерегулярный график</label>
+    </div>
+
+    <div class="checkbox-grid">
+      <label><input type="checkbox" name="breathing_symptom" value="храп"> Храп</label>
+      <label><input type="checkbox" name="breathing_symptom" value="остановки дыхания во сне"> Остановки дыхания</label>
+      <label><input type="checkbox" name="breathing_symptom" value="удушье или нехватка воздуха ночью"> Удушье ночью</label>
+      <label><input type="checkbox" name="breathing_symptom" value="утренние головные боли"> Утренние головные боли</label>
+      <label><input type="checkbox" name="movement_symptom" value="неприятные ощущения в ногах вечером"> Неприятные ощущения в ногах</label>
+      <label><input type="checkbox" name="movement_symptom" value="облегчение при движении ногами"> Облегчение при движении</label>
+      <label><input type="checkbox" name="parasomnia_symptom" value="кошмары"> Кошмары</label>
+      <label><input type="checkbox" name="parasomnia_symptom" value="двигательная активность во сне"> Движения во сне</label>
+      <label><input type="checkbox" name="parasomnia_symptom" value="снохождение или ночные эпизоды поведения"> Снохождение/эпизоды поведения</label>
+      <label><input type="checkbox" name="hypersomnia_symptom" value="катаплексия"> Катаплексия</label>
+      <label><input type="checkbox" name="hypersomnia_symptom" value="сонный паралич"> Сонный паралич</label>
+      <label><input type="checkbox" name="hypersomnia_symptom" value="гипнагогические феномены"> Гипнагогические феномены</label>
+    </div>
+
+    <label>
+      Комментарии к ночным эпизодам
+      <textarea id="sleep_notes" rows="3" placeholder="поведение во сне, свидетели, травматизация, связь с алкоголем/лекарствами"></textarea>
+    </label>
+  </div>
+</section>

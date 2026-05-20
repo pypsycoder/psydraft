@@ -1,0 +1,25 @@
+<section class="section" id="diagnosis-section">
+  <div class="section-heading">
+    <span>05</span>
+    <h2>Диагноз</h2>
+  </div>
+  <div class="section-card">
+    <label class="diagnosis-search">
+      Поиск по сомнологическим диагнозам
+      <input id="diagnosis_search" type="text" autocomplete="off" placeholder="например: инсомния, апноэ, циркадное, нарколепсия">
+      <div id="diagnosis_results" class="diagnosis-results"></div>
+    </label>
+    <div class="diagnosis-selected-panel">
+      <span class="field-label">Выбранные диагнозы</span>
+      <div id="diagnosis_list" class="diagnosis-list" aria-live="polite"></div>
+      <textarea id="diagnosis" class="hidden-field" aria-hidden="true" tabindex="-1"></textarea>
+    </div>
+    <div class="diagnosis-manual">
+      <label>
+        Добавить вручную
+        <textarea id="diagnosis_manual" rows="2" placeholder="например: G47.0 Инсомния, уточнение"></textarea>
+      </label>
+      <button type="button" class="secondary" id="add_manual_diagnosis">Добавить</button>
+    </div>
+  </div>
+</section>

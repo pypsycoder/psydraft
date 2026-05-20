@@ -1,0 +1,90 @@
+<section class="section" id="general">
+  <div class="section-heading">
+    <span>01</span>
+    <h2>Общие данные</h2>
+  </div>
+  <div class="section-card grid-2">
+    <label>
+      Жалобы
+      <textarea id="complaints" rows="4" placeholder="трудности засыпания, частые пробуждения, дневная сонливость..."></textarea>
+    </label>
+    <label>
+      Анамнез нарушения сна
+      <textarea id="history" rows="4" placeholder="когда началось, динамика, провоцирующие факторы, предыдущее лечение"></textarea>
+    </label>
+    <div class="checklist-panel compact-checklist">
+      <div class="checklist-title">Сопутствующие заболевания</div>
+      <div class="comorbidity-checklist">
+        <label><input type="checkbox" name="comorbidity_option" value="артериальная гипертензия"> <span>АГ</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="ожирение"> <span>Ожирение</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="сахарный диабет"> <span>Сахарный диабет</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="гипотиреоз"> <span>Гипотиреоз</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="ХОБЛ / бронхиальная астма"> <span>ХОБЛ/астма</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="сердечно-сосудистое заболевание"> <span>ССЗ</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="тревожное или депрессивное расстройство"> <span>Тревога/депрессия</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="неврологическое заболевание"> <span>Неврология</span></label>
+      </div>
+      <label>
+        Дополнительно
+        <textarea id="comorbidity_extra" rows="2" placeholder="другие заболевания"></textarea>
+      </label>
+    </div>
+    <div class="substances-panel">
+      <div class="checklist-title">Лекарства и вещества</div>
+      <div class="substances-table">
+        <div class="substances-head">Фактор</div>
+        <div class="substances-head">Количество</div>
+        <div class="substances-head">До сна</div>
+
+        <label><input type="checkbox" name="substance_option" value="кофеин" data-substance-id="caffeine"> <span>Кофеин</span></label>
+        <input type="text" data-substance-amount="caffeine" placeholder="2 чашки">
+        <input type="time" data-substance-time="caffeine">
+
+        <label><input type="checkbox" name="substance_option" value="алкоголь" data-substance-id="alcohol"> <span>Алкоголь</span></label>
+        <input type="text" data-substance-amount="alcohol" placeholder="200 мл">
+        <input type="time" data-substance-time="alcohol">
+
+        <label><input type="checkbox" name="substance_option" value="никотин" data-substance-id="nicotine"> <span>Никотин</span></label>
+        <input type="text" data-substance-amount="nicotine" placeholder="сигареты/вейп">
+        <input type="time" data-substance-time="nicotine">
+
+        <label><input type="checkbox" name="substance_option" value="седативные / снотворные" data-substance-id="sedatives"> <span>Седативные</span></label>
+        <input type="text" data-substance-amount="sedatives" placeholder="название/доза">
+        <input type="time" data-substance-time="sedatives">
+
+        <label><input type="checkbox" name="substance_option" value="антидепрессанты" data-substance-id="antidepressants"> <span>Антидепрессанты</span></label>
+        <input type="text" data-substance-amount="antidepressants" placeholder="название/доза">
+        <input type="time" data-substance-time="antidepressants">
+
+        <label><input type="checkbox" name="substance_option" value="стимуляторы" data-substance-id="stimulants"> <span>Стимуляторы</span></label>
+        <input type="text" data-substance-amount="stimulants" placeholder="название/доза">
+        <input type="time" data-substance-time="stimulants">
+      </div>
+      <label>
+        Дополнительно
+        <textarea id="substances_extra" rows="2" placeholder="другие препараты, БАД, режим приема"></textarea>
+      </label>
+    </div>
+    <div class="anthro-block">
+      <div class="anthro-grid">
+        <label>
+          Вес, кг
+          <input id="weight_kg" type="number" min="20" max="350" step="0.1" placeholder="96">
+        </label>
+        <label>
+          Рост, см
+          <input id="height_cm" type="number" min="80" max="250" step="1" placeholder="178">
+        </label>
+        <label>
+          ИМТ
+          <input id="bmi" type="text" readonly placeholder="рассчитается автоматически">
+        </label>
+      </div>
+      <span id="bmi_label" class="bmi-label"></span>
+    </div>
+    <label>
+      Окружность шеи
+      <input id="neck" type="number" min="20" max="80" step="0.1" placeholder="43">
+    </label>
+  </div>
+</section>
