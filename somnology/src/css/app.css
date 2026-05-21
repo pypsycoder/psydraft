@@ -163,17 +163,37 @@ textarea {
   min-width: 0;
 }
 
+.app-footer {
+  margin: 20px 0 4px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.app-footer strong {
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
 .topbar {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
+  padding: 18px 20px;
   margin-bottom: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(105, 199, 255, 0.98) 0%, rgba(0, 122, 255, 0.94) 48%, rgba(0, 82, 204, 0.98) 100%);
+  box-shadow:
+    0 18px 34px rgba(0, 122, 255, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34);
 }
 
 .eyebrow {
   margin: 0 0 4px;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -189,6 +209,7 @@ h3 {
 }
 
 h1 {
+  color: #ffffff;
   font-size: 30px;
   font-weight: 760;
   letter-spacing: 0;
@@ -215,21 +236,22 @@ h3 {
 .score-pill {
   min-width: 92px;
   padding: 8px 10px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.48);
   border-radius: 14px;
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 10px 22px rgba(0, 64, 160, 0.18);
+  backdrop-filter: blur(14px);
 }
 
 .score-pill span {
   display: block;
-  color: var(--text-secondary);
+  color: rgba(15, 52, 96, 0.72);
   font-size: 12px;
   font-weight: 600;
 }
 
 .score-pill strong {
-  color: var(--accent);
+  color: #007aff;
   font-size: 25px;
   line-height: 1.1;
 }
@@ -516,9 +538,41 @@ button.secondary:hover {
   color: var(--text-secondary);
 }
 
+.advisor-criteria {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+.advisor-criteria-block {
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  padding: 9px 10px;
+  background: #f9fafb;
+}
+
+.advisor-criteria-met {
+  border-color: rgba(52, 199, 89, 0.28);
+  background: rgba(52, 199, 89, 0.06);
+}
+
+.advisor-criteria-missing {
+  border-color: rgba(255, 149, 0, 0.28);
+  background: rgba(255, 149, 0, 0.07);
+}
+
+.advisor-criteria-exclusion {
+  border-color: rgba(255, 59, 48, 0.22);
+  background: rgba(255, 59, 48, 0.05);
+}
+
 .advisor-card ul {
   margin: 8px 0 0 20px;
   padding: 0;
+}
+
+.advisor-muted {
+  color: var(--text-muted);
 }
 
 .advisor-actions {

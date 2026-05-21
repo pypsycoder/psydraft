@@ -165,6 +165,11 @@ const ADVISOR_RULES = [
       ['ISI >= 8', s => s.isi >= 8],
       ['Дневное нарушение / неосвежающий сон', s => s.sleepSymptoms.includes('неосвежающий сон') || s.ess >= 10]
     ],
+    exclusions: [
+      ['Дыхательные симптомы или STOP-Bang >= 3: сначала исключить ОАС как причину инсомнии', s => hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне', 'удушье или нехватка воздуха ночью']) || s.stopbang >= 3],
+      ['Нерегулярный график сна: исключить циркадное нарушение как основное объяснение', s => hasSleepVariability(s)],
+      ['REM-феномены или катаплексия: исключить гиперсомнию/нарколептический спектр', s => hasAny(s.hypersomniaSymptoms, ['катаплексия', 'сонный паралич', 'гипнагогические феномены'])]
+    ],
     clarify: ['частота >= 3 ночей в неделю', 'длительность >= 3 месяцев', 'условия сна достаточны', 'исключить вторичную инсомнию']
   },
   {
@@ -174,6 +179,10 @@ const ADVISOR_RULES = [
       ['Храп / остановки дыхания', s => hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне'])],
       ['STOP-Bang >= 3', s => s.stopbang >= 3],
       ['Дневная сонливость или утренние симптомы', s => s.sleepSymptoms.includes('выраженная дневная сонливость') || s.breathingSymptoms.includes('утренние головные боли')]
+    ],
+    exclusions: [
+      ['Нет дыхательных симптомов и STOP-Bang < 3 по заполненным данным', s => !hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне', 'удушье или нехватка воздуха ночью']) && s.stopbang < 3],
+      ['Дневная сонливость может объясняться недостаточным временем сна < 6 ч', s => parseSleepHours(s.totalSleep) > 0 && parseSleepHours(s.totalSleep) < 6]
     ],
     clarify: ['показан КРМ или полисомнография', 'оценить ИМТ, окружность шеи, АГ', 'уточнить безопасность вождения']
   },
@@ -185,6 +194,10 @@ const ADVISOR_RULES = [
       ['Облегчение при движении', s => s.movementSymptoms.includes('облегчение при движении ногами')],
       ['Нарушение сна', s => s.isi >= 8 || s.sleepSymptoms.length > 0]
     ],
+    exclusions: [
+      ['Нет сенсомоторных жалоб в ногах по заполненным данным', s => !hasAny(s.movementSymptoms, ['неприятные ощущения в ногах вечером', 'облегчение при движении ногами'])],
+      ['Преобладают ночные эпизоды поведения: дифференцировать с парасомнией', s => s.parasomniaSymptoms.length > 0 && s.movementSymptoms.length === 0]
+    ],
     clarify: ['ухудшение в покое и вечером/ночью', 'ферритин, железо, ОЖСС', 'лекарственные и неврологические причины']
   },
   {
@@ -195,15 +208,24 @@ const ADVISOR_RULES = [
       ['Дневная сонливость', s => s.sleepSymptoms.includes('выраженная дневная сонливость')],
       ['REM-феномены', s => hasAny(s.hypersomniaSymptoms, ['катаплексия', 'сонный паралич', 'гипнагогические феномены'])]
     ],
+    exclusions: [
+      ['Недостаточное общее время сна < 6 ч может объяснять сонливость', s => parseSleepHours(s.totalSleep) > 0 && parseSleepHours(s.totalSleep) < 6],
+      ['STOP-Bang >= 3 или дыхательные симптомы: сначала исключить ОАС', s => s.stopbang >= 3 || hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне'])],
+      ['Седативные/алкоголь могут объяснять сонливость', s => textHasAny(s.substances, ['седативные', 'снотворные', 'алкоголь'])]
+    ],
     clarify: ['достаточность ночного сна', 'исключить ОАС и депривацию сна', 'при показаниях ПСГ + MSLT']
   },
   {
     code: 'G47.2',
     name: 'Нарушение циркадного ритма сна',
     checks: [
-      ['Нерегулярный график', s => s.sleepSymptoms.includes('нерегулярный график сна')],
+      ['Нерегулярный график / высокая вариабельность сна', s => hasSleepVariability(s)],
       ['Смещение времени сна', s => !!s.bedtime && !!s.waketime],
       ['Дневное нарушение', s => s.ess >= 10 || s.isi >= 8]
+    ],
+    exclusions: [
+      ['Дыхательные симптомы или STOP-Bang >= 3: исключить ОАС', s => hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне']) || s.stopbang >= 3],
+      ['Седативные/стимуляторы/алкоголь могут объяснять нарушение графика', s => textHasAny(s.substances, ['седативные', 'снотворные', 'стимуляторы', 'алкоголь'])]
     ],
     clarify: ['дневник сна 2 недели', 'актиграфия при возможности', 'световой режим и график работы']
   },
@@ -214,6 +236,10 @@ const ADVISOR_RULES = [
       ['Ночные эпизоды поведения', s => s.parasomniaSymptoms.length > 0],
       ['Двигательная активность / снохождение / кошмары', s => hasAny(s.parasomniaSymptoms, ['двигательная активность во сне', 'снохождение или ночные эпизоды поведения', 'кошмары'])],
       ['Клиническое описание эпизодов', s => s.sleepNotes.length > 0]
+    ],
+    exclusions: [
+      ['Алкоголь/седативные могут провоцировать эпизоды', s => textHasAny(s.substances, ['алкоголь', 'седативные', 'снотворные'])],
+      ['Нужно исключить эпилептические приступы при стереотипных эпизодах/травмах', s => textHasAny(s.sleepNotes, ['стереотип', 'судорог', 'травм', 'прикус', 'мочеиспуск'])]
     ],
     clarify: ['время эпизодов: первая/вторая половина ночи', 'травмы и безопасность спальни', 'дифференцировать с эпилепсией и RBD']
   }
@@ -234,6 +260,23 @@ function checkedValues(name) {
 
 function hasAny(values, needles) {
   return needles.some(needle => values.includes(needle));
+}
+
+function textHasAny(text, needles) {
+  const normalized = normalizeSearch(text || '');
+  return needles.some(needle => normalized.includes(normalizeSearch(needle)));
+}
+
+function parseSleepHours(value) {
+  if (!value) return 0;
+  return Number(String(value).replace(',', '.')) || 0;
+}
+
+function hasSleepVariability(state) {
+  return state.sleepSymptoms.includes('нерегулярный график сна')
+    || Number(state.bedtimeVariability || 0) >= 60
+    || Number(state.waketimeVariability || 0) >= 60
+    || Number(state.sleepDurationVariability || 0) >= 90;
 }
 
 function createScaleItems() {
@@ -412,12 +455,16 @@ function applyRecommendationsForDiagnosis(code) {
   });
 }
 
-function collectTestsText() {
+function collectTestsItems() {
   const selected = Array.from(document.querySelectorAll('input[name="test_option"]:checked'))
     .map(checkbox => checkbox.value);
   const extra = value('tests_extra');
   if (extra) selected.push(extra);
-  return selected.join('; ');
+  return selected;
+}
+
+function collectTestsText() {
+  return collectTestsItems().join('; ');
 }
 
 function collectComorbidityText() {
@@ -444,12 +491,16 @@ function collectSubstancesText() {
   return parts.join('; ');
 }
 
-function collectRecommendationsText() {
+function collectRecommendationsItems() {
   const selected = Array.from(document.querySelectorAll('input[name="recommendation_option"]:checked'))
     .map(checkbox => checkbox.value);
   const extra = value('recommendations_extra');
   if (extra) selected.push(extra);
-  return selected.join('; ');
+  return selected;
+}
+
+function collectRecommendationsText() {
+  return collectRecommendationsItems().join('; ');
 }
 
 function sumScale(name) {
@@ -606,6 +657,9 @@ function collectState() {
     awakeningDuration: value('awakening_duration'),
     totalSleep: value('total_sleep'),
     napMinutes: value('nap_minutes'),
+    bedtimeVariability: value('bedtime_variability'),
+    waketimeVariability: value('waketime_variability'),
+    sleepDurationVariability: value('sleep_duration_variability'),
     sleepSymptoms: checkedValues('sleep_symptom'),
     breathingSymptoms: checkedValues('breathing_symptom'),
     movementSymptoms: checkedValues('movement_symptom'),
@@ -618,7 +672,9 @@ function collectState() {
     diagnosis: value('diagnosis'),
     advisorClarifications: collectAdvisorClarificationsText(),
     recommendations: collectRecommendationsText(),
+    recommendationItems: collectRecommendationsItems(),
     tests: collectTestsText(),
+    testItems: collectTestsItems(),
     treatment: value('treatment')
   };
 }
@@ -646,9 +702,15 @@ function runAdvisor() {
   const state = collectState();
   const results = ADVISOR_RULES.map(rule => {
     const met = rule.checks.filter(([, fn]) => fn(state)).map(([label]) => label);
+    const missing = rule.checks.filter(([, fn]) => !fn(state)).map(([label]) => label);
+    const exclusions = (rule.exclusions || []).filter(([, fn]) => fn(state)).map(([label]) => label);
     const score = Math.round((met.length / rule.checks.length) * 100);
-    return { ...rule, met, score };
-  }).filter(result => result.score >= 34).sort((a, b) => b.score - a.score);
+    return { ...rule, met, missing, exclusions, score };
+  }).filter(result => result.met.length > 0)
+    .sort((a, b) => {
+      if (b.met.length !== a.met.length) return b.met.length - a.met.length;
+      return a.exclusions.length - b.exclusions.length;
+    });
 
   renderAdvisor(results);
   results.slice(0, 2).forEach(result => {
@@ -674,10 +736,18 @@ function renderAdvisor(results) {
 
   results.forEach(result => {
     const card = document.createElement('div');
-    card.className = `advisor-card ${result.score >= 67 ? 'high' : 'mid'}`;
+    card.className = `advisor-card ${result.met.length >= 2 && !result.exclusions.length ? 'high' : 'mid'}`;
     card.dataset.code = result.code;
     card.dataset.name = result.name;
-    const metItems = result.met.map(item => `<li>${escapeHtml(item)}</li>`).join('');
+    const metItems = result.met.length
+      ? result.met.map(item => `<li>${escapeHtml(item)}</li>`).join('')
+      : '<li class="advisor-muted">нет совпадений</li>';
+    const missingItems = result.missing.length
+      ? result.missing.map(item => `<li>${escapeHtml(item)}</li>`).join('')
+      : '<li class="advisor-muted">ключевые критерии заполнены</li>';
+    const exclusionItems = result.exclusions.length
+      ? result.exclusions.map(item => `<li>${escapeHtml(item)}</li>`).join('')
+      : '<li class="advisor-muted">по заполненным данным не выявлены</li>';
     const clarifyItems = result.clarify.map((item, index) => `
       <label class="advisor-clarify-item">
         <input type="checkbox" class="advisor-clarify-check">
@@ -686,8 +756,18 @@ function renderAdvisor(results) {
       </label>
     `).join('');
     card.innerHTML = `
-      <div class="advisor-title"><span>${result.code} ${escapeHtml(result.name)}</span><span class="advisor-score">${result.score}%</span></div>
-      <strong>Совпало:</strong><ul>${metItems}</ul>
+      <div class="advisor-title"><span>${result.code} ${escapeHtml(result.name)}</span><span class="advisor-score">${result.met.length}/${result.checks.length}</span></div>
+      <div class="advisor-criteria">
+        <div class="advisor-criteria-block advisor-criteria-met">
+          <strong>Совпало:</strong><ul>${metItems}</ul>
+        </div>
+        <div class="advisor-criteria-block advisor-criteria-missing">
+          <strong>Не хватает:</strong><ul>${missingItems}</ul>
+        </div>
+        <div class="advisor-criteria-block advisor-criteria-exclusion">
+          <strong>Против / исключить:</strong><ul>${exclusionItems}</ul>
+        </div>
+      </div>
       <strong>Уточнить:</strong><div class="advisor-clarify-list">${clarifyItems}</div>
       <div class="advisor-actions"><button type="button" class="advisor-add-diagnosis">Добавить диагноз</button></div>
     `;
@@ -745,6 +825,12 @@ function multilineLine(label, text) {
   return text ? `<strong>${label}:</strong><br>${escapeHtml(text).replace(/\n/g, '<br>')}<br>` : '';
 }
 
+function numberedList(label, items) {
+  if (!items.length) return '';
+  const list = items.map(item => `<li>${escapeHtml(item)}</li>`).join('');
+  return `<strong>${label}:</strong><ol>${list}</ol>`;
+}
+
 function generateReport() {
   const s = collectState();
   const sleepProfile = [
@@ -754,7 +840,10 @@ function generateReport() {
     s.awakenings ? `пробуждений за ночь: ${s.awakenings}` : '',
     s.awakeningDuration ? `длительность пробуждений ${s.awakeningDuration} мин` : '',
     s.totalSleep ? `общее время сна ${s.totalSleep} ч` : '',
-    s.napMinutes ? `дневной сон ${s.napMinutes} мин` : ''
+    s.napMinutes ? `дневной сон ${s.napMinutes} мин` : '',
+    s.bedtimeVariability ? `вариабельность отхода ко сну ${s.bedtimeVariability} мин` : '',
+    s.waketimeVariability ? `вариабельность подъема ${s.waketimeVariability} мин` : '',
+    s.sleepDurationVariability ? `вариабельность длительности сна ${s.sleepDurationVariability} мин` : ''
   ].filter(Boolean).join(', ');
 
   let html = '';
@@ -786,8 +875,8 @@ function generateReport() {
   html += `STOP-Bang ${s.stopbang}/8 (${escapeHtml(classifyStopBang(s.stopbang))}).<br>`;
   html += '<br>';
   html += multilineLine('Диагноз', s.diagnosis);
-  html += line('Обследования', s.tests);
-  html += line('Рекомендации', s.recommendations);
+  html += numberedList('Обследования', s.testItems);
+  html += numberedList('Рекомендации', s.recommendationItems);
   html += line('Лечение / маршрутизация', s.treatment);
 
   el('result').innerHTML = html;
