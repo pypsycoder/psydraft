@@ -68,90 +68,115 @@ const TEST_OPTIONS = [
   { id: 'video', label: 'Видео ночных эпизодов от родственников при возможности', tags: ['G47.5', 'F51.3', 'F51.4', 'F51.5'] }
 ];
 
+const RECOMMENDATION_GROUPS = [
+  ['general', 'Общие'],
+  ['apnea', 'Апноэ'],
+  ['insomnia', 'Инсомния'],
+  ['rls', 'Синдром беспокойных ног'],
+  ['other', 'Прочее']
+];
+
 const RECOMMENDATION_OPTIONS = [
   {
     id: 'sleep_diary',
+    group: 'general',
     label: 'Вести дневник сна 2 недели с фиксацией времени отхода ко сну, подъема, пробуждений, дневного сна, кофеина/алкоголя и самочувствия днем.',
     tags: ['G47.0', 'G47.2', 'F51.0', 'F51.2']
   },
   {
     id: 'regular_schedule',
+    group: 'general',
     label: 'Стабилизировать время подъема, включая выходные; избегать длительного дневного сна и позднего пребывания в постели без сна.',
     tags: ['G47.0', 'G47.2', 'F51.0', 'F51.2']
   },
   {
     id: 'stimulus_control',
+    group: 'insomnia',
     label: 'Соблюдать контроль стимулов: использовать кровать преимущественно для сна, вставать при длительном бодрствовании, возвращаться при сонливости.',
     tags: ['G47.0', 'F51.0']
   },
   {
     id: 'sleep_hygiene',
+    group: 'general',
     label: 'Оптимизировать гигиену сна: затемнение, тишина, прохладная комната, отказ от кофеина во второй половине дня и алкоголя как средства для сна.',
     tags: ['G47.0', 'G47.2', 'F51.0', 'F51.2', 'G47.9']
   },
   {
     id: 'cbti',
-    label: 'Рассмотреть CBT-I как метод первой линии при хронической инсомнии; медикаментозную терапию использовать ограниченно и с учетом рисков.',
+    group: 'insomnia',
+    label: 'Обсудить CBT-I как метод первой линии для восстановления сна; медикаментозную терапию использовать ограниченно и с учетом рисков.',
     tags: ['G47.0', 'F51.0']
   },
   {
     id: 'osa_weight',
-    label: 'При подозрении на ОАС рекомендовать снижение массы тела при избытке веса, отказ от алкоголя и седативных препаратов перед сном.',
+    group: 'apnea',
+    label: 'Постепенно снижать массу тела при ее избытке; отказаться от алкоголя и седативных препаратов перед сном.',
     tags: ['G47.3']
   },
   {
     id: 'osa_position',
-    label: 'До уточнения диагноза ОАС избегать сна на спине при позиционном ухудшении храпа/апноэ; оценить безопасность вождения при сонливости.',
+    group: 'apnea',
+    label: 'Избегать сна на спине, если в этом положении усиливаются храп или остановки дыхания; не садиться за руль при выраженной сонливости.',
     tags: ['G47.3']
   },
   {
     id: 'cpap_route',
-    label: 'При подтверждении клинически значимого ОАС обсудить CPAP/APAP-терапию и подбор маски; контроль приверженности и эффективности.',
+    group: 'apnea',
+    label: 'После подтверждения нарушения дыхания во сне обсудить CPAP/APAP-терапию, подбор маски и контроль эффективности лечения.',
     tags: ['G47.3']
   },
   {
     id: 'rls_iron',
-    label: 'При признаках синдрома беспокойных ног проверить дефицит железа; коррекция ферритина и пересмотр препаратов, усиливающих симптомы.',
+    group: 'rls',
+    label: 'Проверить показатели обмена железа; при дефиците обсудить коррекцию ферритина и пересмотр препаратов, усиливающих симптомы.',
     tags: ['G25.8']
   },
   {
     id: 'rls_behavior',
-    label: 'При RLS ограничить кофеин/алкоголь вечером, избегать недосыпания, использовать умеренную вечернюю активность и растяжку по переносимости.',
+    group: 'rls',
+    label: 'Ограничить кофеин и алкоголь вечером, избегать недосыпания, использовать умеренную вечернюю активность и растяжку по переносимости.',
     tags: ['G25.8']
   },
   {
     id: 'hypersomnia_safety',
-    label: 'При выраженной дневной сонливости рекомендовать избегать вождения и опасных работ до уточнения причины и стабилизации состояния.',
+    group: 'other',
+    label: 'Избегать вождения и опасных работ при выраженной дневной сонливости до уточнения причины и стабилизации состояния.',
     tags: ['G47.1', 'G47.4']
   },
   {
     id: 'hypersomnia_schedule',
+    group: 'other',
     label: 'Оценить достаточность ночного сна и регулярность графика; исключить депривацию сна, ОАС и лекарственные причины сонливости.',
     tags: ['G47.1', 'G47.4', 'R53']
   },
   {
     id: 'circadian_light',
-    label: 'При циркадном нарушении настроить световой режим: яркий свет в целевое утреннее время и ограничение яркого/синего света вечером.',
+    group: 'other',
+    label: 'Настроить световой режим: яркий свет в целевое утреннее время и ограничение яркого/синего света вечером.',
     tags: ['G47.2', 'F51.2']
   },
   {
     id: 'circadian_shift',
+    group: 'other',
     label: 'Сдвиг графика сна проводить постепенно, небольшими шагами; фиксировать эффект по дневнику сна.',
     tags: ['G47.2', 'F51.2']
   },
   {
     id: 'parasomnia_safety',
-    label: 'При парасомниях обеспечить безопасность спальни: убрать травмоопасные предметы, закрывать окна/двери, предупредить партнера по сну.',
+    group: 'other',
+    label: 'Обеспечить безопасность спальни: убрать травмоопасные предметы, закрывать окна/двери, предупредить партнера по сну.',
     tags: ['G47.5', 'F51.3', 'F51.4', 'F51.5']
   },
   {
     id: 'parasomnia_triggers',
-    label: 'При ночных эпизодах исключить провокаторы: недосыпание, алкоголь, стресс, седативные препараты; собрать видео эпизодов при возможности.',
+    group: 'other',
+    label: 'Исключить провокаторы ночных эпизодов: недосыпание, алкоголь, стресс, седативные препараты; по возможности собрать видео эпизодов.',
     tags: ['G47.5', 'F51.3', 'F51.4', 'F51.5']
   },
   {
     id: 'nightmares',
-    label: 'При кошмарах оценить связь с травматическим стрессом, тревогой, депрессией и лекарствами; рассмотреть психотерапевтические подходы.',
+    group: 'other',
+    label: 'Оценить связь кошмаров с травматическим стрессом, тревогой, депрессией и лекарствами; обсудить психотерапевтические подходы.',
     tags: ['F51.5', 'G47.5']
   }
 ];
@@ -160,87 +185,138 @@ const ADVISOR_RULES = [
   {
     code: 'G47.0',
     name: 'Инсомния',
-    checks: [
+    status: 'критерии частично; требуется уточнение длительности и исключений',
+    required: [
       ['Инсомнические жалобы', s => hasAny(s.sleepSymptoms, ['трудности засыпания', 'частые ночные пробуждения', 'ранние утренние пробуждения'])],
-      ['ISI >= 8', s => s.isi >= 8],
-      ['Дневное нарушение / неосвежающий сон', s => s.sleepSymptoms.includes('неосвежающий сон') || s.ess >= 10]
+      ['Дневное нарушение / неосвежающий сон', s => s.sleepSymptoms.includes('неосвежающий сон') || s.ess >= 10],
+      ['Частота >= 3 ночей в неделю', () => false],
+      ['Длительность >= 3 месяцев', () => false],
+      ['Есть достаточная возможность и условия для сна', () => false]
+    ],
+    supportive: [
+      ['ISI >= 8', s => s.isi >= 8]
     ],
     exclusions: [
       ['Дыхательные симптомы или STOP-Bang >= 3: сначала исключить ОАС как причину инсомнии', s => hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне', 'удушье или нехватка воздуха ночью']) || s.stopbang >= 3],
       ['Нерегулярный график сна: исключить циркадное нарушение как основное объяснение', s => hasSleepVariability(s)],
       ['REM-феномены или катаплексия: исключить гиперсомнию/нарколептический спектр', s => hasAny(s.hypersomniaSymptoms, ['катаплексия', 'сонный паралич', 'гипнагогические феномены'])]
     ],
+    confirm: ['Оценить тревогу/депрессию, боль, соматические причины, препараты и вещества как возможные причины инсомнии'],
     clarify: ['частота >= 3 ночей в неделю', 'длительность >= 3 месяцев', 'условия сна достаточны', 'исключить вторичную инсомнию']
   },
   {
     code: 'G47.3',
-    name: 'Подозрение на обструктивное апноэ сна',
-    checks: [
+    name: 'Риск / подозрение на обструктивное апноэ сна',
+    status: 'скрининг; диагноз требует КРМ или ПСГ',
+    required: [
       ['Храп / остановки дыхания', s => hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне'])],
-      ['STOP-Bang >= 3', s => s.stopbang >= 3],
       ['Дневная сонливость или утренние симптомы', s => s.sleepSymptoms.includes('выраженная дневная сонливость') || s.breathingSymptoms.includes('утренние головные боли')]
+    ],
+    supportive: [
+      ['STOP-Bang >= 3', s => s.stopbang >= 3],
+      ['ИМТ > 35 или окружность шеи > 40 см', s => Number(String(s.bmi).replace(',', '.')) > 35 || Number(s.neck || 0) > 40]
     ],
     exclusions: [
       ['Нет дыхательных симптомов и STOP-Bang < 3 по заполненным данным', s => !hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне', 'удушье или нехватка воздуха ночью']) && s.stopbang < 3],
       ['Дневная сонливость может объясняться недостаточным временем сна < 6 ч', s => parseSleepHours(s.totalSleep) > 0 && parseSleepHours(s.totalSleep) < 6]
     ],
+    confirm: ['КРМ или полисомнография', 'AHI/REI/ODI и десатурации', 'Тип событий: обструктивные, центральные, смешанные'],
     clarify: ['показан КРМ или полисомнография', 'оценить ИМТ, окружность шеи, АГ', 'уточнить безопасность вождения']
   },
   {
     code: 'G25.8',
     name: 'Синдром беспокойных ног',
-    checks: [
+    status: 'критерии частично; требуется уточнить классические признаки RLS',
+    required: [
       ['Неприятные ощущения в ногах вечером', s => s.movementSymptoms.includes('неприятные ощущения в ногах вечером')],
       ['Облегчение при движении', s => s.movementSymptoms.includes('облегчение при движении ногами')],
+      ['Ухудшение в покое', () => false],
+      ['Усиление вечером или ночью', s => s.movementSymptoms.includes('неприятные ощущения в ногах вечером')]
+    ],
+    supportive: [
       ['Нарушение сна', s => s.isi >= 8 || s.sleepSymptoms.length > 0]
     ],
     exclusions: [
       ['Нет сенсомоторных жалоб в ногах по заполненным данным', s => !hasAny(s.movementSymptoms, ['неприятные ощущения в ногах вечером', 'облегчение при движении ногами'])],
       ['Преобладают ночные эпизоды поведения: дифференцировать с парасомнией', s => s.parasomniaSymptoms.length > 0 && s.movementSymptoms.length === 0]
     ],
+    confirm: ['Ферритин, железо, ОЖСС/трансферрин', 'Исключить судороги, нейропатию, акатизию, артралгию, отеки и лекарственные причины'],
     clarify: ['ухудшение в покое и вечером/ночью', 'ферритин, железо, ОЖСС', 'лекарственные и неврологические причины']
   },
   {
     code: 'G47.1',
-    name: 'Гиперсомния / нарколептический спектр',
-    checks: [
-      ['ESS >= 11', s => s.ess >= 11],
+    name: 'Гиперсомния',
+    status: 'подозрение; диагноз исключения после оценки сна, ОАС и препаратов',
+    required: [
       ['Дневная сонливость', s => s.sleepSymptoms.includes('выраженная дневная сонливость')],
-      ['REM-феномены', s => hasAny(s.hypersomniaSymptoms, ['катаплексия', 'сонный паралич', 'гипнагогические феномены'])]
+      ['ESS >= 11', s => s.ess >= 11],
+      ['Достаточная длительность ночного сна подтверждена', s => parseSleepHours(s.totalSleep) >= 7]
+    ],
+    supportive: [
+      ['Сонливость сохраняется несмотря на регулярный график', s => !hasSleepVariability(s) && s.sleepSymptoms.includes('выраженная дневная сонливость')]
     ],
     exclusions: [
       ['Недостаточное общее время сна < 6 ч может объяснять сонливость', s => parseSleepHours(s.totalSleep) > 0 && parseSleepHours(s.totalSleep) < 6],
       ['STOP-Bang >= 3 или дыхательные симптомы: сначала исключить ОАС', s => s.stopbang >= 3 || hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне'])],
       ['Седативные/алкоголь могут объяснять сонливость', s => textHasAny(s.substances, ['седативные', 'снотворные', 'алкоголь'])]
     ],
+    confirm: ['Дневник сна/актиграфия для исключения депривации сна', 'ПСГ для исключения ОАС и других нарушений сна', 'MSLT по показаниям'],
     clarify: ['достаточность ночного сна', 'исключить ОАС и депривацию сна', 'при показаниях ПСГ + MSLT']
+  },
+  {
+    code: 'G47.4',
+    name: 'Нарколепсия и катаплексия',
+    status: 'подозрение; требуется ПСГ + MSLT или профильный сомнологический протокол',
+    required: [
+      ['Непреодолимая дневная сонливость / приступы сна', s => s.sleepSymptoms.includes('выраженная дневная сонливость') || s.ess >= 11],
+      ['Катаплексия', s => s.hypersomniaSymptoms.includes('катаплексия')]
+    ],
+    supportive: [
+      ['Сонный паралич', s => s.hypersomniaSymptoms.includes('сонный паралич')],
+      ['Гипнагогические феномены', s => s.hypersomniaSymptoms.includes('гипнагогические феномены')]
+    ],
+    exclusions: [
+      ['Недостаточное общее время сна < 6 ч может объяснять сонливость', s => parseSleepHours(s.totalSleep) > 0 && parseSleepHours(s.totalSleep) < 6],
+      ['STOP-Bang >= 3 или дыхательные симптомы: сначала исключить ОАС', s => s.stopbang >= 3 || hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне'])],
+      ['Седативные/алкоголь могут объяснять сонливость', s => textHasAny(s.substances, ['седативные', 'снотворные', 'алкоголь'])]
+    ],
+    confirm: ['Ночная ПСГ перед MSLT', 'MSLT: латентность сна и SOREMP', 'Исключить депривацию сна, ОАС, лекарства и вещества'],
+    clarify: ['частота приступов сна', 'наличие катаплексии', 'сонный паралич/гипнагогические феномены', 'безопасность вождения']
   },
   {
     code: 'G47.2',
     name: 'Нарушение циркадного ритма сна',
-    checks: [
+    status: 'подозрение; требуется дневник сна или актиграфия',
+    required: [
       ['Нерегулярный график / высокая вариабельность сна', s => hasSleepVariability(s)],
-      ['Смещение времени сна', s => !!s.bedtime && !!s.waketime],
       ['Дневное нарушение', s => s.ess >= 10 || s.isi >= 8]
+    ],
+    supportive: [
+      ['Смещение времени сна', s => !!s.bedtime && !!s.waketime]
     ],
     exclusions: [
       ['Дыхательные симптомы или STOP-Bang >= 3: исключить ОАС', s => hasAny(s.breathingSymptoms, ['храп', 'остановки дыхания во сне']) || s.stopbang >= 3],
       ['Седативные/стимуляторы/алкоголь могут объяснять нарушение графика', s => textHasAny(s.substances, ['седативные', 'снотворные', 'стимуляторы', 'алкоголь'])]
     ],
+    confirm: ['Дневник сна минимум 2 недели', 'Актиграфия при возможности', 'Сопоставить фактический сон с социальным/рабочим графиком'],
     clarify: ['дневник сна 2 недели', 'актиграфия при возможности', 'световой режим и график работы']
   },
   {
     code: 'G47.5',
     name: 'Парасомния',
-    checks: [
+    status: 'подозрение; требуется типизация эпизодов и исключение RBD/эпилепсии',
+    required: [
       ['Ночные эпизоды поведения', s => s.parasomniaSymptoms.length > 0],
-      ['Двигательная активность / снохождение / кошмары', s => hasAny(s.parasomniaSymptoms, ['двигательная активность во сне', 'снохождение или ночные эпизоды поведения', 'кошмары'])],
       ['Клиническое описание эпизодов', s => s.sleepNotes.length > 0]
+    ],
+    supportive: [
+      ['Двигательная активность / снохождение / кошмары', s => hasAny(s.parasomniaSymptoms, ['двигательная активность во сне', 'снохождение или ночные эпизоды поведения', 'кошмары'])]
     ],
     exclusions: [
       ['Алкоголь/седативные могут провоцировать эпизоды', s => textHasAny(s.substances, ['алкоголь', 'седативные', 'снотворные'])],
       ['Нужно исключить эпилептические приступы при стереотипных эпизодах/травмах', s => textHasAny(s.sleepNotes, ['стереотип', 'судорог', 'травм', 'прикус', 'мочеиспуск'])]
     ],
+    confirm: ['Уточнить время эпизодов: первая или вторая половина ночи', 'Видео эпизодов от родственников при возможности', 'ПСГ с видео/ЭЭГ по показаниям'],
     clarify: ['время эпизодов: первая/вторая половина ночи', 'травмы и безопасность спальни', 'дифференцировать с эпилепсией и RBD']
   }
 ];
@@ -321,10 +397,44 @@ function createRecommendationsChecklist() {
   const container = el('recommendations-checklist');
   if (!container) return;
 
-  RECOMMENDATION_OPTIONS.forEach(option => {
-    const label = document.createElement('label');
-    label.innerHTML = `<input type="checkbox" name="recommendation_option" value="${escapeHtml(option.label)}" data-rec-id="${escapeHtml(option.id)}"> <span>${escapeHtml(option.label)}</span>`;
-    container.appendChild(label);
+  RECOMMENDATION_GROUPS.forEach(([groupId, groupLabel]) => {
+    const options = RECOMMENDATION_OPTIONS.filter(option => option.group === groupId);
+    if (!options.length) return;
+
+    const group = document.createElement('div');
+    group.className = 'recommendation-group';
+    group.dataset.recommendationGroup = groupId;
+    group.innerHTML = `
+      <button type="button" class="recommendation-group-title" aria-expanded="false">
+        <span>${escapeHtml(groupLabel)}</span>
+        <span class="recommendation-group-count">0</span>
+      </button>
+      <div class="recommendation-group-body" hidden></div>
+    `;
+    const body = group.querySelector('.recommendation-group-body');
+    const title = group.querySelector('.recommendation-group-title');
+    title.addEventListener('click', () => {
+      const isOpen = group.classList.toggle('open');
+      title.setAttribute('aria-expanded', String(isOpen));
+      body.hidden = !isOpen;
+    });
+
+    options.forEach(option => {
+      const label = document.createElement('label');
+      label.innerHTML = `<input type="checkbox" name="recommendation_option" value="${escapeHtml(option.label)}" data-rec-id="${escapeHtml(option.id)}" data-rec-group="${escapeHtml(option.group)}"> <span>${escapeHtml(option.label)}</span>`;
+      body.appendChild(label);
+    });
+
+    container.appendChild(group);
+  });
+}
+
+function updateRecommendationGroupCounts() {
+  document.querySelectorAll('.recommendation-group').forEach(group => {
+    const checkedCount = group.querySelectorAll('input[name="recommendation_option"]:checked').length;
+    const count = group.querySelector('.recommendation-group-count');
+    if (count) count.textContent = String(checkedCount);
+    group.classList.toggle('has-selected', checkedCount > 0);
   });
 }
 
@@ -453,6 +563,7 @@ function applyRecommendationsForDiagnosis(code) {
       checkbox.checked = true;
     }
   });
+  updateRecommendationGroupCounts();
 }
 
 function collectTestsItems() {
@@ -493,14 +604,17 @@ function collectSubstancesText() {
 
 function collectRecommendationsItems() {
   const selected = Array.from(document.querySelectorAll('input[name="recommendation_option"]:checked'))
-    .map(checkbox => checkbox.value);
+    .map(checkbox => ({
+      label: checkbox.value,
+      group: checkbox.dataset.recGroup || 'other'
+    }));
   const extra = value('recommendations_extra');
-  if (extra) selected.push(extra);
+  if (extra) selected.push({ label: extra, group: 'other' });
   return selected;
 }
 
 function collectRecommendationsText() {
-  return collectRecommendationsItems().join('; ');
+  return collectRecommendationsItems().map(item => item.label).join('; ');
 }
 
 function sumScale(name) {
@@ -616,6 +730,7 @@ function timeToMinutes(time) {
 
 function updateTotalSleep() {
   const totalField = el('total_sleep');
+  const efficiencyField = el('sleep_efficiency');
   if (!totalField) return null;
 
   const bedtime = timeToMinutes(value('bedtime'));
@@ -623,6 +738,7 @@ function updateTotalSleep() {
 
   if (bedtime === null || waketime === null) {
     totalField.value = '';
+    if (efficiencyField) efficiencyField.value = '';
     return null;
   }
 
@@ -635,8 +751,10 @@ function updateTotalSleep() {
   const wakeAfterSleepOnset = awakenings * awakeningDuration;
   const sleepMinutes = Math.max(0, timeInBed - latency - wakeAfterSleepOnset);
   const sleepHours = Math.round((sleepMinutes / 60) * 10) / 10;
+  const sleepEfficiency = timeInBed > 0 ? Math.round((sleepMinutes / timeInBed) * 100) : 0;
 
   totalField.value = String(sleepHours).replace('.', ',');
+  if (efficiencyField) efficiencyField.value = String(sleepEfficiency);
   return sleepHours;
 }
 
@@ -656,6 +774,7 @@ function collectState() {
     awakenings: value('awakenings'),
     awakeningDuration: value('awakening_duration'),
     totalSleep: value('total_sleep'),
+    sleepEfficiency: value('sleep_efficiency'),
     napMinutes: value('nap_minutes'),
     bedtimeVariability: value('bedtime_variability'),
     waketimeVariability: value('waketime_variability'),
@@ -701,14 +820,15 @@ function classifyStopBang(score) {
 function runAdvisor() {
   const state = collectState();
   const results = ADVISOR_RULES.map(rule => {
-    const met = rule.checks.filter(([, fn]) => fn(state)).map(([label]) => label);
-    const missing = rule.checks.filter(([, fn]) => !fn(state)).map(([label]) => label);
+    const requiredMet = rule.required.filter(([, fn]) => fn(state)).map(([label]) => label);
+    const requiredMissing = rule.required.filter(([, fn]) => !fn(state)).map(([label]) => label);
+    const supportiveMet = (rule.supportive || []).filter(([, fn]) => fn(state)).map(([label]) => label);
     const exclusions = (rule.exclusions || []).filter(([, fn]) => fn(state)).map(([label]) => label);
-    const score = Math.round((met.length / rule.checks.length) * 100);
-    return { ...rule, met, missing, exclusions, score };
-  }).filter(result => result.met.length > 0)
+    return { ...rule, requiredMet, requiredMissing, supportiveMet, exclusions };
+  }).filter(result => result.requiredMet.length > 0 || result.supportiveMet.length > 0)
     .sort((a, b) => {
-      if (b.met.length !== a.met.length) return b.met.length - a.met.length;
+      if (b.requiredMet.length !== a.requiredMet.length) return b.requiredMet.length - a.requiredMet.length;
+      if (b.supportiveMet.length !== a.supportiveMet.length) return b.supportiveMet.length - a.supportiveMet.length;
       return a.exclusions.length - b.exclusions.length;
     });
 
@@ -736,18 +856,24 @@ function renderAdvisor(results) {
 
   results.forEach(result => {
     const card = document.createElement('div');
-    card.className = `advisor-card ${result.met.length >= 2 && !result.exclusions.length ? 'high' : 'mid'}`;
+    card.className = `advisor-card ${result.requiredMet.length >= 2 && !result.exclusions.length ? 'high' : 'mid'}`;
     card.dataset.code = result.code;
     card.dataset.name = result.name;
-    const metItems = result.met.length
-      ? result.met.map(item => `<li>${escapeHtml(item)}</li>`).join('')
+    const requiredItems = result.requiredMet.length
+      ? result.requiredMet.map(item => `<li>${escapeHtml(item)}</li>`).join('')
       : '<li class="advisor-muted">нет совпадений</li>';
-    const missingItems = result.missing.length
-      ? result.missing.map(item => `<li>${escapeHtml(item)}</li>`).join('')
+    const supportiveItems = result.supportiveMet.length
+      ? result.supportiveMet.map(item => `<li>${escapeHtml(item)}</li>`).join('')
+      : '<li class="advisor-muted">нет поддерживающих признаков</li>';
+    const missingItems = result.requiredMissing.length
+      ? result.requiredMissing.map(item => `<li>${escapeHtml(item)}</li>`).join('')
       : '<li class="advisor-muted">ключевые критерии заполнены</li>';
     const exclusionItems = result.exclusions.length
       ? result.exclusions.map(item => `<li>${escapeHtml(item)}</li>`).join('')
       : '<li class="advisor-muted">по заполненным данным не выявлены</li>';
+    const confirmItems = (result.confirm || []).length
+      ? result.confirm.map(item => `<li>${escapeHtml(item)}</li>`).join('')
+      : '<li class="advisor-muted">не требуется</li>';
     const clarifyItems = result.clarify.map((item, index) => `
       <label class="advisor-clarify-item">
         <input type="checkbox" class="advisor-clarify-check">
@@ -756,16 +882,26 @@ function renderAdvisor(results) {
       </label>
     `).join('');
     card.innerHTML = `
-      <div class="advisor-title"><span>${result.code} ${escapeHtml(result.name)}</span><span class="advisor-score">${result.met.length}/${result.checks.length}</span></div>
+      <div class="advisor-title">
+        <span>${result.code} ${escapeHtml(result.name)}</span>
+        <span class="advisor-score">${result.requiredMet.length}/${result.required.length}</span>
+      </div>
+      <div class="advisor-status">${escapeHtml(result.status)}</div>
       <div class="advisor-criteria">
         <div class="advisor-criteria-block advisor-criteria-met">
-          <strong>Совпало:</strong><ul>${metItems}</ul>
+          <strong>Обязательные критерии:</strong><ul>${requiredItems}</ul>
+        </div>
+        <div class="advisor-criteria-block advisor-criteria-supportive">
+          <strong>Поддерживающие признаки:</strong><ul>${supportiveItems}</ul>
         </div>
         <div class="advisor-criteria-block advisor-criteria-missing">
           <strong>Не хватает:</strong><ul>${missingItems}</ul>
         </div>
         <div class="advisor-criteria-block advisor-criteria-exclusion">
           <strong>Против / исключить:</strong><ul>${exclusionItems}</ul>
+        </div>
+        <div class="advisor-criteria-block advisor-criteria-confirm">
+          <strong>Подтверждение / обследования:</strong><ul>${confirmItems}</ul>
         </div>
       </div>
       <strong>Уточнить:</strong><div class="advisor-clarify-list">${clarifyItems}</div>
@@ -831,6 +967,19 @@ function numberedList(label, items) {
   return `<strong>${label}:</strong><ol>${list}</ol>`;
 }
 
+function groupedRecommendationList(items) {
+  if (!items.length) return '';
+
+  const sections = RECOMMENDATION_GROUPS.map(([groupId, groupLabel]) => {
+    const groupItems = items.filter(item => item.group === groupId);
+    if (!groupItems.length) return '';
+    const list = groupItems.map(item => `<li>${escapeHtml(item.label)}</li>`).join('');
+    return `<div class="result-subtitle">${escapeHtml(groupLabel)}</div><ol>${list}</ol>`;
+  }).filter(Boolean).join('');
+
+  return `<strong>Рекомендации:</strong>${sections}`;
+}
+
 function generateReport() {
   const s = collectState();
   const sleepProfile = [
@@ -840,6 +989,7 @@ function generateReport() {
     s.awakenings ? `пробуждений за ночь: ${s.awakenings}` : '',
     s.awakeningDuration ? `длительность пробуждений ${s.awakeningDuration} мин` : '',
     s.totalSleep ? `общее время сна ${s.totalSleep} ч` : '',
+    s.sleepEfficiency ? `эффективность сна ${s.sleepEfficiency}%` : '',
     s.napMinutes ? `дневной сон ${s.napMinutes} мин` : '',
     s.bedtimeVariability ? `вариабельность отхода ко сну ${s.bedtimeVariability} мин` : '',
     s.waketimeVariability ? `вариабельность подъема ${s.waketimeVariability} мин` : '',
@@ -876,7 +1026,7 @@ function generateReport() {
   html += '<br>';
   html += multilineLine('Диагноз', s.diagnosis);
   html += numberedList('Обследования', s.testItems);
-  html += numberedList('Рекомендации', s.recommendationItems);
+  html += groupedRecommendationList(s.recommendationItems);
   html += line('Лечение / маршрутизация', s.treatment);
 
   el('result').innerHTML = html;
@@ -1094,11 +1244,13 @@ document.addEventListener('DOMContentLoaded', () => {
   createScaleItems();
   createTestsChecklist();
   createRecommendationsChecklist();
+  updateRecommendationGroupCounts();
   updateScores();
   initNav();
   initDiagnosisSearch();
   initTimePicker();
   document.addEventListener('change', updateScores);
+  document.addEventListener('change', updateRecommendationGroupCounts);
   document.addEventListener('input', updateScores);
   el('run-advisor').addEventListener('click', runAdvisor);
   el('generate-report').addEventListener('click', generateReport);

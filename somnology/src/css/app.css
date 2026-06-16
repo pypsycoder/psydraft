@@ -11,6 +11,7 @@
   --text-main: #111111;
   --text-primary: #111111;
   --text-secondary: #6e6e73;
+  --text-muted: #8e8e93;
   --text-heading: #1f2937;
   --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.05);
   --transition-fast: 0.2s ease;
@@ -335,6 +336,7 @@ label {
 }
 
 .checkbox-grid label,
+.symptom-group label,
 .scale-row label,
 .stopbang-row label {
   flex-direction: row;
@@ -346,6 +348,27 @@ label {
   font-weight: 400;
   line-height: 1.35;
   text-align: left;
+}
+
+.symptom-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.symptom-group {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+.symptom-group-title {
+  color: var(--text-heading);
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .metric-grid label {
@@ -538,6 +561,18 @@ button.secondary:hover {
   color: var(--text-secondary);
 }
 
+.advisor-status {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(0, 122, 255, 0.08);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .advisor-criteria {
   display: grid;
   gap: 8px;
@@ -556,6 +591,11 @@ button.secondary:hover {
   background: rgba(52, 199, 89, 0.06);
 }
 
+.advisor-criteria-supportive {
+  border-color: rgba(0, 122, 255, 0.24);
+  background: rgba(0, 122, 255, 0.05);
+}
+
 .advisor-criteria-missing {
   border-color: rgba(255, 149, 0, 0.28);
   background: rgba(255, 149, 0, 0.07);
@@ -564,6 +604,11 @@ button.secondary:hover {
 .advisor-criteria-exclusion {
   border-color: rgba(255, 59, 48, 0.22);
   background: rgba(255, 59, 48, 0.05);
+}
+
+.advisor-criteria-confirm {
+  border-color: rgba(88, 86, 214, 0.24);
+  background: rgba(88, 86, 214, 0.05);
 }
 
 .advisor-card ul {
@@ -788,6 +833,100 @@ button.secondary:hover {
   line-height: 1.35;
 }
 
+.recommendations-checklist {
+  gap: 10px;
+}
+
+.recommendation-group {
+  display: grid;
+  gap: 7px;
+  padding: 6px;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.recommendation-group + .recommendation-group {
+  margin-top: 2px;
+}
+
+.recommendation-group-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #f9fafb;
+  border: 1px solid transparent;
+  box-shadow: none;
+  color: var(--text-heading);
+  font-size: 14px;
+  font-weight: 800;
+  text-align: left;
+}
+
+.recommendation-group-title:hover {
+  background: rgba(0, 122, 255, 0.06);
+  box-shadow: none;
+  transform: none;
+}
+
+.recommendation-group-title::before {
+  content: "▸";
+  flex: 0 0 auto;
+  margin-right: 8px;
+  color: var(--accent);
+}
+
+.recommendation-group.open .recommendation-group-title::before {
+  content: "▾";
+}
+
+.recommendation-group-title span:first-child {
+  flex: 1 1 auto;
+}
+
+.recommendation-group-count {
+  flex: 0 0 auto;
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--bg-section-heading);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.recommendation-group.has-selected .recommendation-group-count {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.recommendation-group-body {
+  display: grid;
+  gap: 7px;
+  padding: 4px 2px 2px 26px;
+}
+
+.recommendation-group-body[hidden] {
+  display: none;
+}
+
+.recommendation-group-body label {
+  padding: 7px 8px;
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+.result-subtitle {
+  margin-top: 8px;
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
 .compact-checklist {
   gap: 8px;
 }
@@ -994,6 +1133,7 @@ button.secondary:hover {
   .scale-layout,
   .metric-grid,
   .anthro-grid,
+  .symptom-groups,
   .checkbox-grid {
     grid-template-columns: 1fr;
   }
