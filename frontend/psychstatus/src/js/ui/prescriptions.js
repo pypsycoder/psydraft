@@ -375,6 +375,13 @@ function deletePrescription(id) {
     }
 
     renderPrescriptionsList();
+
+    if (typeof syncDrugMonitoring === 'function') {
+        syncDrugMonitoring(prescriptions);
+    }
+    if (typeof collectSelectedRecommendations === 'function') {
+        collectSelectedRecommendations();
+    }
 }
 
 // Экспорт в текст: используется при сборке заключения

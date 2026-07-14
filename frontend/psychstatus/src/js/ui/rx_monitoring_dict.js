@@ -1,249 +1,324 @@
-// Карта мониторинга психиатрических препаратов
-// Ключ: МНН в нижнем регистре
-// Значение: { items: [recId из RECOMMENDATIONS_LIBRARY], alert: string|null }
-//
-// 🔵 items — обязательные обследования (автоматически выбираются в разделе «Обследования»)
-// alert  — клиническое предупреждение, отображается в уведомлении
+// Автоматический план мониторинга психотропной фармакотерапии на 12 месяцев.
+// Содержание синхронизировано с psychiatric_drug_monitoring.md (июль 2026).
+// План предназначен для взрослых и дополняет, но не заменяет действующую
+// инструкцию, локальный протокол и индивидуальную оценку факторов риска.
 
-const RX_MONITORING_MAP = {
+const RX_MONITORING_MAP = {};
+const autoMonitoringRecIds = new Set();
+let currentDrugMonitoringPlans = [];
 
-    // ── АНТИДЕПРЕССАНТЫ — СИОЗС ──────────────────────────────────────────────
-
-    'сертралин':    { items: ['exam_ecg'], alert: null },
-    'флуоксетин':   { items: ['exam_ecg'], alert: null },
-    'пароксетин':   { items: ['exam_ecg'], alert: null },
-    'флувоксамин':  { items: ['exam_ecg'], alert: null },
-    'циталопрам':   {
-        items: ['exam_ecg'],
-        alert: 'Наибольший риск удлинения QTc среди СИОЗС. Максимальная доза: 40 мг (20 мг у пожилых).'
-    },
-    'эсциталопрам': {
-        items: ['exam_ecg'],
-        alert: 'Наибольший риск удлинения QTc среди СИОЗС. Максимальная доза: 20 мг (10 мг у пожилых).'
-    },
-
-    // ── АНТИДЕПРЕССАНТЫ — СИОЗСН ─────────────────────────────────────────────
-
-    'венлафаксин':  {
-        items: ['exam_ecg', 'lab_biochem'],
-        alert: 'Дозозависимое повышение АД. При дозе >225 мг контроль АД обязателен.'
-    },
-    'дулоксетин':   { items: ['exam_ecg', 'lab_biochem'], alert: null },
-    'милнаципран':  { items: [], alert: null },
-
-    // ── АНТИДЕПРЕССАНТЫ — НаССА ──────────────────────────────────────────────
-
-    'миртазапин':   {
-        items: ['lab_cbc'],
-        alert: 'Агранулоцитоз редок, но описан. ОАК при любой лихорадке неясного генеза.'
-    },
-
-    // ── АНТИДЕПРЕССАНТЫ — другие ─────────────────────────────────────────────
-
-    'вортиоксетин': { items: [], alert: null },
-    'агомелатин':   {
-        items: ['lab_biochem'],
-        alert: '⚠ Гепатотоксичность — обязательный мониторинг АЛТ/АСТ по инструкции (Нед 3, 6, 12 — далее каждые 6 мес). При АЛТ/АСТ >3N — отмена.'
-    },
-    'тразодон':     {
-        items: ['exam_ecg'],
-        alert: 'Приапизм — редкий, но серьёзный побочный эффект; предупредить пациента до начала терапии.'
-    },
-    'бупропион':    {
-        items: [],
-        alert: 'Снижает порог судорожной готовности. Противопоказан при эпилепсии, булимии, анорексии. Не комбинировать с МАО-И.'
-    },
-
-    // Трициклические
-    'амитриптилин': { items: ['exam_ecg', 'lab_biochem'], alert: null },
-    'кломипрамин':  { items: ['exam_ecg', 'lab_biochem'], alert: null },
-    'имипрамин':    { items: ['exam_ecg', 'lab_biochem'], alert: null },
-    'нортриптилин': { items: ['exam_ecg', 'lab_biochem'], alert: null },
-
-    // МАО-ингибиторы
-    'пирлиндол':    { items: [], alert: null },
-    'моклобемид':   {
-        items: ['lab_biochem'],
-        alert: 'При необратимых МАО-И — обязательная тираминовая диета.'
-    },
-
-    // ── АНТИПСИХОТИКИ — АТИПИЧНЫЕ ─────────────────────────────────────────────
-
-    'клозапин':     {
-        items: ['lab_cbc', 'lab_glucose', 'lab_biochem', 'exam_ecg', 'lab_lipids'],
-        alert: '⚠ Агранулоцитоз — жизнеугрожающий побочный эффект. ОАК еженедельно первые 18 нед — условие выписки, не рекомендация. При нейтрофилах < 1.5×10⁹/л — немедленная отмена.'
-    },
-    'оланзапин':    { items: ['exam_ecg', 'lab_glucose', 'lab_lipids'], alert: null },
-    'рисперидон':   { items: ['exam_ecg', 'lab_prolactin', 'lab_glucose', 'lab_lipids'], alert: null },
-    'палиперидон':  { items: ['exam_ecg', 'lab_prolactin', 'lab_glucose', 'lab_lipids'], alert: null },
-    'кветиапин':    { items: ['exam_ecg', 'lab_glucose', 'lab_lipids'], alert: null },
-    'арипипразол':  {
-        items: ['exam_ecg'],
-        alert: 'Метаболический риск значительно ниже, чем у оланзапина/кветиапина, но не нулевой.'
-    },
-    'луразидон':    { items: ['exam_ecg'], alert: null },
-    'карипразин':   { items: ['exam_ecg'], alert: null },
-    'брекспипразол':{ items: ['exam_ecg'], alert: null },
-    'амисульприд':  { items: ['exam_ecg', 'lab_prolactin'], alert: null },
-    'зипрасидон':   { items: ['exam_ecg'], alert: null },
-    'сертиндол':    { items: ['exam_ecg'], alert: null },
-    'азенапин':     { items: ['exam_ecg'], alert: null },
-    'иллоперидон':  { items: ['exam_ecg'], alert: null },
-
-    // ── АНТИПСИХОТИКИ — ТИПИЧНЫЕ ─────────────────────────────────────────────
-
-    'галоперидол':      { items: ['exam_ecg', 'lab_biochem'], alert: null },
-    'хлорпромазин':     { items: ['exam_ecg', 'lab_cbc', 'lab_biochem'], alert: null },
-    'трифлуоперазин':   { items: ['exam_ecg', 'lab_cbc', 'lab_biochem'], alert: null },
-    'перфеназин':       { items: ['exam_ecg', 'lab_cbc', 'lab_biochem'], alert: null },
-    'тиоридазин':       { items: ['exam_ecg', 'lab_cbc', 'lab_biochem'], alert: null },
-    'флуфеназин':       { items: ['exam_ecg', 'lab_cbc', 'lab_biochem'], alert: null },
-    'зуклопентиксол':   { items: ['exam_ecg', 'lab_cbc', 'lab_biochem'], alert: null },
-    'флупентиксол':     { items: ['exam_ecg', 'lab_cbc', 'lab_biochem'], alert: null },
-    'тиопроперазин':    { items: ['exam_ecg', 'lab_cbc', 'lab_biochem'], alert: null },
-    'хлорпротиксен':    { items: ['exam_ecg', 'lab_cbc', 'lab_biochem'], alert: null },
-    'левомепромазин':   { items: ['exam_ecg', 'lab_cbc', 'lab_biochem'], alert: null },
-    'сульпирид':        { items: ['exam_ecg', 'lab_prolactin'], alert: null },
-
-    // ── НОРМОТИМИКИ ──────────────────────────────────────────────────────────
-
-    'лития карбонат':       {
-        items: ['lab_lithium', 'lab_electrolytes', 'lab_thyroid', 'exam_ecg', 'exam_uzi_thyroid'],
-        alert: 'Терапевтическое окно: 0.6–1.0 ммоль/л. Токсичность при >1.5 ммоль/л. Внеплановый контроль: при изменении дозы, диарее/рвоте, инфекции с гипертермией, добавлении НПВС или диуретиков.'
-    },
-    'вальпроевая кислота':  {
-        items: ['lab_valproate', 'lab_biochem', 'lab_cbc', 'lab_coag'],
-        alert: '⚠ Тератогенность — абсолютное противопоказание при беременности. Обязательная контрацепция у женщин репродуктивного возраста. Фиксировать информированное согласие.'
-    },
-    'вальпроат натрия':     {
-        items: ['lab_valproate', 'lab_biochem', 'lab_cbc', 'lab_coag'],
-        alert: '⚠ Тератогенность — абсолютное противопоказание при беременности. Обязательная контрацепция у женщин репродуктивного возраста. Фиксировать информированное согласие.'
-    },
-    'карбамазепин':         {
-        items: ['lab_carbamazepine', 'lab_cbc', 'lab_electrolytes', 'lab_biochem', 'exam_ecg'],
-        alert: 'Мощный индуктор CYP3A4: снижает концентрацию варфарина, оральных контрацептивов, ламотриджина, антипсихотиков. Гипонатриемия — частый ПЭ, особенно у пожилых.'
-    },
-    'ламотриджин':          {
-        items: ['lab_biochem'],
-        alert: 'Взаимодействия, критичные для дозирования: вальпроаты удваивают концентрацию (доза вдвое меньше); карбамазепин снижает вдвое (доза вдвое больше). Контролировать кожные реакции первые 8 нед.'
-    },
-    'окскарбазепин':        {
-        items: ['lab_electrolytes', 'lab_biochem'],
-        alert: 'Гипонатриемия развивается чаще и выраженнее, чем при карбамазепине.'
-    },
-    'топирамат':    { items: [], alert: null },
-    'прегабалин':   { items: [], alert: null },
-    'габапентин':   { items: [], alert: null },
-
-    // ── АНКСИОЛИТИКИ ─────────────────────────────────────────────────────────
-
-    'гидроксизин':  {
-        items: ['exam_ecg'],
-        alert: 'Удлиняет QTc. При комбинации с антипсихотиками или циталопрамом контроль ЭКГ обязателен.'
-    },
-    'буспирон':     { items: ['lab_biochem'], alert: null },
-    'мелатонин':    { items: [], alert: null },
-
-    // ── ПРЕПАРАТЫ ПРИ ДЕМЕНЦИИ ───────────────────────────────────────────────
-
-    'донепезил':    { items: ['exam_ecg', 'lab_biochem'], alert: null },
-    'ривастигмин':  { items: ['exam_ecg', 'lab_biochem'], alert: null },
-    'галантамин':   { items: ['exam_ecg', 'lab_biochem'], alert: null },
-    'мемантин':     {
-        items: ['lab_biochem'],
-        alert: 'Коррекция дозы при хронической болезни почек (ХБП).'
-    },
-
-    // ── СДВГ ─────────────────────────────────────────────────────────────────
-
-    'атомоксетин':  { items: ['exam_ecg', 'lab_biochem'], alert: null },
-};
-
-
-// ── Применить мониторинг для назначенного препарата ────────────────────────
-// drugName — строка из поля rx-name, например "Клозапин (Азалептин, Лепонекс)"
-// Автоматически выбирает нужные пункты в selectedRecs и показывает уведомление.
-
-function applyDrugMonitoring(drugName) {
-    if (!drugName) return;
-
-    var substanceRaw = drugName.split('(')[0].trim();
-    var substanceKey = substanceRaw.toLowerCase();
-    var monitoring = RX_MONITORING_MAP[substanceKey];
-
-    // Препарат не в карте — не показываем ничего
-    if (!monitoring) return;
-    if (!monitoring.items.length && !monitoring.alert) return;
-
-    var addedTitles = [];
-    (monitoring.items || []).forEach(function (id) {
-        if (typeof selectedRecs !== 'undefined' && !selectedRecs[id]) {
-            selectedRecs[id] = 'short';
-            if (typeof RECOMMENDATIONS_LIBRARY !== 'undefined') {
-                var rec = RECOMMENDATIONS_LIBRARY.find(function (r) { return r.id === id; });
-                if (rec) addedTitles.push(rec.title);
-            }
-        }
+function defineMonitoring(drugs, config) {
+    drugs.forEach(function (drug) {
+        RX_MONITORING_MAP[drug] = config;
     });
-
-    // Перерисовываем раздел рекомендаций с переключением на «Все»,
-    // чтобы лабораторные и инструментальные позиции стали видны
-    if (addedTitles.length > 0) {
-        if (typeof activeGroup !== 'undefined') {
-            activeGroup = 'all';
-        }
-        if (typeof renderGroupFilters === 'function') renderGroupFilters();
-        if (typeof renderRecommendations === 'function') renderRecommendations();
-    }
-
-    _showMonitoringNotice(substanceRaw, addedTitles, monitoring.alert);
 }
 
+const ANTIPSYCHOTIC_BASE = {
+    items: ['lab_hba1c', 'lab_lipids', 'lab_prolactin'],
+    plan: [
+        'До начала: масса тела и ИМТ, окружность талии, АД и пульс, HbA1c или глюкоза натощак, липидный профиль, пролактин, оценка двигательных нарушений.',
+        '1–6-я недели: масса тела еженедельно; регулярно оценивать эффект, приверженность, ортостаз, седацию и экстрапирамидные нарушения.',
+        '12-я неделя: масса тела/ИМТ, АД и пульс, HbA1c или глюкоза натощак, липидный профиль.',
+        '12 месяцев: масса тела/ИМТ, талия, АД и пульс, HbA1c или глюкоза натощак, липиды; структурированная оценка двигательных нарушений.',
+        'ЭКГ — не рутинно всем: исходно и повторно при сердечно-сосудистом/QT-риске, синкопе, высокой дозе или сочетании QT-пролонгирующих средств.'
+    ]
+};
 
-// ── Уведомление о мониторинге ─────────────────────────────────────────────
+defineMonitoring([
+    'оланзапин', 'кветиапин', 'арипипразол', 'луразидон', 'карипразин',
+    'брекспипразол', 'азенапин', 'илоперидон', 'иллоперидон'
+], ANTIPSYCHOTIC_BASE);
 
-function _showMonitoringNotice(substanceName, addedItems, alertText) {
+defineMonitoring(['рисперидон', 'палиперидон', 'амисульприд', 'сульпирид'], {
+    items: ANTIPSYCHOTIC_BASE.items,
+    plan: ANTIPSYCHOTIC_BASE.plan.concat([
+        'Пролактин: повторить при симптомах; можно рассмотреть контроль через 3 месяца из-за повышенного риска гиперпролактинемии.'
+    ])
+});
+
+defineMonitoring([
+    'галоперидол', 'хлорпромазин', 'трифлуоперазин', 'перфеназин',
+    'тиоридазин', 'флуфеназин', 'зуклопентиксол', 'флупентиксол',
+    'тиопроперазин', 'хлорпротиксен', 'левомепромазин'
+], {
+    items: ANTIPSYCHOTIC_BASE.items,
+    plan: ANTIPSYCHOTIC_BASE.plan.concat([
+        'Двигательные нарушения: клиническая оценка на каждом визите; структурированная шкала каждые 6 месяцев при высоком риске поздней дискинезии.'
+    ])
+});
+
+defineMonitoring(['зипрасидон', 'сертиндол'], {
+    items: ANTIPSYCHOTIC_BASE.items.concat(['exam_ecg']),
+    plan: ANTIPSYCHOTIC_BASE.plan.concat([
+        'ЭКГ/QTc и электролиты: выполнить по инструкции и повторять после значимого повышения дозы либо изменения QT-риска.'
+    ])
+});
+
+defineMonitoring(['клозапин'], {
+    items: ['lab_cbc', 'lab_hba1c', 'lab_lipids', 'lab_prolactin', 'exam_ecg'],
+    plan: ANTIPSYCHOTIC_BASE.plan.concat([
+        'ОАК с лейкоформулой и абсолютным числом нейтрофилов: до начала; обычно еженедельно первые 18 недель, затем каждые 4 недели — строго по действующей инструкции и службе мониторинга.',
+        'Первые 4 недели: активно исключать миокардит; тропонин и CRP исходно и часто еженедельно, если это предусмотрено локальным протоколом, немедленно — при боли в груди, одышке, лихорадке или необъяснимой тахикардии.',
+        'На каждом контакте: оценивать запор/частоту стула. Тяжёлый запор, вздутие, рвота или отсутствие стула требуют срочной оценки.',
+        'Концентрация клозапина — при токсичности, недостаточном эффекте, взаимодействиях, тяжёлой инфекции, изменении курения или сомнении в приверженности.'
+    ]),
+    alert: 'Порог решения при нейтропении нельзя сводить к АЧН <1,5 × 10⁹/л: действовать по актуальной инструкции, симптомам и утверждённому протоколу.'
+});
+
+// Антидепрессанты
+defineMonitoring(['сертралин', 'флуоксетин', 'пароксетин', 'флувоксамин', 'вортиоксетин'], {
+    items: [],
+    plan: [
+        'Через 1–2 недели: суицидальный риск, активация/акатизия, инверсия фазы, тревога, сон и переносимость; эффект пересмотреть через 2–4 недели.',
+        'Натрий через 1–2 недели — только у пожилых и других пациентов высокого риска гипонатриемии либо при соответствующих симптомах; рутинный ежеквартальный контроль не требуется.'
+    ]
+});
+
+defineMonitoring(['циталопрам', 'эсциталопрам'], {
+    items: [],
+    plan: [
+        'Через 1–2 недели: суицидальный риск, активация/акатизия, инверсия фазы и переносимость; эффект пересмотреть через 2–4 недели.',
+        'ЭКГ и калий/магний: исходно при сердечном заболевании, брадикардии, электролитном риске или сочетании QT-пролонгирующих средств; у пациентов риска повторить после достижения целевой дозы.',
+        'Натрий через 1–2 недели — у пожилых и других пациентов высокого риска либо при симптомах.'
+    ],
+    alert: 'Соблюдать возрастные и печёночные ограничения максимальной дозы по действующей инструкции.'
+});
+
+defineMonitoring(['венлафаксин', 'дулоксетин', 'милнаципран'], {
+    items: [],
+    plan: [
+        'До начала и после повышения дозы: АД и пульс; далее контролировать периодически в течение года.',
+        'Через 1–2 недели: суицидальный риск, активация/акатизия, инверсия фазы и переносимость; эффект пересмотреть через 2–4 недели.',
+        'Натрий через 1–2 недели — у пожилых и других пациентов высокого риска либо при симптомах.',
+        'Для дулоксетина печёночные пробы — исходно при печёночном риске и далее при симптомах; автоматический ежегодный анализ не требуется.'
+    ]
+});
+
+defineMonitoring(['миртазапин'], {
+    items: [],
+    plan: [
+        'До начала и в ранние сроки: масса тела/ИМТ; далее контролировать периодически в течение года.',
+        'Гликемия и липиды — исходно и далее по метаболическому риску.',
+        'ОАК срочно при лихорадке, боли в горле, стоматите или иной инфекции; плановый ОАК без симптомов не требуется.'
+    ]
+});
+
+defineMonitoring(['тразодон'], {
+    items: [],
+    plan: [
+        'АД и ортостатические симптомы: исходно и во время титрации; ЭКГ только по QT-риску.',
+        'Предупредить о необходимости экстренного обращения при приапизме.'
+    ]
+});
+
+defineMonitoring(['бупропион'], {
+    items: [],
+    plan: [
+        'АД: до начала и периодически в течение года; оценить судорожный риск и расстройства пищевого поведения.',
+        'Рутинные ЭКГ и ОАК не требуются.'
+    ]
+});
+
+defineMonitoring(['амитриптилин', 'кломипрамин', 'имипрамин', 'нортриптилин'], {
+    items: [],
+    plan: [
+        'АД, пульс и ортостаз: исходно и при титрации; контролировать антихолинергические эффекты.',
+        'ЭКГ — при сердечном риске, старшем возрасте, высокой дозе, симптомах или токсичности; концентрация препарата — по клиническим показаниям.'
+    ]
+});
+
+defineMonitoring(['моклобемид', 'пирлиндол'], {
+    items: [],
+    plan: [
+        'АД: до начала и во время титрации; проверить взаимодействия и обучить распознаванию гипертензивного и серотонинового синдромов.'
+    ]
+});
+
+defineMonitoring(['агомелатин'], {
+    items: ['lab_biochem'],
+    plan: [
+        'АЛТ/АСТ: до начала, примерно через 3, 6, 12 и 24 недели; после повышения дозы повторить ту же временную схему.',
+        'При симптомах поражения печени исследовать немедленно. Не начинать или отменить препарат при трансаминазах >3 верхних границ нормы согласно инструкции.'
+    ]
+});
+
+// Нормотимики
+defineMonitoring(['лития карбонат'], {
+    items: ['lab_lithium', 'lab_electrolytes', 'lab_thyroid'],
+    plan: [
+        'До начала: СКФ, мочевина и электролиты, кальций, ТТГ (± Т4 свободный), масса/ИМТ, ОАК; исключить беременность. ЭКГ — при сердечно-сосудистом риске.',
+        'Литий (12-часовая минимальная концентрация): через 1 неделю, затем еженедельно до стабильности и каждые 3 месяца первый год.',
+        'Через 6 и 12 месяцев: СКФ, мочевина/электролиты, кальций, ТТГ и масса/ИМТ.',
+        'Срочно проверить литий и электролиты при токсичности, рвоте/диарее, обезвоживании, лихорадке, изменении соли/жидкости или добавлении НПВС, иАПФ/БРА либо диуретика.'
+    ],
+    alert: 'Токсичность возможна и при «терапевтической» концентрации; при подозрении удержать литий и срочно получить специализированную помощь.'
+});
+
+defineMonitoring(['вальпроевая кислота', 'вальпроат натрия'], {
+    items: ['lab_cbc', 'lab_biochem', 'lab_coag'],
+    plan: [
+        'До начала: масса/ИМТ, ОАК с тромбоцитами, печёночные пробы, коагуляция; тест на беременность и оценка репродуктивного риска у способных к беременности.',
+        'До стабилизации: печёночные пробы периодически; отклонения контролировать по клинической ситуации.',
+        'Через 6 и 12 месяцев: масса/ИМТ, ОАК и печёночные пробы.',
+        'Концентрация вальпроата, аммиак и липаза — не рутинно; только при недостаточном эффекте, токсичности, взаимодействиях или соответствующих симптомах.'
+    ],
+    alert: 'Высокий тератогенный и нейроразвивающий риск: соблюдать действующую программу предотвращения беременности; репродуктивные риски обсуждать также с мужчинами.'
+});
+
+defineMonitoring(['карбамазепин'], {
+    items: ['lab_cbc', 'lab_biochem', 'lab_electrolytes'],
+    plan: [
+        'До начала: ОАК, печёночные пробы, мочевина/электролиты и натрий; HLA-B*15:02 у пациентов соответствующего азиатского происхождения, HLA-A*31:01 — если результат повлияет на выбор.',
+        'Натрий через 2 недели и ежемесячно первые 3 месяца — преимущественно при почечном риске или приёме Na-снижающих средств.',
+        'Через 6 и 12 месяцев: мочевина/электролиты; печёночные пробы периодически по риску. ОАК и концентрация карбамазепина — по симптомам и клиническим показаниям.',
+        'Проверить многочисленные лекарственные взаимодействия, включая снижение эффективности гормональной контрацепции.'
+    ]
+});
+
+defineMonitoring(['ламотриджин'], {
+    items: [],
+    plan: [
+        'Медленная титрация строго по инструкции с учётом вальпроата и индукторов ферментов; рутинные ОАК, печёночные пробы и концентрация не требуются.',
+        'Первые 8 недель и после повышения дозы: активно контролировать сыпь, поражение слизистых, лихорадку и системные симптомы; при их появлении нужна немедленная медицинская оценка.'
+    ]
+});
+
+defineMonitoring(['окскарбазепин'], {
+    items: ['lab_electrolytes'],
+    plan: [
+        'Натрий: исходно у пациентов риска, примерно через 2 недели и ежемесячно первые 3 месяца при пожилом возрасте, почечной недостаточности или Na-снижающих средствах; далее по симптомам и риску.'
+    ]
+});
+
+// Анксиолитики, препараты для сна и деменции
+defineMonitoring(['гидроксизин'], {
+    items: [],
+    plan: ['ЭКГ и калий/магний — только при QT-риске; использовать минимальную эффективную дозу и кратчайший курс.']
+});
+defineMonitoring(['буспирон'], {
+    items: [],
+    plan: ['Специального рутинного лабораторного контроля нет; функцию печени/почек оценивать при соответствующем заболевании, проверить взаимодействия CYP3A4.']
+});
+defineMonitoring([
+    'алпразолам', 'диазепам', 'клоназепам', 'лоразепам', 'феназепам',
+    'оксазепам', 'медазепам', 'бромазепам', 'хлордиазепоксид', 'нитразепам',
+    'зопиклон', 'золпидем', 'залеплон'
+], {
+    items: [],
+    plan: ['При каждом пересмотре: седация, дыхательный риск/апноэ сна, алкоголь и опиоиды, падения, вождение, когнитивные нарушения, зависимость; документировать срок и план постепенной отмены.']
+});
+defineMonitoring(['мелатонин'], {
+    items: [],
+    plan: ['Специального рутинного лабораторного мониторинга нет; ТТГ только из-за назначения мелатонина не требуется. Периодически пересматривать эффект и дневную сонливость.']
+});
+defineMonitoring(['донепезил', 'ривастигмин', 'галантамин'], {
+    items: [],
+    plan: ['До начала, после титрации и периодически: пульс, масса, ЖКТ-переносимость, падения/синкопе и функциональный эффект; ЭКГ только при брадикардии, синкопе, нарушении проводимости или сердечном риске.']
+});
+defineMonitoring(['мемантин'], {
+    items: ['lab_biochem'],
+    plan: ['СКФ/клиренс креатинина до начала; повторить при изменении функции почек и периодически при ХБП, корректируя дозу по инструкции.']
+});
+defineMonitoring(['атомоксетин'], {
+    items: [],
+    plan: [
+        'До начала, после каждого изменения дозы и не реже каждых 6 месяцев: АД и пульс; контролировать массу, аппетит, сон и психическое состояние.',
+        'ЭКГ и печёночные пробы — не рутинно; выполнять при сердечном риске или симптомах поражения печени соответственно.'
+    ]
+});
+
+function normalizeDrugName(drugName) {
+    return (drugName || '').split('(')[0].trim().toLowerCase();
+}
+
+function uniqueStrings(items) {
+    return items.filter(function (item, index) { return items.indexOf(item) === index; });
+}
+
+function getDrugMonitoringRecommendations() {
+    return currentDrugMonitoringPlans.slice();
+}
+
+// Полностью синхронизирует автообследования и годовые планы с текущим списком
+// назначений. Одинаковые обследования и одинаковые пункты плана объединяются.
+function syncDrugMonitoring(allPrescriptions, changedDrugName) {
+    var source = Array.isArray(allPrescriptions) ? allPrescriptions : [];
+    var activeEntries = [];
+
+    source.forEach(function (prescription) {
+        var key = normalizeDrugName(prescription && prescription.name);
+        var monitoring = RX_MONITORING_MAP[key];
+        if (monitoring) activeEntries.push({ name: prescription.name.split('(')[0].trim(), config: monitoring });
+    });
+
+    autoMonitoringRecIds.forEach(function (id) { delete selectedRecs[id]; });
+    autoMonitoringRecIds.clear();
+
+    var requiredIds = uniqueStrings(activeEntries.reduce(function (acc, entry) {
+        return acc.concat(entry.config.items || []);
+    }, []));
+
+    requiredIds.forEach(function (id) {
+        selectedRecs[id] = 'short';
+        autoMonitoringRecIds.add(id);
+    });
+
+    currentDrugMonitoringPlans = activeEntries.map(function (entry) {
+        return {
+            drug: entry.name,
+            items: uniqueStrings(entry.config.plan || []),
+            alert: entry.config.alert || ''
+        };
+    });
+
+    if (typeof renderRecommendations === 'function') renderRecommendations();
+    if (typeof updateSelectedCount === 'function') updateSelectedCount();
+
+    if (changedDrugName) {
+        var changed = RX_MONITORING_MAP[normalizeDrugName(changedDrugName)];
+        _showMonitoringNotice(changedDrugName.split('(')[0].trim(), requiredIds, changed);
+    }
+}
+
+// Обратная совместимость с прежним вызовом из prescriptions.js.
+function applyDrugMonitoring(drugName) {
+    syncDrugMonitoring(typeof prescriptions !== 'undefined' ? prescriptions : [], drugName);
+}
+
+function _showMonitoringNotice(substanceName, requiredIds, monitoring) {
     var notice = document.getElementById('rx-monitoring-notice');
-    if (!notice) return;
+    if (!notice || !monitoring) return;
 
-    if (!addedItems.length && !alertText) {
-        notice.style.display = 'none';
-        return;
-    }
+    var safeSubstanceName = String(substanceName)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 
-    var html = '<div class="rx-mn-body">';
+    var titles = requiredIds.map(function (id) {
+        var rec = RECOMMENDATIONS_LIBRARY.find(function (item) { return item.id === id; });
+        return rec ? rec.title : '';
+    }).filter(Boolean);
 
-    if (addedItems.length > 0) {
-        html += '<div class="rx-mn-added">'
-             + '⚕\u00a0<strong>' + substanceName + '</strong>: '
-             + 'добавлено в «Обследования»: ' + addedItems.join(', ')
-             + '\u00a0<button type="button" class="rx-mn-goto" onclick="_gotoMonitoringSection()">перейти →</button>'
-             + '</div>';
-    } else {
-        html += '<div class="rx-mn-added"><strong>' + substanceName + '</strong></div>';
-    }
+    var html = '<div class="rx-mn-body">'
+        + '<div class="rx-mn-added">⚕&nbsp;<strong>' + safeSubstanceName + '</strong>: '
+        + 'годовой план мониторинга добавлен в рекомендации'
+        + '&nbsp;<button type="button" class="rx-mn-goto" onclick="_gotoMonitoringSection()">перейти →</button></div>';
 
-    if (alertText) {
-        html += '<div class="rx-mn-alert">' + alertText + '</div>';
-    }
+    if (titles.length) html += '<div class="rx-mn-alert">Автообследования: ' + titles.join(', ') + '.</div>';
+    if (monitoring.alert) html += '<div class="rx-mn-alert">' + monitoring.alert + '</div>';
 
-    html += '</div>';
-    html += '<button type="button" class="rx-mn-close" '
-          + 'onclick="document.getElementById(\'rx-monitoring-notice\').style.display=\'none\'">'
-          + '✕</button>';
-
+    html += '</div><button type="button" class="rx-mn-close" '
+        + 'onclick="document.getElementById(\'rx-monitoring-notice\').style.display=\'none\'">✕</button>';
     notice.innerHTML = html;
     notice.style.display = 'flex';
 }
-
-
-// ── Переход к разделу Рекомендаций с группой «Все» ───────────────────────
 
 function _gotoMonitoringSection() {
     if (typeof activeGroup !== 'undefined') activeGroup = 'all';
     if (typeof renderGroupFilters === 'function') renderGroupFilters();
     if (typeof renderRecommendations === 'function') renderRecommendations();
-
     var section = document.getElementById('section-recommendations');
     if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }

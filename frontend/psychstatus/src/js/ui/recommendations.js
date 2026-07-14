@@ -653,6 +653,51 @@ function collectSelectedRecommendations() {
         examSections[group].forEach((name, i) => lines.push(`${i + 1}. ${name}`));
     });
 
+    // Автоматический годовой план для выбранных препаратов. Одинаковые пункты
+    // объединяются, а рядом сохраняется перечень препаратов, к которым они относятся.
+    const monitoringPlans = typeof getDrugMonitoringRecommendations === 'function'
+        ? getDrugMonitoringRecommendations()
+        : [];
+    if (monitoringPlans.length > 0) {
+        const mergedPlan = new Map();
+        const alerts = [];
+
+        const escapeMonitoringHtml = value => String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+        monitoringPlans.forEach(plan => {
+            (plan.items || []).forEach(text => {
+                if (!mergedPlan.has(text)) mergedPlan.set(text, []);
+                const drugs = mergedPlan.get(text);
+                const safeDrug = escapeMonitoringHtml(plan.drug);
+                if (!drugs.includes(safeDrug)) drugs.push(safeDrug);
+            });
+            if (plan.alert) {
+                const safeDrug = escapeMonitoringHtml(plan.drug);
+                const duplicate = alerts.some(alert => alert.drug === safeDrug && alert.text === plan.alert);
+                if (!duplicate) alerts.push({ drug: safeDrug, text: plan.alert });
+            }
+        });
+
+        if (lines.length > 0) lines.push('');
+        lines.push('<strong>Мониторинг фармакотерапии на 12 месяцев:</strong>');
+        Array.from(mergedPlan.entries()).forEach(([text, drugs], index) => {
+            lines.push(`${index + 1}. ${text} <em>(${drugs.join(', ')})</em>`);
+        });
+
+        if (alerts.length > 0) {
+            lines.push('');
+            lines.push('<strong>Важные условия безопасности:</strong>');
+            alerts.forEach((alert, index) => {
+                lines.push(`${index + 1}. <strong>${alert.drug}:</strong> ${alert.text}`);
+            });
+        }
+    }
+
     textarea.innerHTML = lines.join('<br>');
 }
 
