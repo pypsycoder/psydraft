@@ -1,11 +1,36 @@
 <div class="buttons">
     <button type="button" onclick="generateText()">Сформировать текст</button>
     <button type="button" class="btn-secondary" onclick="copyResult()">Скопировать результат</button>
+    <button type="button" class="btn-secondary" id="print-result">Печать</button>
 </div>
 
 <div class="section" id="section-result">
     <h2>🖋️ Сформированный текст</h2>
     <div id="result-container">
+        <div class="editor-toolbar" data-editor-toolbar aria-label="Форматирование заключения">
+            <select class="editor-select" data-editor-command="formatBlock" aria-label="Стиль абзаца" title="Стиль абзаца">
+                <option value="p">Обычный текст</option><option value="h2">Заголовок</option><option value="h3">Подзаголовок</option>
+            </select>
+            <select class="editor-select editor-font-size" data-editor-command="fontSize" aria-label="Размер шрифта" title="Размер шрифта">
+                <option value="3">Размер</option><option value="2">Мелкий</option><option value="3">Обычный</option><option value="4">Крупный</option><option value="5">Очень крупный</option>
+            </select>
+            <span class="editor-toolbar__divider" aria-hidden="true"></span>
+            <button type="button" data-editor-command="bold" aria-label="Жирный" title="Жирный"><strong>Ж</strong></button>
+            <button type="button" data-editor-command="italic" aria-label="Курсив" title="Курсив"><em>К</em></button>
+            <button type="button" data-editor-command="underline" aria-label="Подчёркивание" title="Подчёркивание"><u>Ч</u></button>
+            <button type="button" data-editor-command="foreColor" data-editor-value="#b42318" aria-label="Цвет текста" title="Цвет текста"><span class="editor-color-mark">А</span></button>
+            <span class="editor-toolbar__divider" aria-hidden="true"></span>
+            <button type="button" data-editor-command="insertUnorderedList" aria-label="Маркированный список" title="Маркированный список">•≡</button>
+            <button type="button" data-editor-command="insertOrderedList" aria-label="Нумерованный список" title="Нумерованный список">1≡</button>
+            <span class="editor-toolbar__divider" aria-hidden="true"></span>
+            <button type="button" data-editor-command="justifyLeft" aria-label="По левому краю" title="По левому краю"><svg class="editor-align-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M3 8h10M3 12h14M3 16h10"/></svg></button>
+            <button type="button" data-editor-command="justifyCenter" aria-label="По центру" title="По центру"><svg class="editor-align-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M5 8h10M3 12h14M5 16h10"/></svg></button>
+            <button type="button" data-editor-command="justifyRight" aria-label="По правому краю" title="По правому краю"><svg class="editor-align-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M7 8h10M3 12h14M7 16h10"/></svg></button>
+            <span class="editor-toolbar__divider" aria-hidden="true"></span>
+            <button type="button" data-editor-command="undo" aria-label="Отменить" title="Отменить">↶</button>
+            <button type="button" data-editor-command="redo" aria-label="Повторить" title="Повторить">↷</button>
+            <button type="button" data-editor-command="removeFormat" aria-label="Очистить форматирование" title="Очистить форматирование">T×</button>
+        </div>
         <div id="result" contenteditable="true"></div>
     </div>
 </div>

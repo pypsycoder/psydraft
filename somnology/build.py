@@ -30,7 +30,7 @@ def build():
     html = TEMPLATE_FILE.read_text(encoding="utf-8")
     full_html = resolve_includes(html, SRC_DIR)
     OUTPUT_FILE.write_text(full_html, encoding="utf-8")
-    print(f"Built: {OUTPUT_FILE.relative_to(ROOT_DIR)}")
+    print(f"Собрано: {OUTPUT_FILE.relative_to(ROOT_DIR)}")
 
 
 if __name__ == "__main__":

@@ -64,6 +64,7 @@ textarea {
   border-radius: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   padding: 14px 14px 12px;
+  transition: width var(--transition-fast), padding var(--transition-fast);
 }
 
 .brand {
@@ -86,6 +87,46 @@ textarea {
   font-size: 20px;
   font-weight: 700;
   box-shadow: 0 4px 10px rgba(0, 122, 255, 0.30);
+  flex: 0 0 36px;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+.brand-mark:hover {
+  background: #0063d1;
+  transform: none;
+}
+
+.sidebar--collapsed {
+  width: 64px;
+  padding: 14px 8px 12px;
+}
+
+.sidebar--collapsed .brand {
+  justify-content: center;
+}
+
+.sidebar--collapsed .brand-text,
+.sidebar--collapsed .nav-label {
+  display: none;
+}
+
+.sidebar--collapsed .nav {
+  align-items: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sidebar--collapsed .nav-link {
+  justify-content: center;
+  width: 44px;
+  padding-left: 7px;
+  padding-right: 7px;
+}
+
+.sidebar--collapsed .nav-link:hover {
+  transform: none;
 }
 
 .brand-title {
@@ -352,7 +393,7 @@ label {
 
 .symptom-groups {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 10px;
 }
 
@@ -369,6 +410,20 @@ label {
   color: var(--text-heading);
   font-size: 14px;
   font-weight: 800;
+}
+
+.symptom-group label.field-control {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.episode-fields {
+  align-content: start;
 }
 
 .metric-grid label {
@@ -416,6 +471,29 @@ input[type="checkbox"] {
   width: auto;
   margin: 0;
   margin-top: 2px;
+}
+
+input[type="radio"] {
+  flex: 0 0 17px;
+  width: 17px;
+  height: 17px;
+  margin: 1px 0 0;
+}
+
+.clinical-details .comorbidity-checklist label {
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.clinical-details .comorbidity-checklist label:hover {
+  border-color: rgba(0, 122, 255, 0.35);
+  background: rgba(0, 122, 255, 0.035);
 }
 
 input[readonly] {
@@ -624,11 +702,6 @@ button.secondary:hover {
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
-}
-
-.advisor-add-diagnosis {
-  padding: 7px 10px;
-  font-size: 14px;
 }
 
 .advisor-clarify-list {
@@ -931,6 +1004,50 @@ button.secondary:hover {
   gap: 8px;
 }
 
+.sleep-opportunity-card {
+  align-self: stretch;
+  padding: 12px;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+.binary-checklist {
+  display: grid;
+  gap: 8px;
+}
+
+label.binary-check {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  padding: 9px 10px;
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+label.binary-check:hover {
+  border-color: rgba(0, 122, 255, 0.35);
+  background: rgba(0, 122, 255, 0.035);
+}
+
+label.binary-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+}
+
+label.binary-check span {
+  min-width: 0;
+}
+
 .comorbidity-checklist {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -939,6 +1056,72 @@ button.secondary:hover {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.medication-groups {
+  display: grid;
+  gap: 9px;
+}
+
+.medication-group {
+  overflow: hidden;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+.medication-group summary {
+  padding: 11px 13px;
+  color: var(--text-heading);
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.medication-table {
+  display: grid;
+  grid-template-columns: minmax(250px, 1.5fr) minmax(180px, 1fr) 105px;
+  gap: 7px;
+  padding: 0 10px 10px;
+}
+
+.medication-head {
+  padding: 0 4px 3px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+label.medication-choice {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  padding: 7px 8px;
+  border: 1px solid var(--border-card);
+  border-radius: 9px;
+  background: #ffffff;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+label.medication-choice span,
+label.medication-choice small {
+  display: block;
+  min-width: 0;
+}
+
+label.medication-choice small {
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.medication-table > input {
+  align-self: stretch;
+  min-width: 0;
 }
 
 .substances-table {
@@ -983,6 +1166,104 @@ button.secondary:hover {
   line-height: 1.6;
   white-space: pre-wrap;
 }
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 12px;
+  padding: 6px;
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  background: #f4f7fb;
+}
+
+.editor-toolbar button,
+.editor-toolbar .editor-select {
+  width: auto;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.editor-toolbar button:hover,
+.editor-toolbar button:focus-visible,
+.editor-toolbar .editor-select:hover,
+.editor-toolbar .editor-select:focus-visible {
+  outline: none;
+  border-color: var(--border-input);
+  background: #ffffff;
+}
+
+.editor-toolbar .editor-select { min-width: 118px; }
+.editor-toolbar .editor-font-size { min-width: 82px; }
+.editor-toolbar__divider { width: 1px; height: 20px; margin: 0 2px; background: var(--border-card); }
+.editor-color-mark { border-bottom: 3px solid #b42318; line-height: 1; }
+.editor-align-icon { display: block; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+
+@media (max-width: 560px) {
+  .editor-toolbar { gap: 2px; }
+  .editor-toolbar__divider { display: none; }
+}
+
+.report-appendix {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 2px solid var(--border-card);
+}
+
+.diary-instruction {
+  margin: 7px 0 10px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.diary-meta-fields {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 240px);
+  gap: 12px;
+  margin: 10px 15px 4px;
+}
+
+.report-diary-meta {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.report-diary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 10px;
+  line-height: 1.15;
+}
+
+.report-diary-table th,
+.report-diary-table td {
+  height: 29px;
+  padding: 3px;
+  border: 1px solid #9ca3af;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.report-diary-table th:first-child,
+.report-diary-table td:first-child { width: 25px; text-align: center; }
+.report-diary-table th:nth-child(2) { width: 76px; }
+.report-diary-table th:last-child { width: 120px; }
 
 .time-picker-backdrop {
   position: fixed;
@@ -1144,9 +1425,62 @@ button.secondary:hover {
     font-size: 16px;
     padding: 10px 12px;
   }
+
+  .medication-table {
+    grid-template-columns: minmax(180px, 1.4fr) minmax(150px, 1fr) 100px;
+    overflow-x: auto;
+  }
 }
 
+.safety-panel {
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid rgba(255, 59, 48, .28);
+  border-radius: 14px;
+  background: rgba(255, 59, 48, .055);
+}
+
+.safety-panel .comorbidity-checklist {
+  margin-bottom: 10px;
+}
+
+.clinical-details {
+  margin-top: 14px;
+  border: 1px solid var(--border-card);
+  border-radius: 14px;
+  background: rgba(255,255,255,.58);
+}
+
+.clinical-details summary {
+  padding: 13px 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.clinical-details > :not(summary) { margin-left: 15px; margin-right: 15px; }
+.clinical-details > :last-child { margin-bottom: 15px; }
+.clinical-details > textarea { width: calc(100% - 30px); }
+.calculated-metrics { margin-top: 16px; }
+.calculation-warning { min-height: 20px; color: #b54708; font-size: 13px; font-weight: 600; }
+.diary-table-wrap { overflow-x: auto; margin: 0 15px; }
+.sleep-diary { width: 100%; border-collapse: collapse; min-width: 850px; }
+.sleep-diary th, .sleep-diary td { padding: 6px; border-bottom: 1px solid var(--border-card); text-align: left; }
+.sleep-diary input, .sleep-diary select { min-width: 88px; padding: 7px; }
+.sleep-diary select[data-diary="type"] { min-width: 58px; }
+.diary-summary { margin: 12px 15px 15px; padding: 10px; border-radius: 10px; background: rgba(0,122,255,.07); }
+.link-button { padding: 0; border: 0; background: none; color: var(--accent); text-align: left; box-shadow: none; }
+.link-button:hover { background: none; transform: none; text-decoration: underline; }
+.route-красный-флаг { border-color: rgba(255,59,48,.55); background: rgba(255,59,48,.06); }
+.route-требуется-приоритетное-уточнение { border-color: rgba(255,149,0,.45); }
+
 @media print {
+  .editor-toolbar {
+    display: none !important;
+  }
+
+  .app-footer {
+    display: none !important;
+  }
   body {
     background: #fff;
     color: #000;
@@ -1155,6 +1489,7 @@ button.secondary:hover {
 
   .sidebar,
   .topbar,
+  #result-section .section-heading,
   .section:not(#result-section) .section-card,
   .section:not(#result-section) .section-heading,
   .toolbar {
@@ -1170,5 +1505,20 @@ button.secondary:hover {
   .result {
     border: none;
     box-shadow: none;
+  }
+
+  .report-appendix {
+    break-before: page;
+    page-break-before: always;
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .report-diary-table {
+    font-size: 8.5px;
+  }
+
+  .diary-meta-fields {
+    display: none;
   }
 }

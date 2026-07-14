@@ -71,6 +71,7 @@ textarea {
   border-radius: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   padding: 14px 14px 12px;
+  transition: width var(--transition-fast), padding var(--transition-fast);
 }
 
 .brand {
@@ -93,6 +94,46 @@ textarea {
   font-size: 20px;
   font-weight: 700;
   box-shadow: 0 4px 10px rgba(0, 122, 255, 0.30);
+  flex: 0 0 36px;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+.brand-mark:hover {
+  background: #0063d1;
+  transform: none;
+}
+
+.sidebar--collapsed {
+  width: 64px;
+  padding: 14px 8px 12px;
+}
+
+.sidebar--collapsed .brand {
+  justify-content: center;
+}
+
+.sidebar--collapsed .brand-text,
+.sidebar--collapsed .nav-label {
+  display: none;
+}
+
+.sidebar--collapsed .nav {
+  align-items: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sidebar--collapsed .nav-link {
+  justify-content: center;
+  width: 44px;
+  padding-left: 7px;
+  padding-right: 7px;
+}
+
+.sidebar--collapsed .nav-link:hover {
+  transform: none;
 }
 
 .brand-title {
@@ -359,7 +400,7 @@ label {
 
 .symptom-groups {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 10px;
 }
 
@@ -376,6 +417,20 @@ label {
   color: var(--text-heading);
   font-size: 14px;
   font-weight: 800;
+}
+
+.symptom-group label.field-control {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.episode-fields {
+  align-content: start;
 }
 
 .metric-grid label {
@@ -423,6 +478,29 @@ input[type="checkbox"] {
   width: auto;
   margin: 0;
   margin-top: 2px;
+}
+
+input[type="radio"] {
+  flex: 0 0 17px;
+  width: 17px;
+  height: 17px;
+  margin: 1px 0 0;
+}
+
+.clinical-details .comorbidity-checklist label {
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.clinical-details .comorbidity-checklist label:hover {
+  border-color: rgba(0, 122, 255, 0.35);
+  background: rgba(0, 122, 255, 0.035);
 }
 
 input[readonly] {
@@ -631,11 +709,6 @@ button.secondary:hover {
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
-}
-
-.advisor-add-diagnosis {
-  padding: 7px 10px;
-  font-size: 14px;
 }
 
 .advisor-clarify-list {
@@ -938,6 +1011,50 @@ button.secondary:hover {
   gap: 8px;
 }
 
+.sleep-opportunity-card {
+  align-self: stretch;
+  padding: 12px;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+.binary-checklist {
+  display: grid;
+  gap: 8px;
+}
+
+label.binary-check {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  padding: 9px 10px;
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+label.binary-check:hover {
+  border-color: rgba(0, 122, 255, 0.35);
+  background: rgba(0, 122, 255, 0.035);
+}
+
+label.binary-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+}
+
+label.binary-check span {
+  min-width: 0;
+}
+
 .comorbidity-checklist {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -946,6 +1063,72 @@ button.secondary:hover {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.medication-groups {
+  display: grid;
+  gap: 9px;
+}
+
+.medication-group {
+  overflow: hidden;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+.medication-group summary {
+  padding: 11px 13px;
+  color: var(--text-heading);
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.medication-table {
+  display: grid;
+  grid-template-columns: minmax(250px, 1.5fr) minmax(180px, 1fr) 105px;
+  gap: 7px;
+  padding: 0 10px 10px;
+}
+
+.medication-head {
+  padding: 0 4px 3px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+label.medication-choice {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  padding: 7px 8px;
+  border: 1px solid var(--border-card);
+  border-radius: 9px;
+  background: #ffffff;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+label.medication-choice span,
+label.medication-choice small {
+  display: block;
+  min-width: 0;
+}
+
+label.medication-choice small {
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.medication-table > input {
+  align-self: stretch;
+  min-width: 0;
 }
 
 .substances-table {
@@ -990,6 +1173,104 @@ button.secondary:hover {
   line-height: 1.6;
   white-space: pre-wrap;
 }
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 12px;
+  padding: 6px;
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  background: #f4f7fb;
+}
+
+.editor-toolbar button,
+.editor-toolbar .editor-select {
+  width: auto;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.editor-toolbar button:hover,
+.editor-toolbar button:focus-visible,
+.editor-toolbar .editor-select:hover,
+.editor-toolbar .editor-select:focus-visible {
+  outline: none;
+  border-color: var(--border-input);
+  background: #ffffff;
+}
+
+.editor-toolbar .editor-select { min-width: 118px; }
+.editor-toolbar .editor-font-size { min-width: 82px; }
+.editor-toolbar__divider { width: 1px; height: 20px; margin: 0 2px; background: var(--border-card); }
+.editor-color-mark { border-bottom: 3px solid #b42318; line-height: 1; }
+.editor-align-icon { display: block; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+
+@media (max-width: 560px) {
+  .editor-toolbar { gap: 2px; }
+  .editor-toolbar__divider { display: none; }
+}
+
+.report-appendix {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 2px solid var(--border-card);
+}
+
+.diary-instruction {
+  margin: 7px 0 10px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.diary-meta-fields {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 240px);
+  gap: 12px;
+  margin: 10px 15px 4px;
+}
+
+.report-diary-meta {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.report-diary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 10px;
+  line-height: 1.15;
+}
+
+.report-diary-table th,
+.report-diary-table td {
+  height: 29px;
+  padding: 3px;
+  border: 1px solid #9ca3af;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.report-diary-table th:first-child,
+.report-diary-table td:first-child { width: 25px; text-align: center; }
+.report-diary-table th:nth-child(2) { width: 76px; }
+.report-diary-table th:last-child { width: 120px; }
 
 .time-picker-backdrop {
   position: fixed;
@@ -1151,9 +1432,62 @@ button.secondary:hover {
     font-size: 16px;
     padding: 10px 12px;
   }
+
+  .medication-table {
+    grid-template-columns: minmax(180px, 1.4fr) minmax(150px, 1fr) 100px;
+    overflow-x: auto;
+  }
 }
 
+.safety-panel {
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid rgba(255, 59, 48, .28);
+  border-radius: 14px;
+  background: rgba(255, 59, 48, .055);
+}
+
+.safety-panel .comorbidity-checklist {
+  margin-bottom: 10px;
+}
+
+.clinical-details {
+  margin-top: 14px;
+  border: 1px solid var(--border-card);
+  border-radius: 14px;
+  background: rgba(255,255,255,.58);
+}
+
+.clinical-details summary {
+  padding: 13px 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.clinical-details > :not(summary) { margin-left: 15px; margin-right: 15px; }
+.clinical-details > :last-child { margin-bottom: 15px; }
+.clinical-details > textarea { width: calc(100% - 30px); }
+.calculated-metrics { margin-top: 16px; }
+.calculation-warning { min-height: 20px; color: #b54708; font-size: 13px; font-weight: 600; }
+.diary-table-wrap { overflow-x: auto; margin: 0 15px; }
+.sleep-diary { width: 100%; border-collapse: collapse; min-width: 850px; }
+.sleep-diary th, .sleep-diary td { padding: 6px; border-bottom: 1px solid var(--border-card); text-align: left; }
+.sleep-diary input, .sleep-diary select { min-width: 88px; padding: 7px; }
+.sleep-diary select[data-diary="type"] { min-width: 58px; }
+.diary-summary { margin: 12px 15px 15px; padding: 10px; border-radius: 10px; background: rgba(0,122,255,.07); }
+.link-button { padding: 0; border: 0; background: none; color: var(--accent); text-align: left; box-shadow: none; }
+.link-button:hover { background: none; transform: none; text-decoration: underline; }
+.route-красный-флаг { border-color: rgba(255,59,48,.55); background: rgba(255,59,48,.06); }
+.route-требуется-приоритетное-уточнение { border-color: rgba(255,149,0,.45); }
+
 @media print {
+  .editor-toolbar {
+    display: none !important;
+  }
+
+  .app-footer {
+    display: none !important;
+  }
   body {
     background: #fff;
     color: #000;
@@ -1162,6 +1496,7 @@ button.secondary:hover {
 
   .sidebar,
   .topbar,
+  #result-section .section-heading,
   .section:not(#result-section) .section-card,
   .section:not(#result-section) .section-heading,
   .toolbar {
@@ -1178,6 +1513,21 @@ button.secondary:hover {
     border: none;
     box-shadow: none;
   }
+
+  .report-appendix {
+    break-before: page;
+    page-break-before: always;
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .report-diary-table {
+    font-size: 8.5px;
+  }
+
+  .diary-meta-fields {
+    display: none;
+  }
 }
 
   </style>
@@ -1186,21 +1536,21 @@ button.secondary:hover {
   <div class="app-shell">
     <aside class="sidebar">
   <div class="brand">
-    <div class="brand-mark">S</div>
-    <div>
+    <button class="brand-mark" type="button" aria-label="Свернуть боковую панель" aria-expanded="true" title="Свернуть боковую панель">S</button>
+    <div class="brand-text">
       <div class="brand-title">Somnology</div>
       <div class="brand-subtitle">offline consult</div>
     </div>
   </div>
 
   <nav class="nav" aria-label="Навигация по приему">
-    <a href="#general" class="nav-link active"><span class="nav-icon">📋</span><span>Общее</span></a>
-    <a href="#sleep" class="nav-link"><span class="nav-icon">🌙</span><span>Сон</span></a>
-    <a href="#scales" class="nav-link"><span class="nav-icon">📊</span><span>Шкалы</span></a>
-    <a href="#advisor" class="nav-link"><span class="nav-icon">🔬</span><span>Советник</span></a>
-    <a href="#diagnosis-section" class="nav-link"><span class="nav-icon">🩺</span><span>Диагноз</span></a>
-    <a href="#plan" class="nav-link"><span class="nav-icon">✅</span><span>План</span></a>
-    <a href="#result-section" class="nav-link"><span class="nav-icon">🖋️</span><span>Заключение</span></a>
+    <a href="#general" class="nav-link active"><span class="nav-icon">📋</span><span class="nav-label">Общее</span></a>
+    <a href="#sleep" class="nav-link"><span class="nav-icon">🌙</span><span class="nav-label">Сон</span></a>
+    <a href="#scales" class="nav-link"><span class="nav-icon">📊</span><span class="nav-label">Шкалы</span></a>
+    <a href="#advisor" class="nav-link"><span class="nav-icon">🔬</span><span class="nav-label">Советник</span></a>
+    <a href="#diagnosis-section" class="nav-link"><span class="nav-icon">🩺</span><span class="nav-label">Диагноз</span></a>
+    <a href="#plan" class="nav-link"><span class="nav-icon">✅</span><span class="nav-label">План</span></a>
+    <a href="#result-section" class="nav-link"><span class="nav-icon">🖋️</span><span class="nav-label">Заключение</span></a>
   </nav>
 </aside>
 
@@ -1228,159 +1578,142 @@ button.secondary:hover {
       </header>
 
       <section class="section" id="general">
-  <div class="section-heading">
-    <span>01</span>
-    <h2>Общие данные</h2>
-  </div>
-  <div class="section-card grid-2">
-    <label>
-      Жалобы
-      <textarea id="complaints" rows="4" placeholder="трудности засыпания, частые пробуждения, дневная сонливость..."></textarea>
-    </label>
-    <label>
-      Анамнез нарушения сна
-      <textarea id="history" rows="4" placeholder="когда началось, динамика, провоцирующие факторы, предыдущее лечение"></textarea>
-    </label>
+  <div class="section-heading"><span>01</span><h2>Общие данные и безопасность</h2></div>
+  <div class="section-card">
+    <div class="metric-grid">
+      <label>Возраст<input id="age" type="number" min="18" max="120"></label>
+      <label>Пол<select id="sex"><option value="">—</option><option value="male">Мужской</option><option value="female">Женский</option><option value="other">Другой / не указан</option></select></label>
+      <label>Режим работы<select id="work_schedule"><option value="">—</option><option>дневной</option><option>сменный без ночных смен</option><option>сменный с ночными сменами</option><option>нерегулярный</option><option>не работает</option></select></label>
+      <label>Ночных смен в месяц<input id="night_shifts" type="number" min="0" max="31"></label>
+      <label>Длительность жалоб<select id="complaint_duration"><option value="">—</option><option value="lt_1m">менее 1 месяца</option><option value="1_3m">1–3 месяца</option><option value="ge_3m">3 месяца и более</option></select></label>
+      <label>Частота жалоб, ночей/нед.<input id="complaint_frequency" type="number" min="0" max="7"></label>
+    </div>
+    <div class="grid-2">
+      <label>Жалобы<textarea id="complaints" rows="4" placeholder="основная проблема со сном и дневным функционированием"></textarea></label>
+      <label>Анамнез нарушения сна<textarea id="history" rows="4" placeholder="начало, динамика, провокаторы, предыдущее лечение"></textarea></label>
+      <label>Предыдущие исследования и лечение<textarea id="previous_sleep_care" rows="3" placeholder="ПСГ/КРМ, результаты, CPAP, CBT-I, препараты"></textarea></label>
+      <label>Сведения партнёра / свидетеля<textarea id="bed_partner_report" rows="3" placeholder="храп, остановки дыхания, движения, поведение во сне"></textarea></label>
+      <label>Семейный анамнез<textarea id="family_history" rows="2" placeholder="апноэ, RLS, нарколепсия, парасомнии"></textarea></label>
+      <div class="checklist-panel compact-checklist sleep-opportunity-card">
+        <div class="checklist-title">Возможность и условия для сна</div>
+        <div class="binary-checklist">
+          <label class="binary-check"><input id="sleep_opportunity" type="checkbox"><span>Достаточно времени для сна</span></label>
+          <label class="binary-check"><input id="sleep_conditions" type="checkbox"><span>Условия для сна приемлемы</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="safety-panel">
+      <div class="checklist-title">⚠ Безопасность</div>
+      <div class="comorbidity-checklist">
+        <label><input type="checkbox" name="safety_flag" value="засыпание за рулём"> Засыпание за рулём</label>
+        <label><input type="checkbox" name="safety_flag" value="ДТП или почти-ДТП из-за сонливости"> ДТП / почти-ДТП</label>
+        <label><input type="checkbox" name="safety_flag" value="опасная работа при сонливости"> Опасная работа</label>
+        <label><input type="checkbox" name="safety_flag" value="травмы при ночных эпизодах"> Травмы ночью</label>
+        <label><input type="checkbox" name="safety_flag" value="выраженное удушье ночью"> Выраженное удушье</label>
+        <label><input type="checkbox" name="safety_flag" value="боль в груди, синкопе или выраженная одышка ночью"> Кардиореспираторные симптомы</label>
+      </div>
+      <textarea id="safety_notes" rows="2" placeholder="детали риска и принятые меры"></textarea>
+    </div>
+
     <div class="checklist-panel compact-checklist">
       <div class="checklist-title">Сопутствующие заболевания</div>
       <div class="comorbidity-checklist">
-        <label><input type="checkbox" name="comorbidity_option" value="артериальная гипертензия"> <span>АГ</span></label>
-        <label><input type="checkbox" name="comorbidity_option" value="ожирение"> <span>Ожирение</span></label>
-        <label><input type="checkbox" name="comorbidity_option" value="сахарный диабет"> <span>Сахарный диабет</span></label>
-        <label><input type="checkbox" name="comorbidity_option" value="гипотиреоз"> <span>Гипотиреоз</span></label>
-        <label><input type="checkbox" name="comorbidity_option" value="ХОБЛ / бронхиальная астма"> <span>ХОБЛ/астма</span></label>
-        <label><input type="checkbox" name="comorbidity_option" value="сердечно-сосудистое заболевание"> <span>ССЗ</span></label>
-        <label><input type="checkbox" name="comorbidity_option" value="тревожное или депрессивное расстройство"> <span>Тревога/депрессия</span></label>
-        <label><input type="checkbox" name="comorbidity_option" value="неврологическое заболевание"> <span>Неврология</span></label>
+        <label><input type="checkbox" name="comorbidity_option" value="артериальная гипертензия"> АГ</label>
+        <label><input type="checkbox" name="comorbidity_option" value="резистентная артериальная гипертензия"> Резистентная АГ</label>
+        <label><input type="checkbox" name="comorbidity_option" value="ожирение"> Ожирение</label>
+        <label><input type="checkbox" name="comorbidity_option" value="сахарный диабет"> Сахарный диабет</label>
+        <label><input type="checkbox" name="comorbidity_option" value="гипотиреоз"> Гипотиреоз</label>
+        <label><input type="checkbox" name="comorbidity_option" value="ХОБЛ / бронхиальная астма"> ХОБЛ/астма</label>
+        <label><input type="checkbox" name="comorbidity_option" value="фибрилляция предсердий"> Фибрилляция предсердий</label>
+        <label><input type="checkbox" name="comorbidity_option" value="сердечная недостаточность"> Сердечная недостаточность</label>
+        <label><input type="checkbox" name="comorbidity_option" value="инсульт / ТИА"> Инсульт / ТИА</label>
+        <label><input type="checkbox" name="comorbidity_option" value="тревожное или депрессивное расстройство"> Тревога/депрессия</label>
+        <label><input type="checkbox" name="comorbidity_option" value="нейродегенеративное заболевание"> Нейродегенеративное заболевание</label>
+        <label><input type="checkbox" name="comorbidity_option" value="хроническая боль"> Хроническая боль</label>
+        <label><input type="checkbox" name="comorbidity_option" value="беременность / менопауза"> Беременность / менопауза</label>
       </div>
-      <label>
-        Дополнительно
-        <textarea id="comorbidity_extra" rows="2" placeholder="другие заболевания"></textarea>
-      </label>
+      <textarea id="comorbidity_extra" rows="2" placeholder="другие заболевания"></textarea>
     </div>
+
     <div class="substances-panel">
       <div class="checklist-title">Лекарства и вещества</div>
-      <div class="substances-table">
-        <div class="substances-head">Фактор</div>
-        <div class="substances-head">Количество</div>
-        <div class="substances-head">До сна</div>
-
-        <label><input type="checkbox" name="substance_option" value="кофеин" data-substance-id="caffeine"> <span>Кофеин</span></label>
-        <input type="text" data-substance-amount="caffeine" placeholder="2 чашки">
-        <input type="time" data-substance-time="caffeine">
-
-        <label><input type="checkbox" name="substance_option" value="алкоголь" data-substance-id="alcohol"> <span>Алкоголь</span></label>
-        <input type="text" data-substance-amount="alcohol" placeholder="200 мл">
-        <input type="time" data-substance-time="alcohol">
-
-        <label><input type="checkbox" name="substance_option" value="никотин" data-substance-id="nicotine"> <span>Никотин</span></label>
-        <input type="text" data-substance-amount="nicotine" placeholder="сигареты/вейп">
-        <input type="time" data-substance-time="nicotine">
-
-        <label><input type="checkbox" name="substance_option" value="седативные / снотворные" data-substance-id="sedatives"> <span>Седативные</span></label>
-        <input type="text" data-substance-amount="sedatives" placeholder="название/доза">
-        <input type="time" data-substance-time="sedatives">
-
-        <label><input type="checkbox" name="substance_option" value="антидепрессанты" data-substance-id="antidepressants"> <span>Антидепрессанты</span></label>
-        <input type="text" data-substance-amount="antidepressants" placeholder="название/доза">
-        <input type="time" data-substance-time="antidepressants">
-
-        <label><input type="checkbox" name="substance_option" value="стимуляторы" data-substance-id="stimulants"> <span>Стимуляторы</span></label>
-        <input type="text" data-substance-amount="stimulants" placeholder="название/доза">
-        <input type="time" data-substance-time="stimulants">
-      </div>
-      <label>
-        Дополнительно
-        <textarea id="substances_extra" rows="2" placeholder="другие препараты, БАД, режим приема"></textarea>
-      </label>
+      <p class="hint">Отметьте класс, укажите конкретный препарат/дозу и фактическое время последнего приёма. Список охватывает основные клинически значимые классы, но не заменяет сверку полного листа назначений.</p>
+      <div id="medication-groups" class="medication-groups"></div>
+      <textarea id="substances_extra" rows="2" placeholder="другие препараты, БАД, режим приема"></textarea>
     </div>
-    <div class="anthro-block">
-      <div class="anthro-grid">
-        <label>
-          Вес, кг
-          <input id="weight_kg" type="number" min="20" max="350" step="0.1" placeholder="96">
-        </label>
-        <label>
-          Рост, см
-          <input id="height_cm" type="number" min="80" max="250" step="1" placeholder="178">
-        </label>
-        <label>
-          ИМТ
-          <input id="bmi" type="text" readonly placeholder="рассчитается автоматически">
-        </label>
-      </div>
-      <span id="bmi_label" class="bmi-label"></span>
-    </div>
-    <label>
-      Окружность шеи
-      <input id="neck" type="number" min="20" max="80" step="0.1" placeholder="43">
-    </label>
+
+    <div class="anthro-block"><div class="anthro-grid">
+      <label>Вес, кг<input id="weight_kg" type="number" min="20" max="350" step="0.1"></label>
+      <label>Рост, см<input id="height_cm" type="number" min="80" max="250"></label>
+      <label>ИМТ<input id="bmi" type="text" readonly></label>
+      <label>Окружность шеи, см<input id="neck" type="number" min="20" max="80" step="0.1"></label>
+    </div><span id="bmi_label" class="bmi-label"></span></div>
   </div>
 </section>
 
       <section class="section" id="sleep">
-  <div class="section-heading">
-    <span>02</span>
-    <h2>Профиль сна</h2>
-  </div>
+  <div class="section-heading"><span>02</span><h2>Профиль и симптомы сна</h2></div>
   <div class="section-card">
+    <h3>Рабочие дни</h3>
     <div class="metric-grid">
-      <label>Отход ко сну<input id="bedtime" type="time"></label>
-      <label>Подъем<input id="waketime" type="time"></label>
-      <label>Латентность сна, мин<input id="latency" type="number" min="0" step="5"></label>
-      <label>Пробуждений за ночь<input id="awakenings" type="number" min="0" max="20" step="1"></label>
-      <label>Длительность пробуждений, мин<input id="awakening_duration" type="number" min="0" max="60" step="5"></label>
-      <label>Общее время сна, ч<input id="total_sleep" type="text" readonly placeholder="рассчитается автоматически"></label>
-      <label>Эффективность сна, %<input id="sleep_efficiency" type="text" readonly placeholder="SE"></label>
-      <label>Дневной сон, мин<input id="nap_minutes" type="number" min="0" step="5"></label>
-      <label>Вариабельность отхода ко сну, мин<input id="bedtime_variability" type="number" min="0" max="360" step="5" placeholder="например: 60"></label>
-      <label>Вариабельность подъема, мин<input id="waketime_variability" type="number" min="0" max="360" step="5" placeholder="например: 90"></label>
-      <label>Вариабельность длительности сна, мин<input id="sleep_duration_variability" type="number" min="0" max="360" step="5" placeholder="например: 120"></label>
+      <label>Сонливость вечером<input id="evening_sleepiness" type="time"></label>
+      <label>Укладывание<input id="bedtime" type="time"></label>
+      <label>Попытка уснуть<input id="sleep_attempt" type="time"></label>
+      <label>Латентность, мин<input id="latency" type="number" min="0" max="720" step="5"></label>
+      <label>Пробуждений<input id="awakenings" type="number" min="0" max="30"></label>
+      <label>Бодрствование после засыпания, мин<input id="waso" type="number" min="0" max="720" step="5" title="Суммарное время всех пробуждений после первого засыпания и до окончательного утреннего пробуждения"></label>
+      <label>Окончательное пробуждение<input id="final_wake" type="time"></label>
+      <label>Подъём с постели<input id="waketime" type="time"></label>
+      <label>Дневной сон, мин<input id="nap_minutes" type="number" min="0" max="720" step="5"></label>
     </div>
-
-    <div class="symptom-groups">
-      <div class="symptom-group">
-        <div class="symptom-group-title">Засыпание</div>
-        <label><input type="checkbox" name="sleep_symptom" value="трудности засыпания"> Трудности засыпания</label>
-        <label><input type="checkbox" name="sleep_symptom" value="нерегулярный график сна"> Нерегулярный график</label>
-      </div>
-      <div class="symptom-group">
-        <div class="symptom-group-title">Поддержание сна</div>
-        <label><input type="checkbox" name="sleep_symptom" value="частые ночные пробуждения"> Частые пробуждения</label>
-        <label><input type="checkbox" name="breathing_symptom" value="удушье или нехватка воздуха ночью"> Удушье ночью</label>
-      </div>
-      <div class="symptom-group">
-        <div class="symptom-group-title">Пробуждение и день</div>
-        <label><input type="checkbox" name="sleep_symptom" value="ранние утренние пробуждения"> Ранние пробуждения</label>
-        <label><input type="checkbox" name="sleep_symptom" value="неосвежающий сон"> Неосвежающий сон</label>
-        <label><input type="checkbox" name="sleep_symptom" value="выраженная дневная сонливость"> Дневная сонливость</label>
-        <label><input type="checkbox" name="breathing_symptom" value="утренние головные боли"> Утренние головные боли</label>
-      </div>
-      <div class="symptom-group">
-        <div class="symptom-group-title">Дыхание</div>
-        <label><input type="checkbox" name="breathing_symptom" value="храп"> Храп</label>
-        <label><input type="checkbox" name="breathing_symptom" value="остановки дыхания во сне"> Остановки дыхания</label>
-      </div>
-      <div class="symptom-group">
-        <div class="symptom-group-title">Движения</div>
-        <label><input type="checkbox" name="movement_symptom" value="неприятные ощущения в ногах вечером"> Неприятные ощущения в ногах</label>
-        <label><input type="checkbox" name="movement_symptom" value="облегчение при движении ногами"> Облегчение при движении</label>
-      </div>
-      <div class="symptom-group">
-        <div class="symptom-group-title">Парасомнии / REM-феномены</div>
-        <label><input type="checkbox" name="parasomnia_symptom" value="кошмары"> Кошмары</label>
-        <label><input type="checkbox" name="parasomnia_symptom" value="двигательная активность во сне"> Движения во сне</label>
-        <label><input type="checkbox" name="parasomnia_symptom" value="снохождение или ночные эпизоды поведения"> Снохождение/эпизоды поведения</label>
-        <label><input type="checkbox" name="hypersomnia_symptom" value="катаплексия"> Катаплексия</label>
-        <label><input type="checkbox" name="hypersomnia_symptom" value="сонный паралич"> Сонный паралич</label>
-        <label><input type="checkbox" name="hypersomnia_symptom" value="гипнагогические феномены"> Гипнагогические феномены</label>
-      </div>
+    <h3>Свободные дни</h3>
+    <div class="metric-grid">
+      <label>Укладывание<input id="free_bedtime" type="time"></label>
+      <label>Попытка уснуть<input id="free_sleep_attempt" type="time"></label>
+      <label>Окончательное пробуждение<input id="free_final_wake" type="time"></label>
+      <label>Подъём с постели<input id="free_waketime" type="time"></label>
+      <label>Дневной сон, мин<input id="free_nap_minutes" type="number" min="0" max="720" step="5"></label>
     </div>
+    <div class="metric-grid calculated-metrics">
+      <label>Время в постели, ч<input id="time_in_bed" readonly></label>
+      <label>Общее время сна (TST), ч<input id="total_sleep" readonly></label>
+      <label>Эффективность сна, %<input id="sleep_efficiency" readonly></label>
+    </div>
+    <div id="sleep_calculation_warning" class="calculation-warning" role="status"></div>
 
-    <label>
-      Комментарии к ночным эпизодам
-      <textarea id="sleep_notes" rows="3" placeholder="поведение во сне, свидетели, травматизация, связь с алкоголем/лекарствами"></textarea>
-    </label>
+    <details class="clinical-details" open><summary>Инсомния и дневные последствия</summary><div class="symptom-groups">
+      <div class="symptom-group"><label><input type="checkbox" name="sleep_symptom" value="трудности засыпания"> Трудности засыпания</label><label><input type="checkbox" name="sleep_symptom" value="частые ночные пробуждения"> Частые пробуждения</label><label><input type="checkbox" name="sleep_symptom" value="ранние утренние пробуждения"> Ранние пробуждения</label></div>
+      <div class="symptom-group"><label><input type="checkbox" name="sleep_symptom" value="неосвежающий сон"> Неосвежающий сон</label><label><input type="checkbox" name="sleep_symptom" value="выраженная дневная сонливость"> Дневная сонливость</label><label><input type="checkbox" name="day_impairment" value="усталость или недомогание"> Усталость</label><label><input type="checkbox" name="day_impairment" value="нарушение внимания, памяти или работоспособности"> Нарушение функционирования</label></div>
+    </div></details>
+
+    <details class="clinical-details"><summary>Дыхание во сне</summary><div class="symptom-groups">
+      <div class="symptom-group"><label><input type="checkbox" name="breathing_symptom" value="громкий храп"> Громкий храп</label><label><input type="checkbox" name="breathing_symptom" value="храп почти каждую ночь"> Регулярный храп</label><label><input type="checkbox" name="breathing_symptom" value="остановки дыхания во сне"> Остановки дыхания</label><label><input type="checkbox" name="breathing_symptom" value="удушье или нехватка воздуха ночью"> Удушье</label></div>
+      <div class="symptom-group"><label><input type="checkbox" name="breathing_symptom" value="никтурия"> Никтурия</label><label><input type="checkbox" name="breathing_symptom" value="сухость во рту утром"> Сухость во рту</label><label><input type="checkbox" name="breathing_symptom" value="утренние головные боли"> Утренние головные боли</label><label><input type="checkbox" name="breathing_symptom" value="хуже на спине"> Позиционная зависимость</label></div>
+    </div></details>
+
+    <details class="clinical-details"><summary>Синдром беспокойных ног</summary><div class="symptom-groups">
+      <div class="symptom-group"><label><input type="checkbox" name="movement_symptom" value="императивное желание двигать ногами"> Желание двигать ногами</label><label><input type="checkbox" name="movement_symptom" value="начало или усиление в покое"> Усиление в покое</label><label><input type="checkbox" name="movement_symptom" value="облегчение при движении ногами"> Облегчение движением</label><label><input type="checkbox" name="movement_symptom" value="усиление вечером или ночью"> Усиление вечером/ночью</label></div>
+      <div class="symptom-group"><div class="symptom-group-title">Возможные имитаторы</div><label><input type="checkbox" name="rls_mimic" value="судороги"> Судороги</label><label><input type="checkbox" name="rls_mimic" value="нейропатия"> Нейропатия</label><label><input type="checkbox" name="rls_mimic" value="акатизия"> Акатизия</label><label><input type="checkbox" name="rls_mimic" value="артралгии или отёки"> Артралгии/отёки</label></div>
+    </div></details>
+
+    <details class="clinical-details"><summary>Гиперсомнолентность и REM-феномены</summary><div class="symptom-groups">
+      <div class="symptom-group"><label><input type="checkbox" name="hypersomnia_symptom" value="непреодолимые приступы сна"> Приступы сна</label><label><input type="checkbox" name="hypersomnia_symptom" value="дневной сон освежает"> Освежающий дневной сон</label><label><input type="checkbox" name="hypersomnia_symptom" value="тяжёлая инерция сна"> Инерция сна</label><label><input type="checkbox" name="hypersomnia_symptom" value="сон более 10 часов"> Длительный сон</label><label><input type="checkbox" name="hypersomnia_symptom" value="автоматическое поведение"> Автоматическое поведение</label></div>
+      <div class="symptom-group"><label><input type="checkbox" name="hypersomnia_symptom" value="катаплексия"> Катаплексия</label><label><input type="checkbox" name="hypersomnia_symptom" value="катаплексия провоцируется эмоциями"> Связь с эмоциями</label><label><input type="checkbox" name="hypersomnia_symptom" value="сонный паралич"> Сонный паралич</label><label><input type="checkbox" name="hypersomnia_symptom" value="гипнагогические феномены"> Гипнагогические феномены</label></div>
+    </div></details>
+
+    <details class="clinical-details"><summary>Циркадный профиль</summary><div class="metric-grid">
+      <label>Желаемое засыпание<input id="preferred_bedtime" type="time"></label><label>Желаемый подъём<input id="preferred_waketime" type="time"></label>
+      <label>Сон по свободному графику<select id="free_schedule_sleep"><option value="">—</option><option value="normal">нормальный и освежающий</option><option value="disturbed">остаётся нарушенным</option></select></label>
+      <label>Свет утром, мин<input id="morning_light_minutes" type="number" min="0" max="720"></label>
+    </div><div class="comorbidity-checklist"><label><input type="radio" name="circadian_pattern" value="delayed"> Задержка фазы</label><label><input type="radio" name="circadian_pattern" value="advanced"> Опережение фазы</label><label><input type="radio" name="circadian_pattern" value="irregular"> Нерегулярный ритм</label><label><input type="radio" name="circadian_pattern" value="shift"> Сменная работа</label></div></details>
+
+    <details class="clinical-details"><summary>Ночные эпизоды</summary><div class="symptom-groups">
+      <div class="symptom-group"><label><input type="checkbox" name="parasomnia_symptom" value="кошмары с пробуждением и воспоминанием"> Кошмары</label><label><input type="checkbox" name="parasomnia_symptom" value="NREM-парасомния со спутанностью"> NREM-парасомния</label><label><input type="checkbox" name="parasomnia_symptom" value="разыгрывание сновидений / подозрение на RBD"> Разыгрывание сновидений</label><label><input type="checkbox" name="parasomnia_symptom" value="стереотипный короткий эпизод / подозрение на эпилепсию"> Стереотипные эпизоды</label></div>
+      <div class="symptom-group episode-fields"><label class="field-control"><span>Преимущественное время</span><select id="episode_timing"><option value="">—</option><option>первая половина ночи</option><option>вторая половина ночи</option><option>любое время</option></select></label><label class="field-control"><span>Возраст начала</span><input id="episode_onset_age" type="number" min="0" max="120"></label></div>
+    </div><textarea id="sleep_notes" rows="3" placeholder="частота, длительность, вокализация, глаза, воспоминания, спутанность, травмы"></textarea></details>
+
+    <details class="clinical-details"><summary>Дневник сна — 14 дней</summary><div class="diary-meta-fields"><label>ФИО<input id="sleep_diary_patient_name" type="text" autocomplete="name"></label><label>Дата начала дневника<input id="sleep_diary_start_date" type="date"></label></div><p class="hint">Тип дня: рабочий — «Р»; свободный — «СД». Латентность сна — время от попытки уснуть до засыпания. Бодрствование после засыпания — суммарное время всех ночных пробуждений. Заполненные строки усредняются отдельно для рабочих и свободных дней.</p><div class="diary-table-wrap"><table class="sleep-diary"><thead><tr><th>День</th><th>Тип</th><th>Лёг</th><th>Уснул</th><th>Проснулся</th><th>Встал</th><th>Бодрствование после засыпания, мин</th><th>Дневной сон</th></tr></thead><tbody id="sleep_diary_body"></tbody></table></div><div id="sleep_diary_summary" class="diary-summary">Нет заполненных строк</div></details>
   </div>
 </section>
 
@@ -1392,17 +1725,17 @@ button.secondary:hover {
   <div class="section-card scale-layout">
     <div>
       <h3>ISI</h3>
-      <p class="hint">Insomnia Severity Index: 0-28.</p>
+      <p class="hint">Insomnia Severity Index: 0–28. Скрининг, не диагноз. <span id="isi-completion"></span></p>
       <div class="scale-list" id="isi-items"></div>
     </div>
     <div>
       <h3>ESS</h3>
-      <p class="hint">Epworth Sleepiness Scale: 0-24.</p>
+      <p class="hint">Epworth Sleepiness Scale: 0–24. Скрининг, не диагноз. <span id="ess-completion"></span></p>
       <div class="scale-list" id="ess-items"></div>
     </div>
     <div>
       <h3>STOP-Bang</h3>
-      <p class="hint">Скрининг риска обструктивного апноэ сна.</p>
+      <p class="hint">Скрининг риска OSA, не диагноз. <span id="stopbang-completion"></span></p>
       <div class="scale-list" id="stopbang-items"></div>
     </div>
   </div>
@@ -1414,6 +1747,7 @@ button.secondary:hover {
     <h2>Сомнологический советник</h2>
   </div>
   <div class="section-card">
+    <p class="hint"><strong>Инструмент поддержки решения:</strong> формирует синдромные сигналы и маршрутизацию, не устанавливает диагноз и не изменяет план без подтверждения врача.</p>
     <div class="toolbar">
       <button type="button" id="run-advisor">Анализировать</button>
       <span id="advisor-hint" class="hint"></span>
@@ -1488,6 +1822,30 @@ button.secondary:hover {
       <button type="button" class="secondary" id="copy-report">Скопировать</button>
       <button type="button" class="secondary" id="print-report">Печать</button>
     </div>
+    <div class="editor-toolbar" data-editor-toolbar aria-label="Форматирование заключения">
+      <select class="editor-select" data-editor-command="formatBlock" aria-label="Стиль абзаца" title="Стиль абзаца">
+        <option value="p">Обычный текст</option><option value="h2">Заголовок</option><option value="h3">Подзаголовок</option>
+      </select>
+      <select class="editor-select editor-font-size" data-editor-command="fontSize" aria-label="Размер шрифта" title="Размер шрифта">
+        <option value="3">Размер</option><option value="2">Мелкий</option><option value="3">Обычный</option><option value="4">Крупный</option><option value="5">Очень крупный</option>
+      </select>
+      <span class="editor-toolbar__divider" aria-hidden="true"></span>
+      <button type="button" data-editor-command="bold" aria-label="Жирный" title="Жирный"><strong>Ж</strong></button>
+      <button type="button" data-editor-command="italic" aria-label="Курсив" title="Курсив"><em>К</em></button>
+      <button type="button" data-editor-command="underline" aria-label="Подчёркивание" title="Подчёркивание"><u>Ч</u></button>
+      <button type="button" data-editor-command="foreColor" data-editor-value="#b42318" aria-label="Цвет текста" title="Цвет текста"><span class="editor-color-mark">А</span></button>
+      <span class="editor-toolbar__divider" aria-hidden="true"></span>
+      <button type="button" data-editor-command="insertUnorderedList" aria-label="Маркированный список" title="Маркированный список">•≡</button>
+      <button type="button" data-editor-command="insertOrderedList" aria-label="Нумерованный список" title="Нумерованный список">1≡</button>
+      <span class="editor-toolbar__divider" aria-hidden="true"></span>
+      <button type="button" data-editor-command="justifyLeft" aria-label="По левому краю" title="По левому краю"><svg class="editor-align-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M3 8h10M3 12h14M3 16h10"/></svg></button>
+      <button type="button" data-editor-command="justifyCenter" aria-label="По центру" title="По центру"><svg class="editor-align-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M5 8h10M3 12h14M5 16h10"/></svg></button>
+      <button type="button" data-editor-command="justifyRight" aria-label="По правому краю" title="По правому краю"><svg class="editor-align-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M7 8h10M3 12h14M7 16h10"/></svg></button>
+      <span class="editor-toolbar__divider" aria-hidden="true"></span>
+      <button type="button" data-editor-command="undo" aria-label="Отменить" title="Отменить">↶</button>
+      <button type="button" data-editor-command="redo" aria-label="Повторить" title="Повторить">↷</button>
+      <button type="button" data-editor-command="removeFormat" aria-label="Очистить форматирование" title="Очистить форматирование">T×</button>
+    </div>
     <div id="result" class="result" contenteditable="true"></div>
   </div>
 </section>
@@ -1523,6 +1881,56 @@ button.secondary:hover {
 
 
   <script>
+    (function () {
+  function initEditorToolbar() {
+    const editor = document.getElementById('result');
+    const toolbar = document.querySelector('[data-editor-toolbar]');
+    if (!editor || !toolbar) return;
+
+    let savedRange = null;
+    const rememberSelection = () => {
+      const selection = window.getSelection();
+      if (selection.rangeCount && editor.contains(selection.anchorNode)) savedRange = selection.getRangeAt(0).cloneRange();
+    };
+    const restoreSelection = () => {
+      editor.focus();
+      if (!savedRange) return;
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(savedRange);
+    };
+    const run = (command, value) => {
+      restoreSelection();
+      document.execCommand(command, false, value || null);
+      rememberSelection();
+    };
+
+    ['keyup', 'mouseup', 'input', 'focus'].forEach(type => editor.addEventListener(type, rememberSelection));
+    editor.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' || event.isComposing) return;
+      event.preventDefault();
+      document.execCommand('insertLineBreak');
+      rememberSelection();
+    });
+    toolbar.addEventListener('mousedown', event => {
+      if (event.target.closest('button')) event.preventDefault();
+    });
+    toolbar.addEventListener('click', event => {
+      const control = event.target.closest('[data-editor-command]');
+      if (!control || control.tagName === 'SELECT') return;
+      run(control.dataset.editorCommand, control.dataset.editorValue);
+    });
+    toolbar.addEventListener('change', event => {
+      const control = event.target.closest('select[data-editor-command]');
+      if (!control) return;
+      run(control.dataset.editorCommand, control.value);
+      control.selectedIndex = 0;
+    });
+  }
+
+  window.initEditorToolbar = initEditorToolbar;
+}());
+
     const ISI_ITEMS = [
   'Трудность засыпания',
   'Трудность поддержания сна',
@@ -1599,6 +2007,68 @@ const RECOMMENDATION_GROUPS = [
   ['insomnia', 'Инсомния'],
   ['rls', 'Синдром беспокойных ног'],
   ['other', 'Прочее']
+];
+
+const MEDICATION_GROUPS = [
+  {
+    title: 'Стимулирующие вещества и симпатомиметики',
+    items: [
+      ['caffeine', 'Кофеин / энергетики', 'кофе, чай, энергетик', 'задержка засыпания, фрагментация сна'],
+      ['nicotine', 'Никотин', 'сигареты, вейп, НЗТ', 'активация; абстиненция ночью'],
+      ['stimulants', 'Психостимуляторы и препараты бодрствования', 'метилфенидат, амфетамин, модафинил', 'инсомния, подавление сонливости'],
+      ['decongestants', 'Сосудосуживающие деконгестанты', 'псевдоэфедрин, фенилэфрин', 'активация, инсомния']
+    ]
+  },
+  {
+    title: 'Психотропные препараты',
+    items: [
+      ['antidepressants', 'Антидепрессанты, изменяющие REM/сон', 'СИОЗС/СИОЗСН, бупропион, ИМАО', 'инсомния или сонливость, яркие сновидения, RLS/RBD'],
+      ['sedating_antidepressants', 'Седативные антидепрессанты', 'миртазапин, тразодон, амитриптилин', 'сонливость, изменение архитектуры сна'],
+      ['antipsychotics', 'Антипсихотики', 'кветиапин, оланзапин, рисперидон', 'седация; возможны акатизия/RLS и набор веса'],
+      ['sedatives', 'Бензодиазепины, Z-препараты, барбитураты', 'диазепам, клоназепам, золпидем', 'седация, изменение архитектуры; риск дыхания/зависимости'],
+      ['mood_stabilizers', 'Нормотимики и противоэпилептические', 'литий, вальпроат, ламотриджин, карбамазепин', 'сонливость или инсомния; изменение архитектуры'],
+      ['anxiolytics_other', 'Другие анксиолитики', 'буспирон, гидроксизин', 'активация либо остаточная сонливость']
+    ]
+  },
+  {
+    title: 'Сердечно-сосудистые препараты',
+    items: [
+      ['beta_blockers', 'β-блокаторы', 'пропранолол, метопролол, бисопролол, атенолол, тимолол', 'особенно липофильные: инсомния, яркие сновидения/кошмары, утомляемость'],
+      ['alpha_agents', 'α-адренергические препараты', 'клонидин, празозин, доксазозин', 'сонливость, изменение REM/сновидений'],
+      ['diuretics', 'Диуретики', 'гидрохлоротиазид, индапамид, фуросемид', 'никтурия и фрагментация сна'],
+      ['lipid_lowering', 'Гиполипидемические препараты', 'статины и другие', 'возможные индивидуальные нарушения сна'],
+      ['antiarrhythmics', 'Антиаритмические и другие кардиологические', 'амиодарон и др.', 'прямое влияние или через соматические симптомы']
+    ]
+  },
+  {
+    title: 'Дыхательная система, аллергия и воспаление',
+    items: [
+      ['beta_agonists', 'β₂-агонисты / бронходилататоры', 'сальбутамол, формотерол, теофиллин', 'активация, тремор, инсомния'],
+      ['corticosteroids', 'Системные глюкокортикоиды', 'преднизолон, дексаметазон', 'выраженная активация и инсомния'],
+      ['antihistamines', 'H1-антигистаминные', 'дифенгидрамин, доксиламин, гидроксизин', 'седация, остаточная сонливость; возможное усиление RLS'],
+      ['montelukast', 'Антилейкотриеновые', 'монтелукаст', 'яркие сновидения/кошмары у части пациентов']
+    ]
+  },
+  {
+    title: 'Неврология, боль и другие системные препараты',
+    items: [
+      ['dopaminergic', 'Дофаминергические препараты', 'леводопа, прамипексол, ропинирол', 'сонливость/приступы сна, сновидения, нарушения контроля импульсов'],
+      ['cholinesterase', 'Ингибиторы ацетилхолинэстеразы', 'донепезил, ривастигмин, галантамин', 'инсомния, яркие сновидения/RBD'],
+      ['opioids', 'Опиоиды и опиоидные антагонисты', 'морфин, оксикодон, трамадол, налтрексон', 'седация, центральное апноэ, фрагментация сна'],
+      ['gabapentinoids', 'Габапентиноиды и миорелаксанты', 'габапентин, прегабалин, баклофен', 'сонливость; возможный дыхательный риск'],
+      ['thyroid', 'Тиреоидные гормоны', 'левотироксин', 'инсомния при избыточной дозе/позднем приёме'],
+      ['antimicrobials', 'Препараты с возможной нейроактивацией', 'фторхинолоны, интерфероны', 'редкие инсомния, тревога или яркие сновидения'],
+      ['hormonal', 'Гормональные препараты', 'эстрогены, прогестины, андрогены', 'индивидуальное влияние на сон и дыхание']
+    ]
+  },
+  {
+    title: 'Алкоголь и другие вещества',
+    items: [
+      ['alcohol', 'Алкоголь', 'вид и количество', 'фрагментация сна, усиление храпа/OSA, REM-rebound'],
+      ['cannabis', 'Каннабиноиды', 'форма и количество', 'сонливость; изменение архитектуры и синдром отмены'],
+      ['other_substances', 'Другие ПАВ / добавки', 'название и количество', 'эффект зависит от вещества и отмены']
+    ]
+  }
 ];
 
 const RECOMMENDATION_OPTIONS = [
@@ -1888,21 +2358,22 @@ function createScaleItems() {
   ISI_ITEMS.forEach((label, index) => {
     const row = document.createElement('div');
     row.className = 'scale-row';
-    row.innerHTML = `<div>${index + 1}. ${label}</div><select data-scale="isi"><option value="0">0 - нет</option><option value="1">1 - слабо</option><option value="2">2 - умеренно</option><option value="3">3 - значительно</option><option value="4">4 - выражено</option></select>`;
+    row.innerHTML = `<div>${index + 1}. ${label}</div><select data-scale="isi"><option value="" selected>—</option><option value="0">0 - нет</option><option value="1">1 - слабо</option><option value="2">2 - умеренно</option><option value="3">3 - значительно</option><option value="4">4 - выражено</option></select>`;
     isi.appendChild(row);
   });
 
   ESS_ITEMS.forEach((label, index) => {
     const row = document.createElement('div');
     row.className = 'scale-row';
-    row.innerHTML = `<div>${index + 1}. ${label}</div><select data-scale="ess"><option value="0">0 - не заснул бы</option><option value="1">1 - малая вероятность</option><option value="2">2 - умеренная вероятность</option><option value="3">3 - высокая вероятность</option></select>`;
+    row.innerHTML = `<div>${index + 1}. ${label}</div><select data-scale="ess"><option value="" selected>—</option><option value="0">0 - не заснул бы</option><option value="1">1 - малая вероятность</option><option value="2">2 - умеренная вероятность</option><option value="3">3 - высокая вероятность</option></select>`;
     ess.appendChild(row);
   });
 
   STOPBANG_ITEMS.forEach(([code, label]) => {
     const row = document.createElement('div');
     row.className = 'stopbang-row';
-    row.innerHTML = `<label><input type="checkbox" data-scale="stopbang" data-stopbang-code="${code}"> <strong>${code}</strong> ${label}</label>`;
+    const derived = ' disabled';
+    row.innerHTML = `<label><input type="checkbox" data-scale="stopbang" data-stopbang-code="${code}"${derived}> <strong>${code}</strong> ${label}${derived ? ' <small>(из данных формы)</small>' : ''}</label>`;
     stopbang.appendChild(row);
   });
 }
@@ -1951,6 +2422,21 @@ function createRecommendationsChecklist() {
     });
 
     container.appendChild(group);
+  });
+}
+
+function createMedicationGroups() {
+  const container = el('medication-groups');
+  if (!container || container.children.length) return;
+  MEDICATION_GROUPS.forEach((group, groupIndex) => {
+    const details = document.createElement('details');
+    details.className = 'medication-group';
+    if (groupIndex === 0) details.open = true;
+    details.innerHTML = `<summary>${escapeHtml(group.title)}</summary><div class="medication-table">
+      <div class="medication-head">Класс / фактор</div><div class="medication-head">Препарат и доза</div><div class="medication-head">Время</div>
+      ${group.items.map(([id, label, examples, effect]) => `<label class="medication-choice" title="${escapeHtml(effect)}"><input type="checkbox" name="substance_option" value="${escapeHtml(label)}" data-substance-id="${escapeHtml(id)}"><span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(effect)}</small></span></label><input type="text" data-substance-amount="${escapeHtml(id)}" placeholder="${escapeHtml(examples)}"><input type="time" data-substance-time="${escapeHtml(id)}">`).join('')}
+    </div>`;
+    container.appendChild(details);
   });
 }
 
@@ -2119,7 +2605,7 @@ function collectSubstancesText() {
       const time = document.querySelector(`[data-substance-time="${id}"]`)?.value.trim() || '';
       const details = [];
       if (amount) details.push(amount);
-      if (time) details.push(`за ${time} до сна`);
+      if (time) details.push(`время приёма ${time}`);
       return details.length ? `${checkbox.value} (${details.join(', ')})` : checkbox.value;
     });
   const extra = value('substances_extra');
@@ -2130,6 +2616,7 @@ function collectSubstancesText() {
 function collectRecommendationsItems() {
   const selected = Array.from(document.querySelectorAll('input[name="recommendation_option"]:checked'))
     .map(checkbox => ({
+      id: checkbox.dataset.recId || '',
       label: checkbox.value,
       group: checkbox.dataset.recGroup || 'other'
     }));
@@ -2152,10 +2639,22 @@ function sumScale(name) {
 function updateScores() {
   updateBmi();
   updateNeckStopBang();
-  updateTotalSleep();
+  updateDemographicStopBang();
+  updateTotalSleepV2();
   el('isi-score').textContent = String(sumScale('isi'));
   el('ess-score').textContent = String(sumScale('ess'));
   el('stopbang-score').textContent = String(sumScale('stopbang'));
+  updateScaleCompletion();
+}
+
+function updateScaleCompletion() {
+  [['isi', 7], ['ess', 8]].forEach(([name, total]) => {
+    const done = Array.from(document.querySelectorAll(`select[data-scale="${name}"]`)).filter(node => node.value !== '').length;
+    const badge = el(`${name}-completion`);
+    if (badge) badge.textContent = `${done}/${total}${done === total ? ' · заполнено' : ''}`;
+  });
+  const stop = el('stopbang-completion');
+  if (stop) stop.textContent = value('age') && value('sex') && value('neck') && value('bmi') ? 'исходные данные заполнены' : 'уточните возраст, пол, ИМТ и шею';
 }
 
 function numericValue(id) {
@@ -2283,10 +2782,60 @@ function updateTotalSleep() {
   return sleepHours;
 }
 
+function updateTotalSleepV2() {
+  const totalField = el('total_sleep');
+  const efficiencyField = el('sleep_efficiency');
+  const timeInBedField = el('time_in_bed');
+  const warning = el('sleep_calculation_warning');
+  if (!totalField) return null;
+  const bedtime = timeToMinutes(value('sleep_attempt') || value('bedtime'));
+  const waketime = timeToMinutes(value('waketime'));
+  if (bedtime === null || waketime === null) {
+    totalField.value = '';
+    if (efficiencyField) efficiencyField.value = '';
+    if (timeInBedField) timeInBedField.value = '';
+    if (warning) warning.textContent = 'Для расчёта заполните попытку уснуть/укладывание и подъём.';
+    return null;
+  }
+  let timeInBed = waketime - bedtime;
+  if (timeInBed <= 0) timeInBed += 1440;
+  const latency = numericValue('latency') || 0;
+  const waso = numericValue('waso') || 0;
+  const sleepMinutes = Math.max(0, timeInBed - latency - waso);
+  const sleepHours = Math.round(sleepMinutes / 6) / 10;
+  const efficiency = Math.round(sleepMinutes / timeInBed * 100);
+  totalField.value = String(sleepHours).replace('.', ',');
+  if (efficiencyField) efficiencyField.value = String(efficiency);
+  if (timeInBedField) timeInBedField.value = String(Math.round(timeInBed / 6) / 10).replace('.', ',');
+  const invalid = timeInBed > 960 || latency + waso > timeInBed;
+  if (warning) warning.textContent = invalid ? 'Проверьте значения: интервалы выглядят противоречиво.' : '';
+  return sleepHours;
+}
+
+function updateDemographicStopBang() {
+  const ageCheckbox = document.querySelector('[data-stopbang-code="A"]');
+  const sexCheckbox = document.querySelector('[data-stopbang-code="G"]');
+  const pressureCheckbox = document.querySelector('[data-stopbang-code="P"]');
+  const snoreCheckbox = document.querySelector('[data-stopbang-code="S"]');
+  const tiredCheckbox = document.querySelector('[data-stopbang-code="T"]');
+  const observedCheckbox = document.querySelector('[data-stopbang-code="O"]');
+  if (ageCheckbox) ageCheckbox.checked = (numericValue('age') || 0) > 50;
+  if (sexCheckbox) sexCheckbox.checked = value('sex') === 'male';
+  if (pressureCheckbox) pressureCheckbox.checked = checkedValues('comorbidity_option').some(item => item.includes('артериальная гипертензия'));
+  if (snoreCheckbox) snoreCheckbox.checked = hasAny(checkedValues('breathing_symptom'), ['громкий храп', 'храп почти каждую ночь']);
+  if (tiredCheckbox) tiredCheckbox.checked = checkedValues('sleep_symptom').includes('выраженная дневная сонливость') || sumScale('ess') > 10;
+  if (observedCheckbox) observedCheckbox.checked = checkedValues('breathing_symptom').includes('остановки дыхания во сне');
+}
+
 function collectState() {
   return {
+    age: value('age'), sex: value('sex'), workSchedule: value('work_schedule'), nightShifts: value('night_shifts'),
+    complaintDuration: value('complaint_duration'), complaintFrequency: value('complaint_frequency'),
+    sleepOpportunity: !!el('sleep_opportunity')?.checked, sleepConditions: !!el('sleep_conditions')?.checked,
     complaints: value('complaints'),
     history: value('history'),
+    previousSleepCare: value('previous_sleep_care'), bedPartnerReport: value('bed_partner_report'), familyHistory: value('family_history'),
+    safetyFlags: checkedValues('safety_flag'), safetyNotes: value('safety_notes'),
     comorbidity: collectComorbidityText(),
     substances: collectSubstancesText(),
     heightCm: value('height_cm'),
@@ -2294,10 +2843,13 @@ function collectState() {
     bmi: value('bmi'),
     neck: value('neck'),
     bedtime: value('bedtime'),
+    eveningSleepiness: value('evening_sleepiness'),
+    sleepAttempt: value('sleep_attempt'), finalWake: value('final_wake'),
     waketime: value('waketime'),
+    freeBedtime: value('free_bedtime'), freeSleepAttempt: value('free_sleep_attempt'), freeFinalWake: value('free_final_wake'), freeWaketime: value('free_waketime'), freeNapMinutes: value('free_nap_minutes'),
     latency: value('latency'),
     awakenings: value('awakenings'),
-    awakeningDuration: value('awakening_duration'),
+    awakeningDuration: value('waso'), waso: value('waso'), timeInBed: value('time_in_bed'),
     totalSleep: value('total_sleep'),
     sleepEfficiency: value('sleep_efficiency'),
     napMinutes: value('nap_minutes'),
@@ -2305,11 +2857,18 @@ function collectState() {
     waketimeVariability: value('waketime_variability'),
     sleepDurationVariability: value('sleep_duration_variability'),
     sleepSymptoms: checkedValues('sleep_symptom'),
+    dayImpairments: checkedValues('day_impairment'),
     breathingSymptoms: checkedValues('breathing_symptom'),
     movementSymptoms: checkedValues('movement_symptom'),
+    rlsMimics: checkedValues('rls_mimic'),
     parasomniaSymptoms: checkedValues('parasomnia_symptom'),
     hypersomniaSymptoms: checkedValues('hypersomnia_symptom'),
     sleepNotes: value('sleep_notes'),
+    circadianPattern: document.querySelector('input[name="circadian_pattern"]:checked')?.value || '',
+    preferredBedtime: value('preferred_bedtime'), preferredWaketime: value('preferred_waketime'), freeScheduleSleep: value('free_schedule_sleep'), morningLightMinutes: value('morning_light_minutes'),
+    episodeTiming: value('episode_timing'), episodeOnsetAge: value('episode_onset_age'),
+    sleepDiaryPatientName: value('sleep_diary_patient_name'), sleepDiaryStartDate: value('sleep_diary_start_date'),
+    diarySummary: el('sleep_diary_summary')?.dataset.report || '',
     isi: sumScale('isi'),
     ess: sumScale('ess'),
     stopbang: sumScale('stopbang'),
@@ -2337,12 +2896,15 @@ function classifyEss(score) {
 }
 
 function classifyStopBang(score) {
-  if (score >= 5) return 'высокий риск ОАС';
+  const codes = checkedStopBangCodes();
+  const stopCore = ['S', 'T', 'O', 'P'].filter(code => codes.includes(code)).length;
+  const enhancedHigh = stopCore >= 2 && ['B', 'N', 'G'].some(code => codes.includes(code));
+  if (score >= 5 || enhancedHigh) return 'высокий риск ОАС';
   if (score >= 3) return 'промежуточный риск ОАС';
   return 'низкий риск ОАС';
 }
 
-function runAdvisor() {
+function legacyRunAdvisor() {
   const state = collectState();
   const results = ADVISOR_RULES.map(rule => {
     const requiredMet = rule.required.filter(([, fn]) => fn(state)).map(([label]) => label);
@@ -2358,17 +2920,13 @@ function runAdvisor() {
     });
 
   renderAdvisor(results);
-  results.slice(0, 2).forEach(result => {
-    applyTestsForDiagnosis(result.code);
-    applyRecommendationsForDiagnosis(result.code);
-  });
   const hint = el('advisor-hint');
   const now = new Date();
   hint.textContent = `Обновлено ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   return results;
 }
 
-function renderAdvisor(results) {
+function legacyRenderAdvisor(results) {
   const container = el('advisor-results');
   container.innerHTML = '';
   if (!results.length) {
@@ -2430,11 +2988,132 @@ function renderAdvisor(results) {
         </div>
       </div>
       <strong>Уточнить:</strong><div class="advisor-clarify-list">${clarifyItems}</div>
-      <div class="advisor-actions"><button type="button" class="advisor-add-diagnosis">Добавить диагноз</button></div>
+      <div class="advisor-actions"></div>
     `;
-    card.querySelector('.advisor-add-diagnosis').addEventListener('click', () => addAdvisorDiagnosis(card));
     container.appendChild(card);
   });
+}
+
+const ROUTER_RULES = [
+  {
+    id: 'insomnia', title: 'Инсомнический синдром', anchor: 'complaint_frequency',
+    trigger: s => hasAny(s.sleepSymptoms, ['трудности засыпания', 'частые ночные пробуждения', 'ранние утренние пробуждения']) || s.isi >= 8,
+    complete: s => Number(s.complaintFrequency) >= 3 && s.complaintDuration === 'ge_3m' && s.sleepOpportunity && s.sleepConditions && s.dayImpairments.length > 0,
+    missing: s => [[!s.complaintFrequency, 'частоту жалоб', 'complaint_frequency'], [!s.complaintDuration, 'длительность жалоб', 'complaint_duration'], [!s.sleepOpportunity, 'достаточную возможность для сна', 'sleep_opportunity'], [!s.sleepConditions, 'условия для сна', 'sleep_conditions'], [!s.dayImpairments.length, 'дневные последствия', 'sleep']],
+    alternatives: s => [s.stopbang >= 3 || s.breathingSymptoms.length ? 'Возможна коморбидная OSA (COMISA)' : '', s.circadianPattern ? 'Возможен циркадный компонент' : '', textHasAny(s.substances, ['стимуляторы', 'седативные', 'алкоголь']) ? 'Оценить влияние веществ/лекарств' : ''].filter(Boolean),
+    redFlags: () => [], tests: ['sleep_diary'], recs: ['sleep_diary', 'stimulus_control', 'cbti']
+  },
+  {
+    id: 'osa', title: 'Нарушение дыхания во сне / риск OSA', anchor: 'breathing_symptom',
+    trigger: s => s.stopbang >= 3 || s.breathingSymptoms.length > 0,
+    complete: s => s.stopbang >= 3 && hasAny(s.breathingSymptoms, ['громкий храп', 'остановки дыхания во сне', 'удушье или нехватка воздуха ночью']),
+    missing: s => [[!s.age, 'возраст', 'age'], [!s.sex, 'пол', 'sex'], [!s.neck, 'окружность шеи', 'neck'], [!s.bedPartnerReport, 'сведения свидетеля', 'bed_partner_report']],
+    alternatives: s => [parseSleepHours(s.totalSleep) > 0 && parseSleepHours(s.totalSleep) < 7 ? 'Недостаточный сон также может объяснять сонливость' : ''].filter(Boolean),
+    redFlags: s => s.safetyFlags.filter(item => /рул|ДТП|удушье|груди|синкопе|одышка/.test(item)), tests: ['resp_monitoring'], recs: ['osa_position']
+  },
+  {
+    id: 'rls', title: 'Сенсомоторный синдром / возможный RLS', anchor: 'sleep',
+    trigger: s => s.movementSymptoms.length > 0,
+    complete: s => ['императивное желание двигать ногами', 'начало или усиление в покое', 'облегчение при движении ногами', 'усиление вечером или ночью'].every(item => s.movementSymptoms.includes(item)) && !s.rlsMimics.length,
+    missing: s => [['императивное желание двигать ногами', 'желание двигать ногами'], ['начало или усиление в покое', 'усиление в покое'], ['облегчение при движении ногами', 'облегчение движением'], ['усиление вечером или ночью', 'вечернее усиление']].filter(([key]) => !s.movementSymptoms.includes(key)).map(([, label]) => [true, label, 'sleep']),
+    alternatives: s => s.rlsMimics.map(item => `Имитатор RLS: ${item}`), redFlags: () => [], tests: ['ferritin', 'cbc'], recs: ['rls_iron', 'rls_behavior']
+  },
+  {
+    id: 'hypersomnia', title: 'Центральная гиперсомнолентность', anchor: 'sleep',
+    trigger: s => s.ess >= 11 || hasAny(s.hypersomniaSymptoms, ['непреодолимые приступы сна', 'катаплексия', 'тяжёлая инерция сна', 'сон более 10 часов']),
+    complete: s => s.ess >= 11 && (s.sleepOpportunity || parseSleepHours(s.totalSleep) >= 7) && !!s.diarySummary,
+    missing: s => [[!s.diarySummary, '14-дневный дневник для подтверждения достаточного сна', 'sleep_diary_body'], [!s.previousSleepCare, 'препараты и предшествующие исследования', 'previous_sleep_care']],
+    alternatives: s => [s.stopbang >= 3 ? 'Сначала исключить OSA' : '', parseSleepHours(s.totalSleep) > 0 && parseSleepHours(s.totalSleep) < 7 ? 'Вероятен недостаточный сон' : '', textHasAny(s.substances, ['седативные', 'алкоголь']) ? 'Возможна лекарственная/вещественная сонливость' : ''].filter(Boolean),
+    redFlags: s => s.safetyFlags.filter(item => /рул|ДТП|опасная работа/.test(item)), tests: ['sleep_diary', 'psg', 'mslt'], recs: ['hypersomnia_safety', 'hypersomnia_schedule']
+  },
+  {
+    id: 'circadian', title: 'Циркадное нарушение сна-бодрствования', anchor: 'preferred_bedtime',
+    trigger: s => !!s.circadianPattern || s.workSchedule.includes('сменный') || Number(s.nightShifts) > 0,
+    complete: s => !!s.circadianPattern && !!s.preferredBedtime && !!s.preferredWaketime && !!s.diarySummary,
+    missing: s => [[!s.preferredBedtime, 'желаемое время засыпания', 'preferred_bedtime'], [!s.preferredWaketime, 'желаемое время подъёма', 'preferred_waketime'], [!s.diarySummary, 'дневник сна', 'sleep_diary_body']],
+    alternatives: () => [], redFlags: s => s.safetyFlags.filter(item => /рул|ДТП|опасная работа/.test(item)), tests: ['sleep_diary', 'actigraphy'], recs: ['circadian_light', 'circadian_shift']
+  },
+  {
+    id: 'parasomnia', title: 'Ночные эпизоды / парасомния', anchor: 'sleep_notes',
+    trigger: s => s.parasomniaSymptoms.length > 0,
+    complete: s => !!s.sleepNotes,
+    missing: s => [[!s.sleepNotes, 'клиническое описание эпизодов', 'sleep_notes']],
+    alternatives: s => [s.parasomniaSymptoms.some(item => item.includes('эпилеп')) ? 'Требуется дифференциация с ночной эпилепсией' : '', s.parasomniaSymptoms.some(item => item.includes('RBD')) ? 'Подозрение на RBD: оценить неврологический статус' : ''].filter(Boolean),
+    redFlags: s => s.safetyFlags.filter(item => /травм/.test(item)), tests: ['video', 'psg', 'neurology'], recs: ['parasomnia_safety', 'parasomnia_triggers']
+  }
+];
+
+let lastRouterResults = [];
+
+function evaluateRouter(state) {
+  const globalFlags = state.safetyFlags || [];
+  const results = ROUTER_RULES.filter(rule => rule.trigger(state)).map(rule => {
+    const missing = rule.missing(state).filter(([condition]) => condition).map(([, label, id]) => ({ label, id }));
+    const redFlags = rule.redFlags(state);
+    let status = rule.complete(state) ? 'есть скрининговый сигнал' : 'требуется приоритетное уточнение';
+    if (redFlags.length || globalFlags.some(item => /груди|синкопе/.test(item))) status = 'красный флаг';
+    let tests = [...rule.tests];
+    if (rule.id === 'hypersomnia' && !(state.diarySummary && state.previousSleepCare && parseSleepHours(state.totalSleep) >= 7 && state.stopbang < 3)) tests = tests.filter(id => id !== 'mslt');
+    if (rule.id === 'osa' && textHasAny(state.comorbidity, ['сердечная недостаточность', 'ХОБЛ', 'инсульт'])) tests = ['psg'];
+    if (rule.id === 'rls' && state.movementSymptoms.length < 3) tests = [];
+    return { ...rule, tests, status, missing, alternatives: rule.alternatives(state), redFlags };
+  });
+  if (globalFlags.length && !results.some(item => item.redFlags.length)) {
+    results.unshift({ id: 'safety', title: 'Безопасность сна', status: 'красный флаг', missing: [], alternatives: [], redFlags: globalFlags, tests: [], recs: [], anchor: 'safety_notes' });
+  }
+  return results;
+}
+
+function runAdvisor() {
+  lastRouterResults = evaluateRouter(collectState());
+  renderRouter(lastRouterResults);
+  const now = new Date();
+  el('advisor-hint').textContent = `Обновлено ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}. Советник не изменил диагноз или план.`;
+  return lastRouterResults;
+}
+
+function listHtml(items, empty) {
+  return items.length ? items.map(item => `<li>${escapeHtml(item)}</li>`).join('') : `<li class="advisor-muted">${empty}</li>`;
+}
+
+function renderRouter(results) {
+  const container = el('advisor-results');
+  container.innerHTML = '';
+  if (!results.length) {
+    container.innerHTML = '<p class="hint">Недостаточно данных для синдромного сигнала. Заполните профиль сна и шкалы.</p>';
+    return;
+  }
+  results.forEach(result => {
+    const card = document.createElement('div');
+    card.className = `advisor-card route-${result.status.replaceAll(' ', '-')}`;
+    card.dataset.routeId = result.id;
+    card.innerHTML = `<div class="advisor-title"><span>${escapeHtml(result.title)}</span><span class="advisor-status">${escapeHtml(result.status)}</span></div>
+      <div class="advisor-criteria">
+        <div><strong>Не хватает:</strong><ul>${result.missing.length ? result.missing.map(item => `<li><button type="button" class="link-button advisor-goto" data-target="${item.id}">${escapeHtml(item.label)}</button></li>`).join('') : '<li class="advisor-muted">минимальные данные собраны</li>'}</ul></div>
+        <div><strong>Альтернативы / коморбидность:</strong><ul>${listHtml(result.alternatives, 'не выявлены по заполненным данным')}</ul></div>
+        <div><strong>Красные флаги:</strong><ul>${listHtml(result.redFlags, 'не выявлены')}</ul></div>
+        <div><strong>Подтверждение:</strong><ul>${listHtml(result.tests.map(id => TEST_OPTIONS.find(item => item.id === id)?.label).filter(Boolean), 'не требуется')}</ul></div>
+      </div><div class="advisor-actions">${result.tests.length || result.recs.length ? '<button type="button" class="advisor-apply-plan">Добавить предложенный план</button>' : ''}</div>`;
+    card.querySelectorAll('.advisor-goto').forEach(button => button.addEventListener('click', () => focusClinicalField(button.dataset.target)));
+    card.querySelector('.advisor-apply-plan')?.addEventListener('click', () => applyRouterPlan(result, card));
+    container.appendChild(card);
+  });
+}
+
+function focusClinicalField(id) {
+  const node = el(id) || document.querySelector(`[name="${id}"]`);
+  if (!node) return;
+  node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  node.focus?.();
+  node.closest('details')?.setAttribute('open', '');
+}
+
+function applyRouterPlan(result, card) {
+  result.tests.forEach(id => { const input = document.querySelector(`[data-test-id="${id}"]`); if (input) input.checked = true; });
+  result.recs.forEach(id => { const input = document.querySelector(`[data-rec-id="${id}"]`); if (input) input.checked = true; });
+  updateRecommendationGroupCounts();
+  const button = card.querySelector('.advisor-apply-plan');
+  button.textContent = 'План добавлен'; button.disabled = true;
 }
 
 function collectAdvisorClarificationsFromCard(card) {
@@ -2505,7 +3184,21 @@ function groupedRecommendationList(items) {
   return `<strong>Рекомендации:</strong>${sections}`;
 }
 
-function generateReport() {
+function sleepDiaryAppendix() {
+  const rows = Array.from(document.querySelectorAll('#sleep_diary_body tr')).map((row, index) => {
+    const value = key => row.querySelector(`[data-diary="${key}"]`)?.value || '';
+    const dayType = value('type') === 'free' ? 'СД' : value('type') === 'work' ? 'Р' : '';
+    return `<tr><td>${index + 1}</td><td>${dayType}</td><td>${escapeHtml(value('bed'))}</td><td>${escapeHtml(value('sleep'))}</td><td>${escapeHtml(value('wake'))}</td><td>${escapeHtml(value('rise'))}</td><td>${escapeHtml(value('waso'))}</td><td>${escapeHtml(value('nap'))}</td></tr>`;
+  }).join('');
+  return `<div class="report-appendix">
+    <div class="result-subtitle">Приложение: дневник сна на 2 недели</div>
+    <div class="report-diary-meta"><div>ФИО: ________________________________</div><div>Дата начала дневника: ____.____.____</div></div>
+    <p class="diary-instruction">Тип дня: Р — рабочий; СД — свободный. Латентность сна — время от попытки уснуть до засыпания. Бодрствование после засыпания — суммарное время всех ночных пробуждений.</p>
+    <table class="report-diary-table"><thead><tr><th>День</th><th>Тип</th><th>Лёг</th><th>Уснул</th><th>Проснулся</th><th>Встал</th><th>Бодрствование после засыпания, мин</th><th>Дневной сон, мин</th></tr></thead><tbody>${rows}</tbody></table>
+  </div>`;
+}
+
+function legacyGenerateReport() {
   const s = collectState();
   const sleepProfile = [
     s.bedtime ? `отход ко сну ${s.bedtime}` : '',
@@ -2554,6 +3247,64 @@ function generateReport() {
   html += groupedRecommendationList(s.recommendationItems);
   html += line('Лечение / маршрутизация', s.treatment);
 
+  el('result').innerHTML = html;
+}
+
+function scaleIsComplete(name, total) {
+  return Array.from(document.querySelectorAll(`select[data-scale="${name}"]`)).filter(node => node.value !== '').length === total;
+}
+
+function stateLabel(value, labels) {
+  return labels[value] || value || '';
+}
+
+function generateReport() {
+  const s = collectState();
+  const signals = evaluateRouter(s);
+  const durationLabel = stateLabel(s.complaintDuration, { lt_1m: 'менее 1 месяца', '1_3m': '1–3 месяца', ge_3m: '3 месяца и более' });
+  const sexLabel = stateLabel(s.sex, { male: 'мужской', female: 'женский', other: 'другой / не указан' });
+  const circadianLabel = stateLabel(s.circadianPattern, { delayed: 'задержка фазы', advanced: 'опережение фазы', irregular: 'нерегулярный ритм', shift: 'сменная работа' });
+  const freeScheduleLabel = stateLabel(s.freeScheduleSleep, { normal: 'нормальный и освежающий', disturbed: 'остаётся нарушенным' });
+  const workProfile = [s.eveningSleepiness && `появление вечерней сонливости ${s.eveningSleepiness}`, s.bedtime && `укладывание ${s.bedtime}`, s.sleepAttempt && `попытка уснуть ${s.sleepAttempt}`, s.latency && `латентность сна ${s.latency} мин`, s.awakenings && `ночных пробуждений ${s.awakenings}`, s.finalWake && `окончательное пробуждение ${s.finalWake}`, s.waketime && `подъём ${s.waketime}`, s.timeInBed && `время в постели ${s.timeInBed} ч`, s.totalSleep && `общее время сна (TST) ${s.totalSleep} ч`, s.waso && `бодрствование после засыпания ${s.waso} мин`, s.sleepEfficiency && `эффективность сна (SE) ${s.sleepEfficiency}%`, s.napMinutes && `дневной сон ${s.napMinutes} мин`].filter(Boolean).join(', ');
+  const freeProfile = [s.freeBedtime && `укладывание ${s.freeBedtime}`, s.freeSleepAttempt && `попытка уснуть ${s.freeSleepAttempt}`, s.freeFinalWake && `пробуждение ${s.freeFinalWake}`, s.freeWaketime && `подъём ${s.freeWaketime}`, s.freeNapMinutes && `дневной сон ${s.freeNapMinutes} мин`].filter(Boolean).join(', ');
+  const circadianProfile = [circadianLabel && `предполагаемый профиль: ${circadianLabel}`, s.preferredBedtime && `желаемое засыпание ${s.preferredBedtime}`, s.preferredWaketime && `желаемый подъём ${s.preferredWaketime}`, freeScheduleLabel && `сон при свободном графике ${freeScheduleLabel}`, s.morningLightMinutes && `утренний свет ${s.morningLightMinutes} мин`].filter(Boolean).join(', ');
+  let html = '<strong>Сомнологический приём взрослого пациента</strong><br><br>';
+  html += '<div class="result-subtitle">Повод обращения и анамнез</div>';
+  html += line('Жалобы', s.complaints || 'активно не предъявляет');
+  html += line('Длительность и частота жалоб', [durationLabel, s.complaintFrequency && `${s.complaintFrequency} ночей в неделю`].filter(Boolean).join('; '));
+  html += line('Анамнез', s.history); html += line('Предыдущие исследования и лечение', s.previousSleepCare);
+  html += line('Сведения партнёра', s.bedPartnerReport); html += line('Семейный анамнез', s.familyHistory);
+  html += line('Контекст', [s.age && `возраст ${s.age} лет`, sexLabel && `пол ${sexLabel}`, s.workSchedule && `режим работы: ${s.workSchedule}`, s.nightShifts && `ночных смен в месяц: ${s.nightShifts}`].filter(Boolean).join('; '));
+  html += line('Сопутствующие заболевания', s.comorbidity); html += line('Лекарства и вещества', s.substances);
+  html += line('Антропометрия', [s.heightCm && `рост ${s.heightCm} см`, s.weightKg && `вес ${s.weightKg} кг`, s.bmi && `ИМТ ${s.bmi}`, s.neck && `шея ${s.neck} см`].filter(Boolean).join('; '));
+  html += '<div class="result-subtitle">Профиль сна</div>';
+  html += line('Рабочие дни', workProfile || 'данные не заполнены'); html += line('Свободные дни', freeProfile);
+  html += line('Дневник сна 14 дней', s.diarySummary);
+  html += line('Возможность и условия для сна', `достаточное время — ${s.sleepOpportunity ? 'подтверждено' : 'не подтверждено'}; приемлемые условия — ${s.sleepConditions ? 'подтверждены' : 'не подтверждены'}`);
+  html += line('Циркадный профиль', circadianProfile);
+  html += '<div class="result-subtitle">Синдромные признаки и дневное функционирование</div>';
+  if (s.sleepSymptoms.length) html += line('Сон', s.sleepSymptoms.join(', '));
+  if (s.dayImpairments.length) html += line('Дневные последствия', s.dayImpairments.join(', '));
+  if (s.breathingSymptoms.length) html += line('Дыхание во сне', s.breathingSymptoms.join(', '));
+  if (s.movementSymptoms.length) html += line('Сенсомоторные признаки', s.movementSymptoms.join(', '));
+  if (s.rlsMimics.length) html += line('Возможные имитаторы RLS', s.rlsMimics.join(', '));
+  if (s.hypersomniaSymptoms.length) html += line('Гиперсомнолентность / REM-феномены', s.hypersomniaSymptoms.join(', '));
+  if (s.parasomniaSymptoms.length) html += line('Ночные эпизоды', s.parasomniaSymptoms.join(', '));
+  html += line('Характеристики ночных эпизодов', [s.episodeTiming && `преимущественно ${s.episodeTiming}`, s.episodeOnsetAge && `возраст начала ${s.episodeOnsetAge} лет`].filter(Boolean).join('; '));
+  html += line('Описание эпизодов', s.sleepNotes);
+  html += '<div class="result-subtitle">Безопасность</div>';
+  html += line('Красные флаги', s.safetyFlags.length ? s.safetyFlags.join(', ') : 'по заполненным данным не отмечены'); html += line('Принятые меры', s.safetyNotes);
+  html += '<div class="result-subtitle">Скрининговые шкалы (не диагноз)</div>';
+  html += `ISI: ${scaleIsComplete('isi', 7) ? `${s.isi}/28 (${escapeHtml(classifyIsi(s.isi))})` : 'не заполнена полностью'}.<br>`;
+  html += `ESS: ${scaleIsComplete('ess', 8) ? `${s.ess}/24 (${escapeHtml(classifyEss(s.ess))})` : 'не заполнена полностью'}.<br>`;
+  html += `STOP-Bang: ${s.age && s.sex && s.bmi && s.neck ? `${s.stopbang}/8 (${escapeHtml(classifyStopBang(s.stopbang))})` : 'не хватает исходных данных'}.<br>`;
+  html += '<div class="result-subtitle">Скрининговые сигналы и требующие уточнения данные</div>';
+  if (signals.length) signals.forEach(signal => { html += `<strong>${escapeHtml(signal.title)} — ${escapeHtml(signal.status)}</strong><br>`; if (signal.missing.length) html += `Уточнить: ${escapeHtml(signal.missing.map(item => item.label).join(', '))}.<br>`; if (signal.alternatives.length) html += `Альтернативы/коморбидность: ${escapeHtml(signal.alternatives.join('; '))}.<br>`; });
+  else html += 'Синдромных сигналов по заполненным данным не сформировано.<br>';
+  html += '<br>' + multilineLine('Клиническая оценка / диагноз врача', s.diagnosis);
+  html += numberedList('Обследования', s.testItems); html += groupedRecommendationList(s.recommendationItems); html += line('Лечение / маршрутизация', s.treatment);
+  const needsSleepDiaryAppendix = s.recommendationItems.some(item => item.id === 'sleep_diary') || !!document.querySelector('input[data-test-id="sleep_diary"]:checked');
+  if (needsSleepDiaryAppendix) html += sleepDiaryAppendix();
   el('result').innerHTML = html;
 }
 
@@ -2737,6 +3488,71 @@ function initNav() {
   }
 }
 
+function initSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const toggle = document.querySelector('.brand-mark');
+  if (!sidebar || !toggle) return;
+
+  function setCollapsed(collapsed) {
+    sidebar.classList.toggle('sidebar--collapsed', collapsed);
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+    const label = collapsed ? 'Развернуть боковую панель' : 'Свернуть боковую панель';
+    toggle.setAttribute('aria-label', label);
+    toggle.setAttribute('title', label);
+  }
+
+  setCollapsed(window.matchMedia('(max-width: 760px)').matches);
+  toggle.addEventListener('click', () => {
+    setCollapsed(!sidebar.classList.contains('sidebar--collapsed'));
+  });
+}
+
+function createSleepDiary() {
+  const body = el('sleep_diary_body');
+  if (!body || body.children.length) return;
+  for (let day = 1; day <= 14; day += 1) {
+    const row = document.createElement('tr');
+    row.innerHTML = `<td>${day}</td><td><select data-diary="type" aria-label="Тип дня"><option value="" selected>Тип дня</option><option value="work">Р</option><option value="free">СД</option></select></td>
+      <td><input type="time" data-diary="bed"></td><td><input type="time" data-diary="sleep"></td><td><input type="time" data-diary="wake"></td><td><input type="time" data-diary="rise"></td>
+      <td><input type="number" min="0" max="720" step="5" data-diary="waso"></td><td><input type="number" min="0" max="720" step="5" data-diary="nap"></td>`;
+    body.appendChild(row);
+  }
+  body.addEventListener('input', updateDiarySummary);
+  body.addEventListener('change', updateDiarySummary);
+}
+
+function diaryDuration(start, end) {
+  const a = timeToMinutes(start); const b = timeToMinutes(end);
+  if (a === null || b === null) return null;
+  let duration = b - a; if (duration <= 0) duration += 1440;
+  return duration > 1200 ? null : duration;
+}
+
+function updateDiarySummary() {
+  const groups = { work: [], free: [] };
+  document.querySelectorAll('#sleep_diary_body tr').forEach(row => {
+    const get = key => row.querySelector(`[data-diary="${key}"]`)?.value || '';
+    const timeInBed = diaryDuration(get('bed'), get('rise'));
+    const sleepWindow = diaryDuration(get('sleep'), get('wake'));
+    if (timeInBed === null && sleepWindow === null) return;
+    const waso = Number(get('waso') || 0); const nap = Number(get('nap') || 0);
+    const tst = sleepWindow === null ? null : Math.max(0, sleepWindow - waso);
+    const dayType = get('type');
+    if (!dayType) return;
+    groups[dayType].push({ timeInBed, tst, nap });
+  });
+  const describe = (label, rows) => {
+    if (!rows.length) return '';
+    const average = key => { const values = rows.map(row => row[key]).filter(Number.isFinite); return values.length ? Math.round(values.reduce((a, b) => a + b, 0) / values.length) : null; };
+    const tst = average('tst'); const tib = average('timeInBed'); const nap = average('nap');
+    return `${label}: ${rows.length} дн., TST ${tst === null ? '—' : (tst / 60).toFixed(1)} ч, время в постели ${tib === null ? '—' : (tib / 60).toFixed(1)} ч, дневной сон ${nap ?? '—'} мин`;
+  };
+  const lines = [describe('Рабочие дни', groups.work), describe('Свободные дни', groups.free)].filter(Boolean);
+  const summary = el('sleep_diary_summary');
+  summary.textContent = lines.join(' · ') || 'Нет заполненных строк';
+  summary.dataset.report = lines.join('; ');
+}
+
 function initDiagnosisSearch() {
   const search = el('diagnosis_search');
   if (!search) return;
@@ -2767,20 +3583,32 @@ function initDiagnosisSearch() {
 
 document.addEventListener('DOMContentLoaded', () => {
   createScaleItems();
+  createMedicationGroups();
+  createSleepDiary();
   createTestsChecklist();
   createRecommendationsChecklist();
   updateRecommendationGroupCounts();
   updateScores();
+  initSidebar();
   initNav();
   initDiagnosisSearch();
   initTimePicker();
+  initEditorToolbar();
   document.addEventListener('change', updateScores);
   document.addEventListener('change', updateRecommendationGroupCounts);
   document.addEventListener('input', updateScores);
   el('run-advisor').addEventListener('click', runAdvisor);
   el('generate-report').addEventListener('click', generateReport);
   el('copy-report').addEventListener('click', copyReport);
-  el('print-report').addEventListener('click', () => window.print());
+  el('print-report').addEventListener('click', () => {
+    if (typeof window.print !== 'function') {
+      alert('Печать не поддерживается этим браузером.');
+      return;
+    }
+
+    window.focus();
+    window.print();
+  });
 });
 
   </script>

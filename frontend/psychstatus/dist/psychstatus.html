@@ -905,6 +905,47 @@ button:active {
     min-height: 260px;
 }
 
+.editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin: -2px -4px 12px;
+    padding: 6px;
+    background: #f5f5f7;
+    border: 1px solid #e1e1e6;
+    border-radius: 10px;
+}
+
+.editor-toolbar button,
+.editor-toolbar .editor-select {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 7px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: #3a3a3c;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.editor-toolbar button:hover,
+.editor-toolbar button:focus-visible,
+.editor-toolbar .editor-select:hover,
+.editor-toolbar .editor-select:focus-visible {
+    outline: none;
+    background: #fff;
+    border-color: #c7c7cc;
+}
+
+.editor-toolbar .editor-select { min-width: 118px; }
+.editor-toolbar .editor-font-size { min-width: 82px; }
+.editor-toolbar__divider { width: 1px; height: 20px; background: #d1d1d6; margin: 0 2px; }
+.editor-color-mark { border-bottom: 3px solid #b42318; line-height: 1; }
+.editor-align-icon { display: block; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+
 #result {
     min-height: 240px;
     outline: none;
@@ -915,6 +956,17 @@ button:active {
 #result strong {
     color: #000;
     font-weight: 600;
+}
+
+@media (max-width: 560px) {
+    .editor-toolbar { gap: 2px; }
+    .editor-toolbar__divider { display: none; }
+}
+
+@media print {
+    .editor-toolbar {
+        display: none !important;
+    }
 }
 
     @keyframes fadeInUp {
@@ -3425,11 +3477,36 @@ button:active {
       <div class="buttons">
     <button type="button" onclick="generateText()">Сформировать текст</button>
     <button type="button" class="btn-secondary" onclick="copyResult()">Скопировать результат</button>
+    <button type="button" class="btn-secondary" id="print-result">Печать</button>
 </div>
 
 <div class="section" id="section-result">
     <h2>🖋️ Сформированный текст</h2>
     <div id="result-container">
+        <div class="editor-toolbar" data-editor-toolbar aria-label="Форматирование заключения">
+            <select class="editor-select" data-editor-command="formatBlock" aria-label="Стиль абзаца" title="Стиль абзаца">
+                <option value="p">Обычный текст</option><option value="h2">Заголовок</option><option value="h3">Подзаголовок</option>
+            </select>
+            <select class="editor-select editor-font-size" data-editor-command="fontSize" aria-label="Размер шрифта" title="Размер шрифта">
+                <option value="3">Размер</option><option value="2">Мелкий</option><option value="3">Обычный</option><option value="4">Крупный</option><option value="5">Очень крупный</option>
+            </select>
+            <span class="editor-toolbar__divider" aria-hidden="true"></span>
+            <button type="button" data-editor-command="bold" aria-label="Жирный" title="Жирный"><strong>Ж</strong></button>
+            <button type="button" data-editor-command="italic" aria-label="Курсив" title="Курсив"><em>К</em></button>
+            <button type="button" data-editor-command="underline" aria-label="Подчёркивание" title="Подчёркивание"><u>Ч</u></button>
+            <button type="button" data-editor-command="foreColor" data-editor-value="#b42318" aria-label="Цвет текста" title="Цвет текста"><span class="editor-color-mark">А</span></button>
+            <span class="editor-toolbar__divider" aria-hidden="true"></span>
+            <button type="button" data-editor-command="insertUnorderedList" aria-label="Маркированный список" title="Маркированный список">•≡</button>
+            <button type="button" data-editor-command="insertOrderedList" aria-label="Нумерованный список" title="Нумерованный список">1≡</button>
+            <span class="editor-toolbar__divider" aria-hidden="true"></span>
+            <button type="button" data-editor-command="justifyLeft" aria-label="По левому краю" title="По левому краю"><svg class="editor-align-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M3 8h10M3 12h14M3 16h10"/></svg></button>
+            <button type="button" data-editor-command="justifyCenter" aria-label="По центру" title="По центру"><svg class="editor-align-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M5 8h10M3 12h14M5 16h10"/></svg></button>
+            <button type="button" data-editor-command="justifyRight" aria-label="По правому краю" title="По правому краю"><svg class="editor-align-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M7 8h10M3 12h14M7 16h10"/></svg></button>
+            <span class="editor-toolbar__divider" aria-hidden="true"></span>
+            <button type="button" data-editor-command="undo" aria-label="Отменить" title="Отменить">↶</button>
+            <button type="button" data-editor-command="redo" aria-label="Повторить" title="Повторить">↷</button>
+            <button type="button" data-editor-command="removeFormat" aria-label="Очистить форматирование" title="Очистить форматирование">T×</button>
+        </div>
         <div id="result" contenteditable="true"></div>
     </div>
 </div>
@@ -8166,6 +8243,64 @@ function collectPrescriptionsText() {
     return lines.join('<br>');
 }
 
+    (function () {
+    function initEditorToolbar() {
+        var editor = document.getElementById('result');
+        var toolbar = document.querySelector('[data-editor-toolbar]');
+        if (!editor || !toolbar) return;
+
+        var savedRange = null;
+
+        function rememberSelection() {
+            var selection = window.getSelection();
+            if (selection.rangeCount && editor.contains(selection.anchorNode)) {
+                savedRange = selection.getRangeAt(0).cloneRange();
+            }
+        }
+
+        function restoreSelection() {
+            editor.focus();
+            if (!savedRange) return;
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(savedRange);
+        }
+
+        function run(command, value) {
+            restoreSelection();
+            document.execCommand(command, false, value || null);
+            rememberSelection();
+        }
+
+        editor.addEventListener('keyup', rememberSelection);
+        editor.addEventListener('mouseup', rememberSelection);
+        editor.addEventListener('input', rememberSelection);
+        editor.addEventListener('focus', rememberSelection);
+        editor.addEventListener('keydown', function (event) {
+            if (event.key !== 'Enter' || event.isComposing) return;
+            event.preventDefault();
+            document.execCommand('insertLineBreak');
+            rememberSelection();
+        });
+        toolbar.addEventListener('mousedown', function (event) {
+            if (event.target.closest('button')) event.preventDefault();
+        });
+        toolbar.addEventListener('click', function (event) {
+            var control = event.target.closest('[data-editor-command]');
+            if (!control || control.tagName === 'SELECT') return;
+            run(control.dataset.editorCommand, control.dataset.editorValue);
+        });
+        toolbar.addEventListener('change', function (event) {
+            var control = event.target.closest('select[data-editor-command]');
+            if (!control) return;
+            run(control.dataset.editorCommand, control.value);
+            control.selectedIndex = 0;
+        });
+    }
+
+    window.initEditorToolbar = initEditorToolbar;
+}());
+
 
     // TODO: report templates placeholder
 
@@ -8502,6 +8637,23 @@ function collectPrescriptionsText() {
 
     if (typeof initCompulsionsToggle === 'function') {
         initCompulsionsToggle();
+    }
+
+    if (typeof initEditorToolbar === 'function') {
+        initEditorToolbar();
+    }
+
+    const printButton = document.getElementById('print-result');
+    if (printButton) {
+        printButton.addEventListener('click', () => {
+            if (typeof window.print !== 'function') {
+                alert('Печать не поддерживается этим браузером.');
+                return;
+            }
+
+            window.focus();
+            window.print();
+        });
     }
 
     // Additional UI initialization can be placed here

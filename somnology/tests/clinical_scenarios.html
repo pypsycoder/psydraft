@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<title>Somnology clinical scenarios</title>
+<style>body{font:16px system-ui;padding:24px}#result{white-space:pre-wrap}iframe{width:1px;height:1px;border:0}</style>
+<h1>Клинические сценарии Somnology</h1>
+<div id="result">Запуск…</div>
+<iframe id="app" src="../dist/somnology.html"></iframe>
+<script>
+  const frame = document.getElementById('app');
+  frame.addEventListener('load', () => {
+    const script = frame.contentDocument.createElement('script');
+    script.src = '../tests/clinical_scenarios.js';
+    script.addEventListener('load', () => {
+      try {
+        document.getElementById('result').textContent = frame.contentWindow.runSomnologyClinicalScenarios() + '\nOK';
+      } catch (error) {
+        document.getElementById('result').textContent = 'FAILED\n' + error.stack;
+        document.body.dataset.failed = 'true';
+      }
+    });
+    frame.contentDocument.body.appendChild(script);
+  });
+</script>
+</html>

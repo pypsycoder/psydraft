@@ -76,6 +76,68 @@ const RECOMMENDATION_GROUPS = [
   ['other', 'Прочее']
 ];
 
+const MEDICATION_GROUPS = [
+  {
+    title: 'Стимулирующие вещества и симпатомиметики',
+    items: [
+      ['caffeine', 'Кофеин / энергетики', 'кофе, чай, энергетик', 'задержка засыпания, фрагментация сна'],
+      ['nicotine', 'Никотин', 'сигареты, вейп, НЗТ', 'активация; абстиненция ночью'],
+      ['stimulants', 'Психостимуляторы и препараты бодрствования', 'метилфенидат, амфетамин, модафинил', 'инсомния, подавление сонливости'],
+      ['decongestants', 'Сосудосуживающие деконгестанты', 'псевдоэфедрин, фенилэфрин', 'активация, инсомния']
+    ]
+  },
+  {
+    title: 'Психотропные препараты',
+    items: [
+      ['antidepressants', 'Антидепрессанты, изменяющие REM/сон', 'СИОЗС/СИОЗСН, бупропион, ИМАО', 'инсомния или сонливость, яркие сновидения, RLS/RBD'],
+      ['sedating_antidepressants', 'Седативные антидепрессанты', 'миртазапин, тразодон, амитриптилин', 'сонливость, изменение архитектуры сна'],
+      ['antipsychotics', 'Антипсихотики', 'кветиапин, оланзапин, рисперидон', 'седация; возможны акатизия/RLS и набор веса'],
+      ['sedatives', 'Бензодиазепины, Z-препараты, барбитураты', 'диазепам, клоназепам, золпидем', 'седация, изменение архитектуры; риск дыхания/зависимости'],
+      ['mood_stabilizers', 'Нормотимики и противоэпилептические', 'литий, вальпроат, ламотриджин, карбамазепин', 'сонливость или инсомния; изменение архитектуры'],
+      ['anxiolytics_other', 'Другие анксиолитики', 'буспирон, гидроксизин', 'активация либо остаточная сонливость']
+    ]
+  },
+  {
+    title: 'Сердечно-сосудистые препараты',
+    items: [
+      ['beta_blockers', 'β-блокаторы', 'пропранолол, метопролол, бисопролол, атенолол, тимолол', 'особенно липофильные: инсомния, яркие сновидения/кошмары, утомляемость'],
+      ['alpha_agents', 'α-адренергические препараты', 'клонидин, празозин, доксазозин', 'сонливость, изменение REM/сновидений'],
+      ['diuretics', 'Диуретики', 'гидрохлоротиазид, индапамид, фуросемид', 'никтурия и фрагментация сна'],
+      ['lipid_lowering', 'Гиполипидемические препараты', 'статины и другие', 'возможные индивидуальные нарушения сна'],
+      ['antiarrhythmics', 'Антиаритмические и другие кардиологические', 'амиодарон и др.', 'прямое влияние или через соматические симптомы']
+    ]
+  },
+  {
+    title: 'Дыхательная система, аллергия и воспаление',
+    items: [
+      ['beta_agonists', 'β₂-агонисты / бронходилататоры', 'сальбутамол, формотерол, теофиллин', 'активация, тремор, инсомния'],
+      ['corticosteroids', 'Системные глюкокортикоиды', 'преднизолон, дексаметазон', 'выраженная активация и инсомния'],
+      ['antihistamines', 'H1-антигистаминные', 'дифенгидрамин, доксиламин, гидроксизин', 'седация, остаточная сонливость; возможное усиление RLS'],
+      ['montelukast', 'Антилейкотриеновые', 'монтелукаст', 'яркие сновидения/кошмары у части пациентов']
+    ]
+  },
+  {
+    title: 'Неврология, боль и другие системные препараты',
+    items: [
+      ['dopaminergic', 'Дофаминергические препараты', 'леводопа, прамипексол, ропинирол', 'сонливость/приступы сна, сновидения, нарушения контроля импульсов'],
+      ['cholinesterase', 'Ингибиторы ацетилхолинэстеразы', 'донепезил, ривастигмин, галантамин', 'инсомния, яркие сновидения/RBD'],
+      ['opioids', 'Опиоиды и опиоидные антагонисты', 'морфин, оксикодон, трамадол, налтрексон', 'седация, центральное апноэ, фрагментация сна'],
+      ['gabapentinoids', 'Габапентиноиды и миорелаксанты', 'габапентин, прегабалин, баклофен', 'сонливость; возможный дыхательный риск'],
+      ['thyroid', 'Тиреоидные гормоны', 'левотироксин', 'инсомния при избыточной дозе/позднем приёме'],
+      ['antimicrobials', 'Препараты с возможной нейроактивацией', 'фторхинолоны, интерфероны', 'редкие инсомния, тревога или яркие сновидения'],
+      ['hormonal', 'Гормональные препараты', 'эстрогены, прогестины, андрогены', 'индивидуальное влияние на сон и дыхание']
+    ]
+  },
+  {
+    title: 'Алкоголь и другие вещества',
+    items: [
+      ['alcohol', 'Алкоголь', 'вид и количество', 'фрагментация сна, усиление храпа/OSA, REM-rebound'],
+      ['cannabis', 'Каннабиноиды', 'форма и количество', 'сонливость; изменение архитектуры и синдром отмены'],
+      ['other_substances', 'Другие ПАВ / добавки', 'название и количество', 'эффект зависит от вещества и отмены']
+    ]
+  }
+];
+
 const RECOMMENDATION_OPTIONS = [
   {
     id: 'sleep_diary',
@@ -363,21 +425,22 @@ function createScaleItems() {
   ISI_ITEMS.forEach((label, index) => {
     const row = document.createElement('div');
     row.className = 'scale-row';
-    row.innerHTML = `<div>${index + 1}. ${label}</div><select data-scale="isi"><option value="0">0 - нет</option><option value="1">1 - слабо</option><option value="2">2 - умеренно</option><option value="3">3 - значительно</option><option value="4">4 - выражено</option></select>`;
+    row.innerHTML = `<div>${index + 1}. ${label}</div><select data-scale="isi"><option value="" selected>—</option><option value="0">0 - нет</option><option value="1">1 - слабо</option><option value="2">2 - умеренно</option><option value="3">3 - значительно</option><option value="4">4 - выражено</option></select>`;
     isi.appendChild(row);
   });
 
   ESS_ITEMS.forEach((label, index) => {
     const row = document.createElement('div');
     row.className = 'scale-row';
-    row.innerHTML = `<div>${index + 1}. ${label}</div><select data-scale="ess"><option value="0">0 - не заснул бы</option><option value="1">1 - малая вероятность</option><option value="2">2 - умеренная вероятность</option><option value="3">3 - высокая вероятность</option></select>`;
+    row.innerHTML = `<div>${index + 1}. ${label}</div><select data-scale="ess"><option value="" selected>—</option><option value="0">0 - не заснул бы</option><option value="1">1 - малая вероятность</option><option value="2">2 - умеренная вероятность</option><option value="3">3 - высокая вероятность</option></select>`;
     ess.appendChild(row);
   });
 
   STOPBANG_ITEMS.forEach(([code, label]) => {
     const row = document.createElement('div');
     row.className = 'stopbang-row';
-    row.innerHTML = `<label><input type="checkbox" data-scale="stopbang" data-stopbang-code="${code}"> <strong>${code}</strong> ${label}</label>`;
+    const derived = ' disabled';
+    row.innerHTML = `<label><input type="checkbox" data-scale="stopbang" data-stopbang-code="${code}"${derived}> <strong>${code}</strong> ${label}${derived ? ' <small>(из данных формы)</small>' : ''}</label>`;
     stopbang.appendChild(row);
   });
 }
@@ -426,6 +489,21 @@ function createRecommendationsChecklist() {
     });
 
     container.appendChild(group);
+  });
+}
+
+function createMedicationGroups() {
+  const container = el('medication-groups');
+  if (!container || container.children.length) return;
+  MEDICATION_GROUPS.forEach((group, groupIndex) => {
+    const details = document.createElement('details');
+    details.className = 'medication-group';
+    if (groupIndex === 0) details.open = true;
+    details.innerHTML = `<summary>${escapeHtml(group.title)}</summary><div class="medication-table">
+      <div class="medication-head">Класс / фактор</div><div class="medication-head">Препарат и доза</div><div class="medication-head">Время</div>
+      ${group.items.map(([id, label, examples, effect]) => `<label class="medication-choice" title="${escapeHtml(effect)}"><input type="checkbox" name="substance_option" value="${escapeHtml(label)}" data-substance-id="${escapeHtml(id)}"><span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(effect)}</small></span></label><input type="text" data-substance-amount="${escapeHtml(id)}" placeholder="${escapeHtml(examples)}"><input type="time" data-substance-time="${escapeHtml(id)}">`).join('')}
+    </div>`;
+    container.appendChild(details);
   });
 }
 
@@ -594,7 +672,7 @@ function collectSubstancesText() {
       const time = document.querySelector(`[data-substance-time="${id}"]`)?.value.trim() || '';
       const details = [];
       if (amount) details.push(amount);
-      if (time) details.push(`за ${time} до сна`);
+      if (time) details.push(`время приёма ${time}`);
       return details.length ? `${checkbox.value} (${details.join(', ')})` : checkbox.value;
     });
   const extra = value('substances_extra');
@@ -605,6 +683,7 @@ function collectSubstancesText() {
 function collectRecommendationsItems() {
   const selected = Array.from(document.querySelectorAll('input[name="recommendation_option"]:checked'))
     .map(checkbox => ({
+      id: checkbox.dataset.recId || '',
       label: checkbox.value,
       group: checkbox.dataset.recGroup || 'other'
     }));
@@ -627,10 +706,22 @@ function sumScale(name) {
 function updateScores() {
   updateBmi();
   updateNeckStopBang();
-  updateTotalSleep();
+  updateDemographicStopBang();
+  updateTotalSleepV2();
   el('isi-score').textContent = String(sumScale('isi'));
   el('ess-score').textContent = String(sumScale('ess'));
   el('stopbang-score').textContent = String(sumScale('stopbang'));
+  updateScaleCompletion();
+}
+
+function updateScaleCompletion() {
+  [['isi', 7], ['ess', 8]].forEach(([name, total]) => {
+    const done = Array.from(document.querySelectorAll(`select[data-scale="${name}"]`)).filter(node => node.value !== '').length;
+    const badge = el(`${name}-completion`);
+    if (badge) badge.textContent = `${done}/${total}${done === total ? ' · заполнено' : ''}`;
+  });
+  const stop = el('stopbang-completion');
+  if (stop) stop.textContent = value('age') && value('sex') && value('neck') && value('bmi') ? 'исходные данные заполнены' : 'уточните возраст, пол, ИМТ и шею';
 }
 
 function numericValue(id) {
@@ -758,10 +849,60 @@ function updateTotalSleep() {
   return sleepHours;
 }
 
+function updateTotalSleepV2() {
+  const totalField = el('total_sleep');
+  const efficiencyField = el('sleep_efficiency');
+  const timeInBedField = el('time_in_bed');
+  const warning = el('sleep_calculation_warning');
+  if (!totalField) return null;
+  const bedtime = timeToMinutes(value('sleep_attempt') || value('bedtime'));
+  const waketime = timeToMinutes(value('waketime'));
+  if (bedtime === null || waketime === null) {
+    totalField.value = '';
+    if (efficiencyField) efficiencyField.value = '';
+    if (timeInBedField) timeInBedField.value = '';
+    if (warning) warning.textContent = 'Для расчёта заполните попытку уснуть/укладывание и подъём.';
+    return null;
+  }
+  let timeInBed = waketime - bedtime;
+  if (timeInBed <= 0) timeInBed += 1440;
+  const latency = numericValue('latency') || 0;
+  const waso = numericValue('waso') || 0;
+  const sleepMinutes = Math.max(0, timeInBed - latency - waso);
+  const sleepHours = Math.round(sleepMinutes / 6) / 10;
+  const efficiency = Math.round(sleepMinutes / timeInBed * 100);
+  totalField.value = String(sleepHours).replace('.', ',');
+  if (efficiencyField) efficiencyField.value = String(efficiency);
+  if (timeInBedField) timeInBedField.value = String(Math.round(timeInBed / 6) / 10).replace('.', ',');
+  const invalid = timeInBed > 960 || latency + waso > timeInBed;
+  if (warning) warning.textContent = invalid ? 'Проверьте значения: интервалы выглядят противоречиво.' : '';
+  return sleepHours;
+}
+
+function updateDemographicStopBang() {
+  const ageCheckbox = document.querySelector('[data-stopbang-code="A"]');
+  const sexCheckbox = document.querySelector('[data-stopbang-code="G"]');
+  const pressureCheckbox = document.querySelector('[data-stopbang-code="P"]');
+  const snoreCheckbox = document.querySelector('[data-stopbang-code="S"]');
+  const tiredCheckbox = document.querySelector('[data-stopbang-code="T"]');
+  const observedCheckbox = document.querySelector('[data-stopbang-code="O"]');
+  if (ageCheckbox) ageCheckbox.checked = (numericValue('age') || 0) > 50;
+  if (sexCheckbox) sexCheckbox.checked = value('sex') === 'male';
+  if (pressureCheckbox) pressureCheckbox.checked = checkedValues('comorbidity_option').some(item => item.includes('артериальная гипертензия'));
+  if (snoreCheckbox) snoreCheckbox.checked = hasAny(checkedValues('breathing_symptom'), ['громкий храп', 'храп почти каждую ночь']);
+  if (tiredCheckbox) tiredCheckbox.checked = checkedValues('sleep_symptom').includes('выраженная дневная сонливость') || sumScale('ess') > 10;
+  if (observedCheckbox) observedCheckbox.checked = checkedValues('breathing_symptom').includes('остановки дыхания во сне');
+}
+
 function collectState() {
   return {
+    age: value('age'), sex: value('sex'), workSchedule: value('work_schedule'), nightShifts: value('night_shifts'),
+    complaintDuration: value('complaint_duration'), complaintFrequency: value('complaint_frequency'),
+    sleepOpportunity: !!el('sleep_opportunity')?.checked, sleepConditions: !!el('sleep_conditions')?.checked,
     complaints: value('complaints'),
     history: value('history'),
+    previousSleepCare: value('previous_sleep_care'), bedPartnerReport: value('bed_partner_report'), familyHistory: value('family_history'),
+    safetyFlags: checkedValues('safety_flag'), safetyNotes: value('safety_notes'),
     comorbidity: collectComorbidityText(),
     substances: collectSubstancesText(),
     heightCm: value('height_cm'),
@@ -769,10 +910,13 @@ function collectState() {
     bmi: value('bmi'),
     neck: value('neck'),
     bedtime: value('bedtime'),
+    eveningSleepiness: value('evening_sleepiness'),
+    sleepAttempt: value('sleep_attempt'), finalWake: value('final_wake'),
     waketime: value('waketime'),
+    freeBedtime: value('free_bedtime'), freeSleepAttempt: value('free_sleep_attempt'), freeFinalWake: value('free_final_wake'), freeWaketime: value('free_waketime'), freeNapMinutes: value('free_nap_minutes'),
     latency: value('latency'),
     awakenings: value('awakenings'),
-    awakeningDuration: value('awakening_duration'),
+    awakeningDuration: value('waso'), waso: value('waso'), timeInBed: value('time_in_bed'),
     totalSleep: value('total_sleep'),
     sleepEfficiency: value('sleep_efficiency'),
     napMinutes: value('nap_minutes'),
@@ -780,11 +924,18 @@ function collectState() {
     waketimeVariability: value('waketime_variability'),
     sleepDurationVariability: value('sleep_duration_variability'),
     sleepSymptoms: checkedValues('sleep_symptom'),
+    dayImpairments: checkedValues('day_impairment'),
     breathingSymptoms: checkedValues('breathing_symptom'),
     movementSymptoms: checkedValues('movement_symptom'),
+    rlsMimics: checkedValues('rls_mimic'),
     parasomniaSymptoms: checkedValues('parasomnia_symptom'),
     hypersomniaSymptoms: checkedValues('hypersomnia_symptom'),
     sleepNotes: value('sleep_notes'),
+    circadianPattern: document.querySelector('input[name="circadian_pattern"]:checked')?.value || '',
+    preferredBedtime: value('preferred_bedtime'), preferredWaketime: value('preferred_waketime'), freeScheduleSleep: value('free_schedule_sleep'), morningLightMinutes: value('morning_light_minutes'),
+    episodeTiming: value('episode_timing'), episodeOnsetAge: value('episode_onset_age'),
+    sleepDiaryPatientName: value('sleep_diary_patient_name'), sleepDiaryStartDate: value('sleep_diary_start_date'),
+    diarySummary: el('sleep_diary_summary')?.dataset.report || '',
     isi: sumScale('isi'),
     ess: sumScale('ess'),
     stopbang: sumScale('stopbang'),
@@ -812,12 +963,15 @@ function classifyEss(score) {
 }
 
 function classifyStopBang(score) {
-  if (score >= 5) return 'высокий риск ОАС';
+  const codes = checkedStopBangCodes();
+  const stopCore = ['S', 'T', 'O', 'P'].filter(code => codes.includes(code)).length;
+  const enhancedHigh = stopCore >= 2 && ['B', 'N', 'G'].some(code => codes.includes(code));
+  if (score >= 5 || enhancedHigh) return 'высокий риск ОАС';
   if (score >= 3) return 'промежуточный риск ОАС';
   return 'низкий риск ОАС';
 }
 
-function runAdvisor() {
+function legacyRunAdvisor() {
   const state = collectState();
   const results = ADVISOR_RULES.map(rule => {
     const requiredMet = rule.required.filter(([, fn]) => fn(state)).map(([label]) => label);
@@ -833,17 +987,13 @@ function runAdvisor() {
     });
 
   renderAdvisor(results);
-  results.slice(0, 2).forEach(result => {
-    applyTestsForDiagnosis(result.code);
-    applyRecommendationsForDiagnosis(result.code);
-  });
   const hint = el('advisor-hint');
   const now = new Date();
   hint.textContent = `Обновлено ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   return results;
 }
 
-function renderAdvisor(results) {
+function legacyRenderAdvisor(results) {
   const container = el('advisor-results');
   container.innerHTML = '';
   if (!results.length) {
@@ -905,11 +1055,132 @@ function renderAdvisor(results) {
         </div>
       </div>
       <strong>Уточнить:</strong><div class="advisor-clarify-list">${clarifyItems}</div>
-      <div class="advisor-actions"><button type="button" class="advisor-add-diagnosis">Добавить диагноз</button></div>
+      <div class="advisor-actions"></div>
     `;
-    card.querySelector('.advisor-add-diagnosis').addEventListener('click', () => addAdvisorDiagnosis(card));
     container.appendChild(card);
   });
+}
+
+const ROUTER_RULES = [
+  {
+    id: 'insomnia', title: 'Инсомнический синдром', anchor: 'complaint_frequency',
+    trigger: s => hasAny(s.sleepSymptoms, ['трудности засыпания', 'частые ночные пробуждения', 'ранние утренние пробуждения']) || s.isi >= 8,
+    complete: s => Number(s.complaintFrequency) >= 3 && s.complaintDuration === 'ge_3m' && s.sleepOpportunity && s.sleepConditions && s.dayImpairments.length > 0,
+    missing: s => [[!s.complaintFrequency, 'частоту жалоб', 'complaint_frequency'], [!s.complaintDuration, 'длительность жалоб', 'complaint_duration'], [!s.sleepOpportunity, 'достаточную возможность для сна', 'sleep_opportunity'], [!s.sleepConditions, 'условия для сна', 'sleep_conditions'], [!s.dayImpairments.length, 'дневные последствия', 'sleep']],
+    alternatives: s => [s.stopbang >= 3 || s.breathingSymptoms.length ? 'Возможна коморбидная OSA (COMISA)' : '', s.circadianPattern ? 'Возможен циркадный компонент' : '', textHasAny(s.substances, ['стимуляторы', 'седативные', 'алкоголь']) ? 'Оценить влияние веществ/лекарств' : ''].filter(Boolean),
+    redFlags: () => [], tests: ['sleep_diary'], recs: ['sleep_diary', 'stimulus_control', 'cbti']
+  },
+  {
+    id: 'osa', title: 'Нарушение дыхания во сне / риск OSA', anchor: 'breathing_symptom',
+    trigger: s => s.stopbang >= 3 || s.breathingSymptoms.length > 0,
+    complete: s => s.stopbang >= 3 && hasAny(s.breathingSymptoms, ['громкий храп', 'остановки дыхания во сне', 'удушье или нехватка воздуха ночью']),
+    missing: s => [[!s.age, 'возраст', 'age'], [!s.sex, 'пол', 'sex'], [!s.neck, 'окружность шеи', 'neck'], [!s.bedPartnerReport, 'сведения свидетеля', 'bed_partner_report']],
+    alternatives: s => [parseSleepHours(s.totalSleep) > 0 && parseSleepHours(s.totalSleep) < 7 ? 'Недостаточный сон также может объяснять сонливость' : ''].filter(Boolean),
+    redFlags: s => s.safetyFlags.filter(item => /рул|ДТП|удушье|груди|синкопе|одышка/.test(item)), tests: ['resp_monitoring'], recs: ['osa_position']
+  },
+  {
+    id: 'rls', title: 'Сенсомоторный синдром / возможный RLS', anchor: 'sleep',
+    trigger: s => s.movementSymptoms.length > 0,
+    complete: s => ['императивное желание двигать ногами', 'начало или усиление в покое', 'облегчение при движении ногами', 'усиление вечером или ночью'].every(item => s.movementSymptoms.includes(item)) && !s.rlsMimics.length,
+    missing: s => [['императивное желание двигать ногами', 'желание двигать ногами'], ['начало или усиление в покое', 'усиление в покое'], ['облегчение при движении ногами', 'облегчение движением'], ['усиление вечером или ночью', 'вечернее усиление']].filter(([key]) => !s.movementSymptoms.includes(key)).map(([, label]) => [true, label, 'sleep']),
+    alternatives: s => s.rlsMimics.map(item => `Имитатор RLS: ${item}`), redFlags: () => [], tests: ['ferritin', 'cbc'], recs: ['rls_iron', 'rls_behavior']
+  },
+  {
+    id: 'hypersomnia', title: 'Центральная гиперсомнолентность', anchor: 'sleep',
+    trigger: s => s.ess >= 11 || hasAny(s.hypersomniaSymptoms, ['непреодолимые приступы сна', 'катаплексия', 'тяжёлая инерция сна', 'сон более 10 часов']),
+    complete: s => s.ess >= 11 && (s.sleepOpportunity || parseSleepHours(s.totalSleep) >= 7) && !!s.diarySummary,
+    missing: s => [[!s.diarySummary, '14-дневный дневник для подтверждения достаточного сна', 'sleep_diary_body'], [!s.previousSleepCare, 'препараты и предшествующие исследования', 'previous_sleep_care']],
+    alternatives: s => [s.stopbang >= 3 ? 'Сначала исключить OSA' : '', parseSleepHours(s.totalSleep) > 0 && parseSleepHours(s.totalSleep) < 7 ? 'Вероятен недостаточный сон' : '', textHasAny(s.substances, ['седативные', 'алкоголь']) ? 'Возможна лекарственная/вещественная сонливость' : ''].filter(Boolean),
+    redFlags: s => s.safetyFlags.filter(item => /рул|ДТП|опасная работа/.test(item)), tests: ['sleep_diary', 'psg', 'mslt'], recs: ['hypersomnia_safety', 'hypersomnia_schedule']
+  },
+  {
+    id: 'circadian', title: 'Циркадное нарушение сна-бодрствования', anchor: 'preferred_bedtime',
+    trigger: s => !!s.circadianPattern || s.workSchedule.includes('сменный') || Number(s.nightShifts) > 0,
+    complete: s => !!s.circadianPattern && !!s.preferredBedtime && !!s.preferredWaketime && !!s.diarySummary,
+    missing: s => [[!s.preferredBedtime, 'желаемое время засыпания', 'preferred_bedtime'], [!s.preferredWaketime, 'желаемое время подъёма', 'preferred_waketime'], [!s.diarySummary, 'дневник сна', 'sleep_diary_body']],
+    alternatives: () => [], redFlags: s => s.safetyFlags.filter(item => /рул|ДТП|опасная работа/.test(item)), tests: ['sleep_diary', 'actigraphy'], recs: ['circadian_light', 'circadian_shift']
+  },
+  {
+    id: 'parasomnia', title: 'Ночные эпизоды / парасомния', anchor: 'sleep_notes',
+    trigger: s => s.parasomniaSymptoms.length > 0,
+    complete: s => !!s.sleepNotes,
+    missing: s => [[!s.sleepNotes, 'клиническое описание эпизодов', 'sleep_notes']],
+    alternatives: s => [s.parasomniaSymptoms.some(item => item.includes('эпилеп')) ? 'Требуется дифференциация с ночной эпилепсией' : '', s.parasomniaSymptoms.some(item => item.includes('RBD')) ? 'Подозрение на RBD: оценить неврологический статус' : ''].filter(Boolean),
+    redFlags: s => s.safetyFlags.filter(item => /травм/.test(item)), tests: ['video', 'psg', 'neurology'], recs: ['parasomnia_safety', 'parasomnia_triggers']
+  }
+];
+
+let lastRouterResults = [];
+
+function evaluateRouter(state) {
+  const globalFlags = state.safetyFlags || [];
+  const results = ROUTER_RULES.filter(rule => rule.trigger(state)).map(rule => {
+    const missing = rule.missing(state).filter(([condition]) => condition).map(([, label, id]) => ({ label, id }));
+    const redFlags = rule.redFlags(state);
+    let status = rule.complete(state) ? 'есть скрининговый сигнал' : 'требуется приоритетное уточнение';
+    if (redFlags.length || globalFlags.some(item => /груди|синкопе/.test(item))) status = 'красный флаг';
+    let tests = [...rule.tests];
+    if (rule.id === 'hypersomnia' && !(state.diarySummary && state.previousSleepCare && parseSleepHours(state.totalSleep) >= 7 && state.stopbang < 3)) tests = tests.filter(id => id !== 'mslt');
+    if (rule.id === 'osa' && textHasAny(state.comorbidity, ['сердечная недостаточность', 'ХОБЛ', 'инсульт'])) tests = ['psg'];
+    if (rule.id === 'rls' && state.movementSymptoms.length < 3) tests = [];
+    return { ...rule, tests, status, missing, alternatives: rule.alternatives(state), redFlags };
+  });
+  if (globalFlags.length && !results.some(item => item.redFlags.length)) {
+    results.unshift({ id: 'safety', title: 'Безопасность сна', status: 'красный флаг', missing: [], alternatives: [], redFlags: globalFlags, tests: [], recs: [], anchor: 'safety_notes' });
+  }
+  return results;
+}
+
+function runAdvisor() {
+  lastRouterResults = evaluateRouter(collectState());
+  renderRouter(lastRouterResults);
+  const now = new Date();
+  el('advisor-hint').textContent = `Обновлено ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}. Советник не изменил диагноз или план.`;
+  return lastRouterResults;
+}
+
+function listHtml(items, empty) {
+  return items.length ? items.map(item => `<li>${escapeHtml(item)}</li>`).join('') : `<li class="advisor-muted">${empty}</li>`;
+}
+
+function renderRouter(results) {
+  const container = el('advisor-results');
+  container.innerHTML = '';
+  if (!results.length) {
+    container.innerHTML = '<p class="hint">Недостаточно данных для синдромного сигнала. Заполните профиль сна и шкалы.</p>';
+    return;
+  }
+  results.forEach(result => {
+    const card = document.createElement('div');
+    card.className = `advisor-card route-${result.status.replaceAll(' ', '-')}`;
+    card.dataset.routeId = result.id;
+    card.innerHTML = `<div class="advisor-title"><span>${escapeHtml(result.title)}</span><span class="advisor-status">${escapeHtml(result.status)}</span></div>
+      <div class="advisor-criteria">
+        <div><strong>Не хватает:</strong><ul>${result.missing.length ? result.missing.map(item => `<li><button type="button" class="link-button advisor-goto" data-target="${item.id}">${escapeHtml(item.label)}</button></li>`).join('') : '<li class="advisor-muted">минимальные данные собраны</li>'}</ul></div>
+        <div><strong>Альтернативы / коморбидность:</strong><ul>${listHtml(result.alternatives, 'не выявлены по заполненным данным')}</ul></div>
+        <div><strong>Красные флаги:</strong><ul>${listHtml(result.redFlags, 'не выявлены')}</ul></div>
+        <div><strong>Подтверждение:</strong><ul>${listHtml(result.tests.map(id => TEST_OPTIONS.find(item => item.id === id)?.label).filter(Boolean), 'не требуется')}</ul></div>
+      </div><div class="advisor-actions">${result.tests.length || result.recs.length ? '<button type="button" class="advisor-apply-plan">Добавить предложенный план</button>' : ''}</div>`;
+    card.querySelectorAll('.advisor-goto').forEach(button => button.addEventListener('click', () => focusClinicalField(button.dataset.target)));
+    card.querySelector('.advisor-apply-plan')?.addEventListener('click', () => applyRouterPlan(result, card));
+    container.appendChild(card);
+  });
+}
+
+function focusClinicalField(id) {
+  const node = el(id) || document.querySelector(`[name="${id}"]`);
+  if (!node) return;
+  node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  node.focus?.();
+  node.closest('details')?.setAttribute('open', '');
+}
+
+function applyRouterPlan(result, card) {
+  result.tests.forEach(id => { const input = document.querySelector(`[data-test-id="${id}"]`); if (input) input.checked = true; });
+  result.recs.forEach(id => { const input = document.querySelector(`[data-rec-id="${id}"]`); if (input) input.checked = true; });
+  updateRecommendationGroupCounts();
+  const button = card.querySelector('.advisor-apply-plan');
+  button.textContent = 'План добавлен'; button.disabled = true;
 }
 
 function collectAdvisorClarificationsFromCard(card) {
@@ -980,7 +1251,21 @@ function groupedRecommendationList(items) {
   return `<strong>Рекомендации:</strong>${sections}`;
 }
 
-function generateReport() {
+function sleepDiaryAppendix() {
+  const rows = Array.from(document.querySelectorAll('#sleep_diary_body tr')).map((row, index) => {
+    const value = key => row.querySelector(`[data-diary="${key}"]`)?.value || '';
+    const dayType = value('type') === 'free' ? 'СД' : value('type') === 'work' ? 'Р' : '';
+    return `<tr><td>${index + 1}</td><td>${dayType}</td><td>${escapeHtml(value('bed'))}</td><td>${escapeHtml(value('sleep'))}</td><td>${escapeHtml(value('wake'))}</td><td>${escapeHtml(value('rise'))}</td><td>${escapeHtml(value('waso'))}</td><td>${escapeHtml(value('nap'))}</td></tr>`;
+  }).join('');
+  return `<div class="report-appendix">
+    <div class="result-subtitle">Приложение: дневник сна на 2 недели</div>
+    <div class="report-diary-meta"><div>ФИО: ________________________________</div><div>Дата начала дневника: ____.____.____</div></div>
+    <p class="diary-instruction">Тип дня: Р — рабочий; СД — свободный. Латентность сна — время от попытки уснуть до засыпания. Бодрствование после засыпания — суммарное время всех ночных пробуждений.</p>
+    <table class="report-diary-table"><thead><tr><th>День</th><th>Тип</th><th>Лёг</th><th>Уснул</th><th>Проснулся</th><th>Встал</th><th>Бодрствование после засыпания, мин</th><th>Дневной сон, мин</th></tr></thead><tbody>${rows}</tbody></table>
+  </div>`;
+}
+
+function legacyGenerateReport() {
   const s = collectState();
   const sleepProfile = [
     s.bedtime ? `отход ко сну ${s.bedtime}` : '',
@@ -1029,6 +1314,64 @@ function generateReport() {
   html += groupedRecommendationList(s.recommendationItems);
   html += line('Лечение / маршрутизация', s.treatment);
 
+  el('result').innerHTML = html;
+}
+
+function scaleIsComplete(name, total) {
+  return Array.from(document.querySelectorAll(`select[data-scale="${name}"]`)).filter(node => node.value !== '').length === total;
+}
+
+function stateLabel(value, labels) {
+  return labels[value] || value || '';
+}
+
+function generateReport() {
+  const s = collectState();
+  const signals = evaluateRouter(s);
+  const durationLabel = stateLabel(s.complaintDuration, { lt_1m: 'менее 1 месяца', '1_3m': '1–3 месяца', ge_3m: '3 месяца и более' });
+  const sexLabel = stateLabel(s.sex, { male: 'мужской', female: 'женский', other: 'другой / не указан' });
+  const circadianLabel = stateLabel(s.circadianPattern, { delayed: 'задержка фазы', advanced: 'опережение фазы', irregular: 'нерегулярный ритм', shift: 'сменная работа' });
+  const freeScheduleLabel = stateLabel(s.freeScheduleSleep, { normal: 'нормальный и освежающий', disturbed: 'остаётся нарушенным' });
+  const workProfile = [s.eveningSleepiness && `появление вечерней сонливости ${s.eveningSleepiness}`, s.bedtime && `укладывание ${s.bedtime}`, s.sleepAttempt && `попытка уснуть ${s.sleepAttempt}`, s.latency && `латентность сна ${s.latency} мин`, s.awakenings && `ночных пробуждений ${s.awakenings}`, s.finalWake && `окончательное пробуждение ${s.finalWake}`, s.waketime && `подъём ${s.waketime}`, s.timeInBed && `время в постели ${s.timeInBed} ч`, s.totalSleep && `общее время сна (TST) ${s.totalSleep} ч`, s.waso && `бодрствование после засыпания ${s.waso} мин`, s.sleepEfficiency && `эффективность сна (SE) ${s.sleepEfficiency}%`, s.napMinutes && `дневной сон ${s.napMinutes} мин`].filter(Boolean).join(', ');
+  const freeProfile = [s.freeBedtime && `укладывание ${s.freeBedtime}`, s.freeSleepAttempt && `попытка уснуть ${s.freeSleepAttempt}`, s.freeFinalWake && `пробуждение ${s.freeFinalWake}`, s.freeWaketime && `подъём ${s.freeWaketime}`, s.freeNapMinutes && `дневной сон ${s.freeNapMinutes} мин`].filter(Boolean).join(', ');
+  const circadianProfile = [circadianLabel && `предполагаемый профиль: ${circadianLabel}`, s.preferredBedtime && `желаемое засыпание ${s.preferredBedtime}`, s.preferredWaketime && `желаемый подъём ${s.preferredWaketime}`, freeScheduleLabel && `сон при свободном графике ${freeScheduleLabel}`, s.morningLightMinutes && `утренний свет ${s.morningLightMinutes} мин`].filter(Boolean).join(', ');
+  let html = '<strong>Сомнологический приём взрослого пациента</strong><br><br>';
+  html += '<div class="result-subtitle">Повод обращения и анамнез</div>';
+  html += line('Жалобы', s.complaints || 'активно не предъявляет');
+  html += line('Длительность и частота жалоб', [durationLabel, s.complaintFrequency && `${s.complaintFrequency} ночей в неделю`].filter(Boolean).join('; '));
+  html += line('Анамнез', s.history); html += line('Предыдущие исследования и лечение', s.previousSleepCare);
+  html += line('Сведения партнёра', s.bedPartnerReport); html += line('Семейный анамнез', s.familyHistory);
+  html += line('Контекст', [s.age && `возраст ${s.age} лет`, sexLabel && `пол ${sexLabel}`, s.workSchedule && `режим работы: ${s.workSchedule}`, s.nightShifts && `ночных смен в месяц: ${s.nightShifts}`].filter(Boolean).join('; '));
+  html += line('Сопутствующие заболевания', s.comorbidity); html += line('Лекарства и вещества', s.substances);
+  html += line('Антропометрия', [s.heightCm && `рост ${s.heightCm} см`, s.weightKg && `вес ${s.weightKg} кг`, s.bmi && `ИМТ ${s.bmi}`, s.neck && `шея ${s.neck} см`].filter(Boolean).join('; '));
+  html += '<div class="result-subtitle">Профиль сна</div>';
+  html += line('Рабочие дни', workProfile || 'данные не заполнены'); html += line('Свободные дни', freeProfile);
+  html += line('Дневник сна 14 дней', s.diarySummary);
+  html += line('Возможность и условия для сна', `достаточное время — ${s.sleepOpportunity ? 'подтверждено' : 'не подтверждено'}; приемлемые условия — ${s.sleepConditions ? 'подтверждены' : 'не подтверждены'}`);
+  html += line('Циркадный профиль', circadianProfile);
+  html += '<div class="result-subtitle">Синдромные признаки и дневное функционирование</div>';
+  if (s.sleepSymptoms.length) html += line('Сон', s.sleepSymptoms.join(', '));
+  if (s.dayImpairments.length) html += line('Дневные последствия', s.dayImpairments.join(', '));
+  if (s.breathingSymptoms.length) html += line('Дыхание во сне', s.breathingSymptoms.join(', '));
+  if (s.movementSymptoms.length) html += line('Сенсомоторные признаки', s.movementSymptoms.join(', '));
+  if (s.rlsMimics.length) html += line('Возможные имитаторы RLS', s.rlsMimics.join(', '));
+  if (s.hypersomniaSymptoms.length) html += line('Гиперсомнолентность / REM-феномены', s.hypersomniaSymptoms.join(', '));
+  if (s.parasomniaSymptoms.length) html += line('Ночные эпизоды', s.parasomniaSymptoms.join(', '));
+  html += line('Характеристики ночных эпизодов', [s.episodeTiming && `преимущественно ${s.episodeTiming}`, s.episodeOnsetAge && `возраст начала ${s.episodeOnsetAge} лет`].filter(Boolean).join('; '));
+  html += line('Описание эпизодов', s.sleepNotes);
+  html += '<div class="result-subtitle">Безопасность</div>';
+  html += line('Красные флаги', s.safetyFlags.length ? s.safetyFlags.join(', ') : 'по заполненным данным не отмечены'); html += line('Принятые меры', s.safetyNotes);
+  html += '<div class="result-subtitle">Скрининговые шкалы (не диагноз)</div>';
+  html += `ISI: ${scaleIsComplete('isi', 7) ? `${s.isi}/28 (${escapeHtml(classifyIsi(s.isi))})` : 'не заполнена полностью'}.<br>`;
+  html += `ESS: ${scaleIsComplete('ess', 8) ? `${s.ess}/24 (${escapeHtml(classifyEss(s.ess))})` : 'не заполнена полностью'}.<br>`;
+  html += `STOP-Bang: ${s.age && s.sex && s.bmi && s.neck ? `${s.stopbang}/8 (${escapeHtml(classifyStopBang(s.stopbang))})` : 'не хватает исходных данных'}.<br>`;
+  html += '<div class="result-subtitle">Скрининговые сигналы и требующие уточнения данные</div>';
+  if (signals.length) signals.forEach(signal => { html += `<strong>${escapeHtml(signal.title)} — ${escapeHtml(signal.status)}</strong><br>`; if (signal.missing.length) html += `Уточнить: ${escapeHtml(signal.missing.map(item => item.label).join(', '))}.<br>`; if (signal.alternatives.length) html += `Альтернативы/коморбидность: ${escapeHtml(signal.alternatives.join('; '))}.<br>`; });
+  else html += 'Синдромных сигналов по заполненным данным не сформировано.<br>';
+  html += '<br>' + multilineLine('Клиническая оценка / диагноз врача', s.diagnosis);
+  html += numberedList('Обследования', s.testItems); html += groupedRecommendationList(s.recommendationItems); html += line('Лечение / маршрутизация', s.treatment);
+  const needsSleepDiaryAppendix = s.recommendationItems.some(item => item.id === 'sleep_diary') || !!document.querySelector('input[data-test-id="sleep_diary"]:checked');
+  if (needsSleepDiaryAppendix) html += sleepDiaryAppendix();
   el('result').innerHTML = html;
 }
 
@@ -1212,6 +1555,71 @@ function initNav() {
   }
 }
 
+function initSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const toggle = document.querySelector('.brand-mark');
+  if (!sidebar || !toggle) return;
+
+  function setCollapsed(collapsed) {
+    sidebar.classList.toggle('sidebar--collapsed', collapsed);
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+    const label = collapsed ? 'Развернуть боковую панель' : 'Свернуть боковую панель';
+    toggle.setAttribute('aria-label', label);
+    toggle.setAttribute('title', label);
+  }
+
+  setCollapsed(window.matchMedia('(max-width: 760px)').matches);
+  toggle.addEventListener('click', () => {
+    setCollapsed(!sidebar.classList.contains('sidebar--collapsed'));
+  });
+}
+
+function createSleepDiary() {
+  const body = el('sleep_diary_body');
+  if (!body || body.children.length) return;
+  for (let day = 1; day <= 14; day += 1) {
+    const row = document.createElement('tr');
+    row.innerHTML = `<td>${day}</td><td><select data-diary="type" aria-label="Тип дня"><option value="" selected>Тип дня</option><option value="work">Р</option><option value="free">СД</option></select></td>
+      <td><input type="time" data-diary="bed"></td><td><input type="time" data-diary="sleep"></td><td><input type="time" data-diary="wake"></td><td><input type="time" data-diary="rise"></td>
+      <td><input type="number" min="0" max="720" step="5" data-diary="waso"></td><td><input type="number" min="0" max="720" step="5" data-diary="nap"></td>`;
+    body.appendChild(row);
+  }
+  body.addEventListener('input', updateDiarySummary);
+  body.addEventListener('change', updateDiarySummary);
+}
+
+function diaryDuration(start, end) {
+  const a = timeToMinutes(start); const b = timeToMinutes(end);
+  if (a === null || b === null) return null;
+  let duration = b - a; if (duration <= 0) duration += 1440;
+  return duration > 1200 ? null : duration;
+}
+
+function updateDiarySummary() {
+  const groups = { work: [], free: [] };
+  document.querySelectorAll('#sleep_diary_body tr').forEach(row => {
+    const get = key => row.querySelector(`[data-diary="${key}"]`)?.value || '';
+    const timeInBed = diaryDuration(get('bed'), get('rise'));
+    const sleepWindow = diaryDuration(get('sleep'), get('wake'));
+    if (timeInBed === null && sleepWindow === null) return;
+    const waso = Number(get('waso') || 0); const nap = Number(get('nap') || 0);
+    const tst = sleepWindow === null ? null : Math.max(0, sleepWindow - waso);
+    const dayType = get('type');
+    if (!dayType) return;
+    groups[dayType].push({ timeInBed, tst, nap });
+  });
+  const describe = (label, rows) => {
+    if (!rows.length) return '';
+    const average = key => { const values = rows.map(row => row[key]).filter(Number.isFinite); return values.length ? Math.round(values.reduce((a, b) => a + b, 0) / values.length) : null; };
+    const tst = average('tst'); const tib = average('timeInBed'); const nap = average('nap');
+    return `${label}: ${rows.length} дн., TST ${tst === null ? '—' : (tst / 60).toFixed(1)} ч, время в постели ${tib === null ? '—' : (tib / 60).toFixed(1)} ч, дневной сон ${nap ?? '—'} мин`;
+  };
+  const lines = [describe('Рабочие дни', groups.work), describe('Свободные дни', groups.free)].filter(Boolean);
+  const summary = el('sleep_diary_summary');
+  summary.textContent = lines.join(' · ') || 'Нет заполненных строк';
+  summary.dataset.report = lines.join('; ');
+}
+
 function initDiagnosisSearch() {
   const search = el('diagnosis_search');
   if (!search) return;
@@ -1242,18 +1650,30 @@ function initDiagnosisSearch() {
 
 document.addEventListener('DOMContentLoaded', () => {
   createScaleItems();
+  createMedicationGroups();
+  createSleepDiary();
   createTestsChecklist();
   createRecommendationsChecklist();
   updateRecommendationGroupCounts();
   updateScores();
+  initSidebar();
   initNav();
   initDiagnosisSearch();
   initTimePicker();
+  initEditorToolbar();
   document.addEventListener('change', updateScores);
   document.addEventListener('change', updateRecommendationGroupCounts);
   document.addEventListener('input', updateScores);
   el('run-advisor').addEventListener('click', runAdvisor);
   el('generate-report').addEventListener('click', generateReport);
   el('copy-report').addEventListener('click', copyReport);
-  el('print-report').addEventListener('click', () => window.print());
+  el('print-report').addEventListener('click', () => {
+    if (typeof window.print !== 'function') {
+      alert('Печать не поддерживается этим браузером.');
+      return;
+    }
+
+    window.focus();
+    window.print();
+  });
 });
