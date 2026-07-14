@@ -2,7 +2,10 @@
 
 ## Что это
 
-Офлайн-инструмент для психиатров: структурированный сбор данных осмотра → автогенерация текста консультации. Работает как один самодостаточный HTML-файл без сервера.
+Офлайн-инструменты для врачей: структурированный сбор данных осмотра → автогенерация текста консультации. Каждый модуль работает как один самодостаточный HTML-файл без сервера.
+
+- **psychstatus** — приём психиатра (жалобы, психический статус, нозология, диагноз, рекомендации, назначения)
+- **somnology** — сомнологический приём (сон, шкалы ISI/ESS/STOP-Bang, диагностика, план лечения)
 
 ---
 
@@ -25,12 +28,25 @@ psydraft/
 │           ├── partials/            # 3 переиспользуемых HTML-фрагмента
 │           ├── sections/            # 8 секций форм (жалобы, статус, диагноз, …)
 │           └── icons/               # SVG-иконки
+├── somnology/
+│   ├── build.py                     # сборщик (Python, тот же механизм INCLUDE)
+│   ├── dist/
+│   │   └── somnology.html           # итоговый файл (результат сборки)
+│   └── src/
+│       ├── index.template.html      # главный шаблон с директивами INCLUDE
+│       ├── css/
+│       │   └── app.css              # все стили модуля одним файлом
+│       ├── js/
+│       │   └── app.js               # вся логика модуля одним файлом
+│       └── sections/                # 9 секций формы (sidebar, general, sleep, scales, advisor, diagnosis, plan, result, time_picker)
 └── шаблон консультации психиатра.html  # исходный прототип (не в сборке)
 ```
 
 ---
 
 ## Ключевые файлы
+
+## psychstatus
 
 ### Сборка
 | Файл | Роль |
@@ -68,23 +84,49 @@ psydraft/
 ### Секции форм (`src/sections/`)
 `general.html`, `status/status.wrapper.html` (+ 10 подсекций психического статуса), `nosology.html`, `diagnosis.html`, `recommendations.html`, `prescriptions.html`, `result.html`
 
+## somnology
+
+### Сборка
+| Файл | Роль |
+|------|------|
+| `build.py` | Читает `index.template.html`, раскрывает `<!-- INCLUDE ... -->`, пишет `dist/somnology.html` |
+| `src/index.template.html` | Точка входа: `<head>` со стилями, sidebar, секции формы, футер, time_picker, `<script>` с логикой |
+| `dist/somnology.html` | Единый HTML-файл, открывается прямо в браузере |
+
+### CSS/JS
+В отличие от `psychstatus`, стили и логика не дробятся на модули — по одному файлу на всё:
+- `src/css/app.css` — все стили
+- `src/js/app.js` — вся логика (расчёт шкал ISI/ESS/STOP-Bang, советник, сборка текста консультации)
+
+### Секции форм (`src/sections/`)
+| Файл | Роль |
+|------|------|
+| `sidebar.html` | Навигация по секциям |
+| `general.html` | Общие данные приёма |
+| `sleep.html` | Анамнез сна |
+| `scales.html` | Опросники ISI, ESS, STOP-Bang |
+| `advisor.html` | Диагностический советник |
+| `diagnosis.html` | Диагноз |
+| `plan.html` | План лечения |
+| `result.html` | Итоговый текст консультации |
+| `time_picker.html` | Виджет выбора времени |
+
 ---
 
 ## Сборка
 
 ### Механизм
-`build.py` — минималистичный шаблонизатор на Python. Находит директивы вида:
+`build.py` (свой у каждого модуля, идентичный по логике) — минималистичный шаблонизатор на Python. Находит директивы вида:
 ```html
 <!-- INCLUDE css/base.css -->
 ```
 и подставляет содержимое файла на место комментария. Поддерживает вложенные включения. Кодировка — UTF-8.
 
-### Команда
+### Команды
 ```bash
-python frontend/psychstatus/build.py
+python frontend/psychstatus/build.py   # → frontend/psychstatus/dist/psychstatus.html
+python somnology/build.py              # → somnology/dist/somnology.html
 ```
-
-Результат: `frontend/psychstatus/dist/psychstatus.html`
 
 ### Нет Node.js / npm
 Проект — чистый HTML/CSS/JS. Никаких `npm install`, webpack, gulp. Только Python 3 для сборки.
@@ -94,6 +136,7 @@ python frontend/psychstatus/build.py
 ## Архитектура приложения
 
 - **Данные** хранятся в `localStorage` браузера (офлайн, без сервера)
-- **Рендер** — динамическая генерация текста на клиенте через `report/builder.js`
+- **Рендер** — динамическая генерация текста на клиенте (`report/builder.js` в psychstatus, `app.js` в somnology)
 - **Стек** — Vanilla JS (без фреймворков), CSS3, HTML5
 - **Цель** — работать как файл на рабочем столе врача, без интернета
+- Оба модуля независимы: свой `build.py`, свой `src/`, свой `dist/*.html`; общего кода между ними нет
