@@ -1695,7 +1695,12 @@ label.medication-choice small {
     <details class="clinical-details"><summary>Синдром беспокойных ног</summary><div class="symptom-groups">
       <div class="symptom-group"><label><input type="checkbox" name="movement_symptom" value="императивное желание двигать ногами"> Желание двигать ногами</label><label><input type="checkbox" name="movement_symptom" value="начало или усиление в покое"> Усиление в покое</label><label><input type="checkbox" name="movement_symptom" value="облегчение при движении ногами"> Облегчение движением</label><label><input type="checkbox" name="movement_symptom" value="усиление вечером или ночью"> Усиление вечером/ночью</label></div>
       <div class="symptom-group"><div class="symptom-group-title">Возможные имитаторы</div><label><input type="checkbox" name="rls_mimic" value="судороги"> Судороги</label><label><input type="checkbox" name="rls_mimic" value="нейропатия"> Нейропатия</label><label><input type="checkbox" name="rls_mimic" value="акатизия"> Акатизия</label><label><input type="checkbox" name="rls_mimic" value="артралгии или отёки"> Артралгии/отёки</label></div>
-    </div></details>
+    </div><div class="metric-grid">
+      <label>ХБП / диализ<select id="rls_kidney_disease"><option value="">—</option><option value="да">Да</option><option value="нет">Нет</option></select></label>
+      <label>Беременность / послеродовый период<select id="rls_pregnancy"><option value="">—</option><option value="да">Да</option><option value="нет">Нет / не применимо</option></select></label>
+      <label>Кровопотери / донорство<select id="rls_blood_loss"><option value="">—</option><option value="да">Да</option><option value="нет">Нет</option></select></label>
+      <label>Семейный анамнез RLS<input id="rls_family_history" type="text" placeholder="есть / нет / неизвестно"></label>
+    </div><label>Показатели обмена железа<textarea id="rls_iron_results" rows="2" placeholder="ферритин, насыщение трансферрина, ОАК; дата"></textarea></label></details>
 
     <details class="clinical-details"><summary>Гиперсомнолентность и REM-феномены</summary><div class="symptom-groups">
       <div class="symptom-group"><label><input type="checkbox" name="hypersomnia_symptom" value="непреодолимые приступы сна"> Приступы сна</label><label><input type="checkbox" name="hypersomnia_symptom" value="дневной сон освежает"> Освежающий дневной сон</label><label><input type="checkbox" name="hypersomnia_symptom" value="тяжёлая инерция сна"> Инерция сна</label><label><input type="checkbox" name="hypersomnia_symptom" value="сон более 10 часов"> Длительный сон</label><label><input type="checkbox" name="hypersomnia_symptom" value="автоматическое поведение"> Автоматическое поведение</label></div>
@@ -1710,8 +1715,8 @@ label.medication-choice small {
 
     <details class="clinical-details"><summary>Ночные эпизоды</summary><div class="symptom-groups">
       <div class="symptom-group"><label><input type="checkbox" name="parasomnia_symptom" value="кошмары с пробуждением и воспоминанием"> Кошмары</label><label><input type="checkbox" name="parasomnia_symptom" value="NREM-парасомния со спутанностью"> NREM-парасомния</label><label><input type="checkbox" name="parasomnia_symptom" value="разыгрывание сновидений / подозрение на RBD"> Разыгрывание сновидений</label><label><input type="checkbox" name="parasomnia_symptom" value="стереотипный короткий эпизод / подозрение на эпилепсию"> Стереотипные эпизоды</label></div>
-      <div class="symptom-group episode-fields"><label class="field-control"><span>Преимущественное время</span><select id="episode_timing"><option value="">—</option><option>первая половина ночи</option><option>вторая половина ночи</option><option>любое время</option></select></label><label class="field-control"><span>Возраст начала</span><input id="episode_onset_age" type="number" min="0" max="120"></label></div>
-    </div><textarea id="sleep_notes" rows="3" placeholder="частота, длительность, вокализация, глаза, воспоминания, спутанность, травмы"></textarea></details>
+      <div class="symptom-group episode-fields"><label class="field-control"><span>Преимущественное время</span><select id="episode_timing"><option value="">—</option><option>первая половина ночи</option><option>вторая половина ночи</option><option>любое время</option></select></label><label class="field-control"><span>Возраст начала</span><input id="episode_onset_age" type="number" min="0" max="120"></label><label class="field-control"><span>Частота</span><input id="episode_frequency" type="text" placeholder="например: 2 раза в месяц"></label><label class="field-control"><span>Длительность</span><input id="episode_duration" type="text" placeholder="например: 5–10 минут"></label><label class="field-control"><span>Воспоминание после эпизода</span><select id="episode_recall"><option value="">—</option><option>полное</option><option>частичное</option><option>отсутствует</option><option>неизвестно</option></select></label><label class="field-control"><span>Стереотипность</span><select id="episode_stereotypy"><option value="">—</option><option>стереотипные</option><option>вариабельные</option><option>неизвестно</option></select></label></div>
+    </div><textarea id="sleep_notes" rows="3" placeholder="вокализация, глаза, спутанность, травмы, связь с алкоголем/препаратами"></textarea><label>Меры безопасности при ночных эпизодах<textarea id="parasomnia_safety_plan" rows="2" placeholder="защита от травм, безопасность партнёра, исключение триггеров, срочность обращения"></textarea></label></details>
 
     <details class="clinical-details"><summary>Дневник сна — 14 дней</summary><div class="diary-meta-fields"><label>ФИО<input id="sleep_diary_patient_name" type="text" autocomplete="name"></label><label>Дата начала дневника<input id="sleep_diary_start_date" type="date"></label></div><p class="hint">Тип дня: рабочий — «Р»; свободный — «СД». Латентность сна — время от попытки уснуть до засыпания. Бодрствование после засыпания — суммарное время всех ночных пробуждений. Заполненные строки усредняются отдельно для рабочих и свободных дней.</p><div class="diary-table-wrap"><table class="sleep-diary"><thead><tr><th>День</th><th>Тип</th><th>Лёг</th><th>Уснул</th><th>Проснулся</th><th>Встал</th><th>Бодрствование после засыпания, мин</th><th>Дневной сон</th></tr></thead><tbody id="sleep_diary_body"></tbody></table></div><div id="sleep_diary_summary" class="diary-summary">Нет заполненных строк</div></details>
   </div>
@@ -1762,6 +1767,20 @@ label.medication-choice small {
     <h2>Диагноз</h2>
   </div>
   <div class="section-card">
+    <div class="metric-grid">
+      <label>Статус клинической оценки
+        <select id="diagnosis_status">
+          <option value="">—</option>
+          <option value="синдромный сигнал, требуется уточнение">Синдромный сигнал, требуется уточнение</option>
+          <option value="рабочий диагноз">Рабочий диагноз</option>
+          <option value="подтверждённый диагноз">Подтверждённый диагноз</option>
+          <option value="дифференциальный диагноз">Дифференциальный диагноз</option>
+        </select>
+      </label>
+      <label>Основание клинической оценки
+        <textarea id="diagnosis_basis" rows="2" placeholder="клинические критерии, ПСГ/КРМ/HSAT, лабораторные данные; дата исследования"></textarea>
+      </label>
+    </div>
     <label class="diagnosis-search">
       Поиск по сомнологическим диагнозам
       <input id="diagnosis_search" type="text" autocomplete="off" placeholder="например: инсомния, апноэ, циркадное, нарколепсия">
@@ -1788,6 +1807,32 @@ label.medication-choice small {
     <h2>План и рекомендации</h2>
   </div>
   <div class="section-card plan-card">
+    <div class="checklist-panel">
+      <div class="checklist-title">Результаты исследований сна</div>
+      <div class="metric-grid">
+        <label>Метод<select id="sleep_study_type"><option value="">—</option><option value="ПСГ">Полисомнография (ПСГ)</option><option value="КРМ">Кардиореспираторный мониторинг</option><option value="HSAT">Домашний тест апноэ сна (HSAT)</option></select></label>
+        <label>Дата исследования<input id="sleep_study_date" type="date"></label>
+        <label>Обоснование выбора метода<textarea id="sleep_study_rationale" rows="2" placeholder="клиническая вероятность, коморбидность, ограничения HSAT"></textarea></label>
+        <label>Качество/длительность записи<textarea id="sleep_study_quality" rows="2" placeholder="технически пригодная запись, время анализа"></textarea></label>
+      </div>
+      <div class="metric-grid">
+        <label>AHI / REI, в час<input id="study_ahi_rei" type="number" min="0" step="0.1"></label>
+        <label>ODI, в час<input id="study_odi" type="number" min="0" step="0.1"></label>
+        <label>Минимальная SpO₂, %<input id="study_min_spo2" type="number" min="0" max="100"></label>
+        <label>Время SpO₂ &lt;90%, мин<input id="study_t90" type="number" min="0" step="0.1"></label>
+        <label>Позиционный / REM-компонент<input id="study_position_rem" type="text" placeholder="например: выражен в REM и на спине"></label>
+      </div>
+    </div>
+    <div class="checklist-panel">
+      <div class="checklist-title">Подготовка к MSLT / MWT</div>
+      <div class="binary-checklist">
+        <label class="binary-check"><input id="mslt_prior_psg" type="checkbox"><span>Ночная ПСГ до MSLT выполнена</span></label>
+        <label class="binary-check"><input id="mslt_sleep_log" type="checkbox"><span>Дневник сна/актиграфия ≥ 2 недель рассмотрены</span></label>
+        <label class="binary-check"><input id="mslt_medication_review" type="checkbox"><span>Лекарства и вещества, влияющие на сон/REM, оценены</span></label>
+        <label class="binary-check"><input id="mslt_sufficient_sleep" type="checkbox"><span>Достаточность сна и циркадный ритм подтверждены</span></label>
+      </div>
+      <label>План подготовки / ограничения<textarea id="mslt_preparation_notes" rows="2" placeholder="режим, отмена/сохранение препаратов по клиническому решению, причины переноса"></textarea></label>
+    </div>
     <div class="checklist-panel">
       <div class="checklist-title">Рекомендации</div>
       <div id="recommendations-checklist" class="recommendations-checklist"></div>
@@ -2861,24 +2906,34 @@ function collectState() {
     breathingSymptoms: checkedValues('breathing_symptom'),
     movementSymptoms: checkedValues('movement_symptom'),
     rlsMimics: checkedValues('rls_mimic'),
+    rlsKidneyDisease: value('rls_kidney_disease'), rlsPregnancy: value('rls_pregnancy'), rlsBloodLoss: value('rls_blood_loss'),
+    rlsFamilyHistory: value('rls_family_history'), rlsIronResults: value('rls_iron_results'),
     parasomniaSymptoms: checkedValues('parasomnia_symptom'),
     hypersomniaSymptoms: checkedValues('hypersomnia_symptom'),
     sleepNotes: value('sleep_notes'),
     circadianPattern: document.querySelector('input[name="circadian_pattern"]:checked')?.value || '',
     preferredBedtime: value('preferred_bedtime'), preferredWaketime: value('preferred_waketime'), freeScheduleSleep: value('free_schedule_sleep'), morningLightMinutes: value('morning_light_minutes'),
-    episodeTiming: value('episode_timing'), episodeOnsetAge: value('episode_onset_age'),
+    episodeTiming: value('episode_timing'), episodeOnsetAge: value('episode_onset_age'), episodeFrequency: value('episode_frequency'),
+    episodeDuration: value('episode_duration'), episodeRecall: value('episode_recall'), episodeStereotypy: value('episode_stereotypy'),
+    parasomniaSafetyPlan: value('parasomnia_safety_plan'),
     sleepDiaryPatientName: value('sleep_diary_patient_name'), sleepDiaryStartDate: value('sleep_diary_start_date'),
     diarySummary: el('sleep_diary_summary')?.dataset.report || '',
     isi: sumScale('isi'),
     ess: sumScale('ess'),
     stopbang: sumScale('stopbang'),
-    diagnosis: value('diagnosis'),
+    diagnosis: value('diagnosis'), diagnosisStatus: value('diagnosis_status'), diagnosisBasis: value('diagnosis_basis'),
     advisorClarifications: collectAdvisorClarificationsText(),
     recommendations: collectRecommendationsText(),
     recommendationItems: collectRecommendationsItems(),
     tests: collectTestsText(),
     testItems: collectTestsItems(),
-    treatment: value('treatment')
+    treatment: value('treatment'),
+    sleepStudyType: value('sleep_study_type'), sleepStudyDate: value('sleep_study_date'), sleepStudyRationale: value('sleep_study_rationale'),
+    sleepStudyQuality: value('sleep_study_quality'), studyAhiRei: value('study_ahi_rei'), studyOdi: value('study_odi'),
+    studyMinSpo2: value('study_min_spo2'), studyT90: value('study_t90'), studyPositionRem: value('study_position_rem'),
+    msltPriorPsg: !!el('mslt_prior_psg')?.checked, msltSleepLog: !!el('mslt_sleep_log')?.checked,
+    msltMedicationReview: !!el('mslt_medication_review')?.checked, msltSufficientSleep: !!el('mslt_sufficient_sleep')?.checked,
+    msltPreparationNotes: value('mslt_preparation_notes')
   };
 }
 
@@ -3291,7 +3346,12 @@ function generateReport() {
   if (s.hypersomniaSymptoms.length) html += line('Гиперсомнолентность / REM-феномены', s.hypersomniaSymptoms.join(', '));
   if (s.parasomniaSymptoms.length) html += line('Ночные эпизоды', s.parasomniaSymptoms.join(', '));
   html += line('Характеристики ночных эпизодов', [s.episodeTiming && `преимущественно ${s.episodeTiming}`, s.episodeOnsetAge && `возраст начала ${s.episodeOnsetAge} лет`].filter(Boolean).join('; '));
+  html += line('Частота и длительность ночных эпизодов', [s.episodeFrequency && `частота: ${s.episodeFrequency}`, s.episodeDuration && `длительность: ${s.episodeDuration}`].filter(Boolean).join('; '));
+  html += line('Воспоминание и стереотипность эпизодов', [s.episodeRecall && `воспоминание: ${s.episodeRecall}`, s.episodeStereotypy && `характер: ${s.episodeStereotypy}`].filter(Boolean).join('; '));
   html += line('Описание эпизодов', s.sleepNotes);
+  html += line('Меры безопасности при ночных эпизодах', s.parasomniaSafetyPlan);
+  html += line('Факторы вторичного RLS', [s.rlsKidneyDisease && `ХБП/диализ: ${s.rlsKidneyDisease}`, s.rlsPregnancy && `беременность/послеродовый период: ${s.rlsPregnancy}`, s.rlsBloodLoss && `кровопотери/донорство: ${s.rlsBloodLoss}`, s.rlsFamilyHistory && `семейный анамнез: ${s.rlsFamilyHistory}`].filter(Boolean).join('; '));
+  html += line('Обмен железа при RLS', s.rlsIronResults);
   html += '<div class="result-subtitle">Безопасность</div>';
   html += line('Красные флаги', s.safetyFlags.length ? s.safetyFlags.join(', ') : 'по заполненным данным не отмечены'); html += line('Принятые меры', s.safetyNotes);
   html += '<div class="result-subtitle">Скрининговые шкалы (не диагноз)</div>';
@@ -3301,7 +3361,13 @@ function generateReport() {
   html += '<div class="result-subtitle">Скрининговые сигналы и требующие уточнения данные</div>';
   if (signals.length) signals.forEach(signal => { html += `<strong>${escapeHtml(signal.title)} — ${escapeHtml(signal.status)}</strong><br>`; if (signal.missing.length) html += `Уточнить: ${escapeHtml(signal.missing.map(item => item.label).join(', '))}.<br>`; if (signal.alternatives.length) html += `Альтернативы/коморбидность: ${escapeHtml(signal.alternatives.join('; '))}.<br>`; });
   else html += 'Синдромных сигналов по заполненным данным не сформировано.<br>';
-  html += '<br>' + multilineLine('Клиническая оценка / диагноз врача', s.diagnosis);
+  html += '<div class="result-subtitle">Исследования сна и подготовка к тестам</div>';
+  html += line('Исследование сна', [s.sleepStudyType, s.sleepStudyDate && `от ${s.sleepStudyDate}`, s.sleepStudyQuality].filter(Boolean).join('; '));
+  html += line('Обоснование выбора метода', s.sleepStudyRationale);
+  html += line('Показатели исследования', [s.studyAhiRei && `AHI/REI ${s.studyAhiRei}/ч`, s.studyOdi && `ODI ${s.studyOdi}/ч`, s.studyMinSpo2 && `минимальная SpO₂ ${s.studyMinSpo2}%`, s.studyT90 && `SpO₂ <90% ${s.studyT90} мин`, s.studyPositionRem].filter(Boolean).join('; '));
+  html += line('Подготовка к MSLT/MWT', [s.msltPriorPsg && 'ночная ПСГ выполнена', s.msltSleepLog && 'дневник/актиграфия ≥2 недель рассмотрены', s.msltMedicationReview && 'влияющие лекарства и вещества оценены', s.msltSufficientSleep && 'достаточный сон и циркадный ритм подтверждены'].filter(Boolean).join('; '));
+  html += line('План подготовки к MSLT/MWT', s.msltPreparationNotes);
+  html += '<br>' + line('Статус клинической оценки', s.diagnosisStatus) + line('Основание клинической оценки', s.diagnosisBasis) + multilineLine('Клиническая оценка / диагноз врача', s.diagnosis);
   html += numberedList('Обследования', s.testItems); html += groupedRecommendationList(s.recommendationItems); html += line('Лечение / маршрутизация', s.treatment);
   const needsSleepDiaryAppendix = s.recommendationItems.some(item => item.id === 'sleep_diary') || !!document.querySelector('input[data-test-id="sleep_diary"]:checked');
   if (needsSleepDiaryAppendix) html += sleepDiaryAppendix();

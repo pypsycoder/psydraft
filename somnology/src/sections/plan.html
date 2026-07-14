@@ -5,6 +5,32 @@
   </div>
   <div class="section-card plan-card">
     <div class="checklist-panel">
+      <div class="checklist-title">Результаты исследований сна</div>
+      <div class="metric-grid">
+        <label>Метод<select id="sleep_study_type"><option value="">—</option><option value="ПСГ">Полисомнография (ПСГ)</option><option value="КРМ">Кардиореспираторный мониторинг</option><option value="HSAT">Домашний тест апноэ сна (HSAT)</option></select></label>
+        <label>Дата исследования<input id="sleep_study_date" type="date"></label>
+        <label>Обоснование выбора метода<textarea id="sleep_study_rationale" rows="2" placeholder="клиническая вероятность, коморбидность, ограничения HSAT"></textarea></label>
+        <label>Качество/длительность записи<textarea id="sleep_study_quality" rows="2" placeholder="технически пригодная запись, время анализа"></textarea></label>
+      </div>
+      <div class="metric-grid">
+        <label>AHI / REI, в час<input id="study_ahi_rei" type="number" min="0" step="0.1"></label>
+        <label>ODI, в час<input id="study_odi" type="number" min="0" step="0.1"></label>
+        <label>Минимальная SpO₂, %<input id="study_min_spo2" type="number" min="0" max="100"></label>
+        <label>Время SpO₂ &lt;90%, мин<input id="study_t90" type="number" min="0" step="0.1"></label>
+        <label>Позиционный / REM-компонент<input id="study_position_rem" type="text" placeholder="например: выражен в REM и на спине"></label>
+      </div>
+    </div>
+    <div class="checklist-panel">
+      <div class="checklist-title">Подготовка к MSLT / MWT</div>
+      <div class="binary-checklist">
+        <label class="binary-check"><input id="mslt_prior_psg" type="checkbox"><span>Ночная ПСГ до MSLT выполнена</span></label>
+        <label class="binary-check"><input id="mslt_sleep_log" type="checkbox"><span>Дневник сна/актиграфия ≥ 2 недель рассмотрены</span></label>
+        <label class="binary-check"><input id="mslt_medication_review" type="checkbox"><span>Лекарства и вещества, влияющие на сон/REM, оценены</span></label>
+        <label class="binary-check"><input id="mslt_sufficient_sleep" type="checkbox"><span>Достаточность сна и циркадный ритм подтверждены</span></label>
+      </div>
+      <label>План подготовки / ограничения<textarea id="mslt_preparation_notes" rows="2" placeholder="режим, отмена/сохранение препаратов по клиническому решению, причины переноса"></textarea></label>
+    </div>
+    <div class="checklist-panel">
       <div class="checklist-title">Рекомендации</div>
       <div id="recommendations-checklist" class="recommendations-checklist"></div>
       <label>

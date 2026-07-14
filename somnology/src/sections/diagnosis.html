@@ -4,6 +4,20 @@
     <h2>Диагноз</h2>
   </div>
   <div class="section-card">
+    <div class="metric-grid">
+      <label>Статус клинической оценки
+        <select id="diagnosis_status">
+          <option value="">—</option>
+          <option value="синдромный сигнал, требуется уточнение">Синдромный сигнал, требуется уточнение</option>
+          <option value="рабочий диагноз">Рабочий диагноз</option>
+          <option value="подтверждённый диагноз">Подтверждённый диагноз</option>
+          <option value="дифференциальный диагноз">Дифференциальный диагноз</option>
+        </select>
+      </label>
+      <label>Основание клинической оценки
+        <textarea id="diagnosis_basis" rows="2" placeholder="клинические критерии, ПСГ/КРМ/HSAT, лабораторные данные; дата исследования"></textarea>
+      </label>
+    </div>
     <label class="diagnosis-search">
       Поиск по сомнологическим диагнозам
       <input id="diagnosis_search" type="text" autocomplete="off" placeholder="например: инсомния, апноэ, циркадное, нарколепсия">

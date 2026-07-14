@@ -928,24 +928,34 @@ function collectState() {
     breathingSymptoms: checkedValues('breathing_symptom'),
     movementSymptoms: checkedValues('movement_symptom'),
     rlsMimics: checkedValues('rls_mimic'),
+    rlsKidneyDisease: value('rls_kidney_disease'), rlsPregnancy: value('rls_pregnancy'), rlsBloodLoss: value('rls_blood_loss'),
+    rlsFamilyHistory: value('rls_family_history'), rlsIronResults: value('rls_iron_results'),
     parasomniaSymptoms: checkedValues('parasomnia_symptom'),
     hypersomniaSymptoms: checkedValues('hypersomnia_symptom'),
     sleepNotes: value('sleep_notes'),
     circadianPattern: document.querySelector('input[name="circadian_pattern"]:checked')?.value || '',
     preferredBedtime: value('preferred_bedtime'), preferredWaketime: value('preferred_waketime'), freeScheduleSleep: value('free_schedule_sleep'), morningLightMinutes: value('morning_light_minutes'),
-    episodeTiming: value('episode_timing'), episodeOnsetAge: value('episode_onset_age'),
+    episodeTiming: value('episode_timing'), episodeOnsetAge: value('episode_onset_age'), episodeFrequency: value('episode_frequency'),
+    episodeDuration: value('episode_duration'), episodeRecall: value('episode_recall'), episodeStereotypy: value('episode_stereotypy'),
+    parasomniaSafetyPlan: value('parasomnia_safety_plan'),
     sleepDiaryPatientName: value('sleep_diary_patient_name'), sleepDiaryStartDate: value('sleep_diary_start_date'),
     diarySummary: el('sleep_diary_summary')?.dataset.report || '',
     isi: sumScale('isi'),
     ess: sumScale('ess'),
     stopbang: sumScale('stopbang'),
-    diagnosis: value('diagnosis'),
+    diagnosis: value('diagnosis'), diagnosisStatus: value('diagnosis_status'), diagnosisBasis: value('diagnosis_basis'),
     advisorClarifications: collectAdvisorClarificationsText(),
     recommendations: collectRecommendationsText(),
     recommendationItems: collectRecommendationsItems(),
     tests: collectTestsText(),
     testItems: collectTestsItems(),
-    treatment: value('treatment')
+    treatment: value('treatment'),
+    sleepStudyType: value('sleep_study_type'), sleepStudyDate: value('sleep_study_date'), sleepStudyRationale: value('sleep_study_rationale'),
+    sleepStudyQuality: value('sleep_study_quality'), studyAhiRei: value('study_ahi_rei'), studyOdi: value('study_odi'),
+    studyMinSpo2: value('study_min_spo2'), studyT90: value('study_t90'), studyPositionRem: value('study_position_rem'),
+    msltPriorPsg: !!el('mslt_prior_psg')?.checked, msltSleepLog: !!el('mslt_sleep_log')?.checked,
+    msltMedicationReview: !!el('mslt_medication_review')?.checked, msltSufficientSleep: !!el('mslt_sufficient_sleep')?.checked,
+    msltPreparationNotes: value('mslt_preparation_notes')
   };
 }
 
@@ -1358,7 +1368,12 @@ function generateReport() {
   if (s.hypersomniaSymptoms.length) html += line('Гиперсомнолентность / REM-феномены', s.hypersomniaSymptoms.join(', '));
   if (s.parasomniaSymptoms.length) html += line('Ночные эпизоды', s.parasomniaSymptoms.join(', '));
   html += line('Характеристики ночных эпизодов', [s.episodeTiming && `преимущественно ${s.episodeTiming}`, s.episodeOnsetAge && `возраст начала ${s.episodeOnsetAge} лет`].filter(Boolean).join('; '));
+  html += line('Частота и длительность ночных эпизодов', [s.episodeFrequency && `частота: ${s.episodeFrequency}`, s.episodeDuration && `длительность: ${s.episodeDuration}`].filter(Boolean).join('; '));
+  html += line('Воспоминание и стереотипность эпизодов', [s.episodeRecall && `воспоминание: ${s.episodeRecall}`, s.episodeStereotypy && `характер: ${s.episodeStereotypy}`].filter(Boolean).join('; '));
   html += line('Описание эпизодов', s.sleepNotes);
+  html += line('Меры безопасности при ночных эпизодах', s.parasomniaSafetyPlan);
+  html += line('Факторы вторичного RLS', [s.rlsKidneyDisease && `ХБП/диализ: ${s.rlsKidneyDisease}`, s.rlsPregnancy && `беременность/послеродовый период: ${s.rlsPregnancy}`, s.rlsBloodLoss && `кровопотери/донорство: ${s.rlsBloodLoss}`, s.rlsFamilyHistory && `семейный анамнез: ${s.rlsFamilyHistory}`].filter(Boolean).join('; '));
+  html += line('Обмен железа при RLS', s.rlsIronResults);
   html += '<div class="result-subtitle">Безопасность</div>';
   html += line('Красные флаги', s.safetyFlags.length ? s.safetyFlags.join(', ') : 'по заполненным данным не отмечены'); html += line('Принятые меры', s.safetyNotes);
   html += '<div class="result-subtitle">Скрининговые шкалы (не диагноз)</div>';
@@ -1368,7 +1383,13 @@ function generateReport() {
   html += '<div class="result-subtitle">Скрининговые сигналы и требующие уточнения данные</div>';
   if (signals.length) signals.forEach(signal => { html += `<strong>${escapeHtml(signal.title)} — ${escapeHtml(signal.status)}</strong><br>`; if (signal.missing.length) html += `Уточнить: ${escapeHtml(signal.missing.map(item => item.label).join(', '))}.<br>`; if (signal.alternatives.length) html += `Альтернативы/коморбидность: ${escapeHtml(signal.alternatives.join('; '))}.<br>`; });
   else html += 'Синдромных сигналов по заполненным данным не сформировано.<br>';
-  html += '<br>' + multilineLine('Клиническая оценка / диагноз врача', s.diagnosis);
+  html += '<div class="result-subtitle">Исследования сна и подготовка к тестам</div>';
+  html += line('Исследование сна', [s.sleepStudyType, s.sleepStudyDate && `от ${s.sleepStudyDate}`, s.sleepStudyQuality].filter(Boolean).join('; '));
+  html += line('Обоснование выбора метода', s.sleepStudyRationale);
+  html += line('Показатели исследования', [s.studyAhiRei && `AHI/REI ${s.studyAhiRei}/ч`, s.studyOdi && `ODI ${s.studyOdi}/ч`, s.studyMinSpo2 && `минимальная SpO₂ ${s.studyMinSpo2}%`, s.studyT90 && `SpO₂ <90% ${s.studyT90} мин`, s.studyPositionRem].filter(Boolean).join('; '));
+  html += line('Подготовка к MSLT/MWT', [s.msltPriorPsg && 'ночная ПСГ выполнена', s.msltSleepLog && 'дневник/актиграфия ≥2 недель рассмотрены', s.msltMedicationReview && 'влияющие лекарства и вещества оценены', s.msltSufficientSleep && 'достаточный сон и циркадный ритм подтверждены'].filter(Boolean).join('; '));
+  html += line('План подготовки к MSLT/MWT', s.msltPreparationNotes);
+  html += '<br>' + line('Статус клинической оценки', s.diagnosisStatus) + line('Основание клинической оценки', s.diagnosisBasis) + multilineLine('Клиническая оценка / диагноз врача', s.diagnosis);
   html += numberedList('Обследования', s.testItems); html += groupedRecommendationList(s.recommendationItems); html += line('Лечение / маршрутизация', s.treatment);
   const needsSleepDiaryAppendix = s.recommendationItems.some(item => item.id === 'sleep_diary') || !!document.querySelector('input[data-test-id="sleep_diary"]:checked');
   if (needsSleepDiaryAppendix) html += sleepDiaryAppendix();

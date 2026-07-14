@@ -55,7 +55,10 @@ class SomnologyBuildTests(unittest.TestCase):
         report_block = app.split("function generateReport()", 1)[1].split("async function copyReport", 1)[0]
         required_report_keys = {
             "eveningSleepiness", "latency", "awakenings", "waso", "circadianPattern", "preferredBedtime",
-            "preferredWaketime", "freeScheduleSleep", "morningLightMinutes", "episodeTiming", "episodeOnsetAge"
+            "preferredWaketime", "freeScheduleSleep", "morningLightMinutes", "episodeTiming", "episodeOnsetAge",
+            "sleepStudyType", "studyAhiRei", "studyOdi", "studyMinSpo2", "studyT90", "sleepStudyRationale",
+            "msltPriorPsg", "msltSleepLog", "msltMedicationReview", "msltSufficientSleep", "rlsIronResults",
+            "parasomniaSafetyPlan", "diagnosisStatus", "diagnosisBasis"
         }
         absent = sorted(key for key in required_report_keys if f"s.{key}" not in report_block)
         self.assertEqual(absent, [], f"Поля не попадают в заключение: {absent}")
