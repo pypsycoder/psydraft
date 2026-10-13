@@ -12,9 +12,39 @@ OUTPUT = ROOT / 'antidepressant-assistant.html'
 def block(text, start, end):
     return text[text.index(start):text.index(end, text.index(start))]
 
+def replace_required(text, old, new, count=1):
+    if text.count(old) != count:
+        raise ValueError('PsyDraft source changed: ' + old[:80])
+    return text.replace(old, new)
+
+def integrate_status(host):
+    # One input per symptom, in its clinical section; shared by report, advisor and compass.
+    placements = {
+        '<h3>🙂 Настроение</h3>': [('anhedonia', 'Ангедония / утрата интересов'), ('fatigue', 'Снижение энергии / быстрая утомляемость')],
+        '<h3>👁️ Обманы ощущений и восприятия</h3>': [('pain', 'Болевой синдром')],
+        '<div class="sleep-duration-row">': [('hypersomnia', 'Гиперсомния / повышенная сонливость')],
+        '<label>Аппетит:</label>': [('diarrhea', 'Диарея'), ('constipation', 'Запор')],
+    }
+    for anchor, symptoms in placements.items():
+        inputs = '<div class="pd-status-symptoms" style="margin:12px 0">' + ''.join(
+            '<label class="checkbox-item"><input type="checkbox" id="pd-status-' + key + '" name="pd-status-symptoms" value="' + key + '" data-report-label="' + html.escape(label, quote=True) + '">' + html.escape(label) + '</label>' for key, label in symptoms) + '</div>'
+        host = replace_required(host, anchor, inputs + anchor if anchor.startswith('<div') or anchor.startswith('<label') else anchor + inputs)
+    host = replace_required(host, "mood:                   sel('mood'),", "mood:                   sel('mood'),\n        anhedonia: !!document.getElementById('pd-status-anhedonia')?.checked,\n        fatigue: !!document.getElementById('pd-status-fatigue')?.checked,")
+    for criterion, key in [('dep_anhedonia','anhedonia'),('dep_energy','fatigue'),('bar_dep_anhedonia','anhedonia'),('bar_dep_energy','fatigue')]:
+        pattern = r"(id: '" + criterion + r"',[\s\S]*?weight: 'core', )capturable: false, met: null"
+        host, found = re.subn(pattern, r"\1capturable: true, met: function(s) { return s." + key + "; }", host, count=1)
+        if found != 1: raise ValueError('Missing criterion: ' + criterion)
+    host = replace_required(host, "\n    dep_mood:               { scrollTo: 'status-mood' },", "\n    dep_anhedonia: { scrollTo: 'status-mood' },\n    dep_energy: { scrollTo: 'status-mood' },\n    bar_dep_anhedonia: { scrollTo: 'status-mood' },\n    bar_dep_energy: { scrollTo: 'status-mood' },\n    dep_mood:               { scrollTo: 'status-mood' },")
+    host = replace_required(host, '        // Уточнённые у пациента пункты из нозологического советника', "        document.querySelectorAll('input[name=\"pd-status-symptoms\"]:checked').forEach(cb => {\n            text += cb.dataset.reportLabel + '.<br>';\n        });\n\n        // Уточнённые у пациента пункты из нозологического советника")
+    # Programmatic diagnosis edits need the same event as typing into the textarea.
+    host = replace_required(host, "field.value = lines.join('\\n');", "field.value = lines.join('\\n');\n            field.dispatchEvent(new Event('input', {bubbles:true}));", count=2)
+    host = replace_required(host, 'diag.value += line;', "diag.value += line;\n                diag.dispatchEvent(new Event('input', {bubbles:true}));")
+    host = replace_required(host, '<textarea id="diagnosis"></textarea>', '<textarea id="diagnosis" aria-describedby="pd-diagnosis-help"></textarea><p id="pd-diagnosis-help" class="small-note">Клинический компас использует первый код МКБ-10 как основной диагноз. При наличии F30/F31 включается маршрут проверки биполярности независимо от порядка кодов.</p>')
+    return host
+
 def main():
     compass = (SRC / 'compass.html').read_text(encoding='utf-8')
-    host = HOST.read_text(encoding='utf-8').rstrip() + '\n'
+    host = integrate_status(HOST.read_text(encoding='utf-8').rstrip() + '\n')
     disclaimer = re.search(r'<div class="note danger" id="clinical-disclaimer"[^>]*>(.*?)</div>', compass, re.S).group(1)
     panel = (SRC / 'psydraft-panel.html').read_text(encoding='utf-8')
     def select(key):
@@ -37,11 +67,15 @@ def main():
         '/*__COURSE_OPTIONS__*/': block(compass, 'const COURSE_OPTIONS=', 'const COURSE_LABELS='),
         '/*__MAP__*/': (SRC / 'bridge-map.js').read_text(encoding='utf-8'),
     }.items(): host_bridge = host_bridge.replace(marker, content)
-    host = host.replace('<body>', '<body><div style="padding:12px 16px;background:#ffebed;color:#9b2f35;font-size:13px" role="note">'+disclaimer+'</div>', 1)
     host = host.replace('</body>', '<script>\n' + host_bridge + '\n</script></body>', 1)
     receiver = (SRC / 'compass-bridge.js').read_text(encoding='utf-8')
-    compass = compass.replace('</head>', '<style>@media screen{#clinical-disclaimer{display:none}}</style></head>', 1)
+    compass = re.sub(r'<div class="note danger" id="clinical-disclaimer"[^>]*>.*?</div>', '', compass, count=1, flags=re.S)
     compass = compass.replace('</body>', '<script>\n' + receiver + '\n</script></body>', 1)
+    navigation = (SRC / 'embedded-navigation.js').read_text(encoding='utf-8')
+    def local_navigation(document):
+        document = document.replace('href="#', 'href="about:srcdoc#')
+        return document.replace('</body>', '<script>\n' + navigation + '\n</script></body>', 1)
+    host, compass = local_navigation(host), local_navigation(compass)
     documents = json.dumps({'draft': host, 'compass': compass}, ensure_ascii=False).replace('<', r'\u003c').replace('\u2028', r'\u2028').replace('\u2029', r'\u2029')
     shell = (SRC / 'shell.html').read_text(encoding='utf-8').replace('__EMBEDDED_DOCUMENTS__', documents).replace('__DISCLAIMER__', disclaimer)
     if any(marker in shell for marker in ['/*__DRUGS__*/','{{SAFETY_SELECTS}}','__EMBEDDED_DOCUMENTS__']): raise ValueError('Unresolved build marker')
