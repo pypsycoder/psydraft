@@ -22,6 +22,7 @@ function createDefaultCase() {
         recommendationGroup: 'sleep',
         clarifyLabels: {},
         reportHTML: '',
+        extensions: {},
         scales: { assessments: {}, history: [] }
     };
 }

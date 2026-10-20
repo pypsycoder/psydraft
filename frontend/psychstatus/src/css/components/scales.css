@@ -59,6 +59,15 @@
 .scales-history-list li { margin: 10px 0; }
 .scales-history-list p { margin: 3px 0; }
 .scales-delta { font-size: 13px; margin: 8px 0; color: #4b5e72; }
+.scales-comparison { border-top: 1px solid var(--border-card); padding-top: 14px; margin-top: 14px; }
+.scales-comparison h4 { font-size: 16px; margin: 0 0 10px; }
+.scales-comparison-table-wrap { overflow-x: auto; margin: 12px 0; }
+.scales-comparison-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.scales-comparison-table caption { text-align: left; color: var(--text-secondary); margin-bottom: 8px; }
+.scales-comparison-table th, .scales-comparison-table td { border-bottom: 1px solid var(--border-card); padding: 8px; text-align: right; font-variant-numeric: tabular-nums; }
+.scales-comparison-table th:first-child { text-align: left; }
+.scales-comparison-table tbody th { font-weight: 500; }
+.scales-comparison-reason { color: #72531c; background: #fff8e8; border-radius: 8px; padding: 10px; font-size: 13px; }
 .scales-action-status { color: #375a37; font-size: 13px; min-height: 1em; }
 #scales-print-root { display: none; }
 .case-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 12px 0 18px; }
@@ -74,23 +83,35 @@
 .scales-confirm-actions button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .scales-confirm-backdrop { position: fixed; inset: 0; z-index: 10000; display: grid; align-items: center; justify-items: center; background: rgba(16, 28, 45, .45); padding: 20px; box-sizing: border-box; }
 .scales-confirmation--fallback[open] { display: block; position: static; margin: 0; }
+.scales-print-preview { width: min(980px, calc(100vw - 32px)); max-width: none; max-height: calc(100vh - 32px); box-sizing: border-box; padding: 0; color: var(--text-main); background: #edf0f5; border: 1px solid var(--border-card); border-radius: 14px; box-shadow: 0 20px 70px rgba(0,0,0,.24); overflow: hidden; }
+.scales-print-preview[open] { display: flex; flex-direction: column; }
+.scales-print-preview::backdrop { background: rgba(16, 28, 45, .45); }
+.scales-print-preview-header { flex: 0 0 auto; background: white; padding: 18px 22px 12px; border-bottom: 1px solid #d5dce5; }
+.scales-print-preview-header h2 { font-size: 19px; margin: 0 0 12px; }
+.scales-print-preview-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.scales-print-preview-actions button { margin: 0; padding: 9px 14px; font-size: 14px; box-shadow: none; }
+.scales-print-preview-status { margin: 10px 0 0; color: var(--text-secondary); font-size: 13px; }
+.scales-print-preview-content { padding: 24px; overflow-y: auto; min-height: 0; }
+.scales-print-preview-content .scales-print-sheet { max-width: 190mm; margin: 0 auto; box-sizing: border-box; padding: 24px; background: white; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+.scales-print-preview :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.scales-print-preview-content:focus-visible { outline-offset: -3px; }
+.scales-print-preview--fallback[open] { position: static; margin: 0; }
 @media (max-width: 600px) {
     .scales-module { padding: 14px; }
     .scales-fields, .scales-item-details .scales-fields { grid-template-columns: 1fr; }
     .scales-item { padding: 12px; }
     .scales-actions button { flex: 1 1 135px; }
     .scales-tabs [role="tab"] { flex-basis: 60px; padding: 10px 8px; }
+    .scales-print-preview { width: calc(100vw - 16px); max-height: calc(100vh - 16px); }
+    .scales-print-preview-header { padding: 14px; }
+    .scales-print-preview-content { padding: 12px; }
+    .scales-print-preview-content .scales-print-sheet { padding: 16px; }
 }
 @media print {
     .case-toolbar { display: none !important; }
     .scales-confirmation, .scales-confirm-backdrop { display: none !important; }
+    .scales-print-preview, .scales-print-preview::backdrop { display: none !important; }
     #section-scales { display: none !important; }
     body.scales-printing > * { display: none !important; }
     body.scales-printing > #scales-print-root { display: block !important; color: black; font: 11pt/1.4 Arial, sans-serif; overflow: visible; }
-    #scales-print-root h1 { font-size: 18pt; margin: 0 0 10pt; }
-    #scales-print-root h2 { font-size: 13pt; margin: 16pt 0 6pt; break-after: avoid; }
-    #scales-print-root h3 { font-size: 11pt; margin: 10pt 0 4pt; break-after: avoid; }
-    #scales-print-root p { margin: 4pt 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-    #scales-print-root article { border-top: 1px solid #aaa; margin-top: 8pt; padding-top: 6pt; break-inside: auto; }
-    #scales-print-root .scales-print-meta { font-size: 9pt; }
 }

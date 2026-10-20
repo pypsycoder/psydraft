@@ -7,7 +7,7 @@ const vm = require('node:vm');
 const base = path.join(__dirname, '../src/js/scales');
 function setup() {
     const context = vm.createContext({ console, Date, Math, Set, Map, JSON, Object, Number, String, RegExp });
-    ['registry', 'definitions', 'validation', 'scoring', 'interpretation', 'storage-adapter'].forEach(name => {
+    ['registry', 'definitions', 'validation', 'scoring', 'interpretation', 'comparison', 'storage-adapter'].forEach(name => {
         vm.runInContext(fs.readFileSync(path.join(base, name + '.js'), 'utf8'), context, { filename: name + '.js' });
     });
     const state = { caseId: 'case-test', scales: { assessments: {}, history: [] } };
@@ -205,4 +205,46 @@ test('C-SSRS restored hidden positives and mismatched period cannot produce a ne
     a.answers.q5 = null; a.answers.q6recent = null; a.period = 'После последнего визита';
     assert.equal(S.evaluate(a).complete, false);
     assert.ok(S.evaluate(a).errors.some(value => value.includes('Recent')));
+});
+test('longitudinal numeric comparison retains independent subscale and domain differences', () => {
+    const { S } = setup();
+    const previous = fill(S, 'bnss', 1), current = fill(S, 'bnss', 2);
+    const result = S.compareAssessments(current, previous);
+    assert.equal(result.comparable, true);
+    assert.equal(result.rows.find(row => row.id === 'total').delta, 13);
+    assert.equal(result.rows.find(row => row.id === 'subscales:distress').delta, 1);
+    assert.equal(result.rows.find(row => row.id === 'domains:motivation').delta, 7);
+    assert.equal(result.rows.find(row => row.id === 'domains:expression').delta, 5);
+    assert.ok(result.notices.some(value => value.includes('Версии внешнего бланка')));
+    const frozen = JSON.stringify(previous);
+    S.compareAssessments(current, previous);
+    assert.equal(JSON.stringify(previous), frozen);
+});
+test('comparison rejects different patients, forms, periods, versions and incomplete assessments', () => {
+    const { S } = setup();
+    for (const mutate of [
+        a => { a.caseId = 'other-patient'; }, a => { a.form = 'other'; },
+        a => { a.period = 'Другой период'; }, a => { a.scaleVersion = 'other'; },
+        a => { a.externalFormVersion = 'other'; }, a => { a.externalTranslationVersion = 'other'; },
+        a => { a.answers.B1 = null; }
+    ]) {
+        const previous = fill(S, 'bnss', 1), current = fill(S, 'bnss', 2);
+        mutate(current);
+        assert.equal(S.compareAssessments(current, previous).comparable, false);
+    }
+    const same = fill(S, 'bnss', 1);
+    assert.equal(S.compareAssessments(same, same).comparable, false);
+});
+test('C-SSRS comparison displays ordinal categories and behavior without arithmetic risk deltas', () => {
+    const { S } = setup();
+    const previous = S.createAssessment('cssrs', 'case-test'), current = S.createAssessment('cssrs', 'case-test');
+    Object.assign(previous.answers, {q1:true,q2:true,q3:true,q4:true,q5:true,q6:false});
+    Object.assign(current.answers, {q1:true,q2:false,q6:true,q6recent:false});
+    const result = S.compareAssessments(current, previous);
+    assert.equal(result.comparable, true);
+    const category = result.rows.find(row => row.id === 'severity');
+    assert.equal(category.previous, 5); assert.equal(category.current, 1); assert.equal(category.delta, null);
+    assert.equal(result.rows.find(row => row.id === 'behavior').previous, 'Нет');
+    assert.equal(result.rows.find(row => row.id === 'behavior').current, 'Да');
+    assert.ok(result.rows.every(row => row.delta === null));
 });

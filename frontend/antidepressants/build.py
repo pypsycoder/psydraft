@@ -17,6 +17,12 @@ def replace_required(text, old, new, count=1):
         raise ValueError('PsyDraft source changed: ' + old[:80])
     return text.replace(old, new)
 
+def inject_before_body_close(document, content):
+    before, marker, after = document.rpartition('</body>')
+    if not marker or after.strip().lower() != '</html>':
+        raise ValueError('Missing final document body')
+    return before + content + marker + after
+
 def integrate_status(host):
     # One input per symptom, in its clinical section; shared by report, advisor and compass.
     placements = {
@@ -45,6 +51,12 @@ def integrate_status(host):
 def main():
     compass = (SRC / 'compass.html').read_text(encoding='utf-8')
     host = integrate_status(HOST.read_text(encoding='utf-8').rstrip() + '\n')
+    storage_bridge = (SRC / 'case-storage-bridge.js').read_text(encoding='utf-8')
+    head_end = host.index('<head>') + len('<head>')
+    if head_end > host.index('<body>'):
+        raise ValueError('Missing document head')
+    host = host[:head_end] + '\n<script>\n' + storage_bridge + '\n</script>' + host[head_end:]
+    host = replace_required(host, 'id="new-case"', 'id="new-case" hidden')
     disclaimer = re.search(r'<div class="note danger" id="clinical-disclaimer"[^>]*>(.*?)</div>', compass, re.S).group(1)
     panel = (SRC / 'psydraft-panel.html').read_text(encoding='utf-8')
     def select(key):
@@ -67,14 +79,15 @@ def main():
         '/*__COURSE_OPTIONS__*/': block(compass, 'const COURSE_OPTIONS=', 'const COURSE_LABELS='),
         '/*__MAP__*/': (SRC / 'bridge-map.js').read_text(encoding='utf-8'),
     }.items(): host_bridge = host_bridge.replace(marker, content)
-    host = host.replace('</body>', '<script>\n' + host_bridge + '\n</script></body>', 1)
+    host = inject_before_body_close(host, '<script>\n' + host_bridge + '\n</script>')
     receiver = (SRC / 'compass-bridge.js').read_text(encoding='utf-8')
     compass = re.sub(r'<div class="note danger" id="clinical-disclaimer"[^>]*>.*?</div>', '', compass, count=1, flags=re.S)
-    compass = compass.replace('</body>', '<script>\n' + receiver + '\n</script></body>', 1)
+    compass = replace_required(compass, 'Данные находятся только в памяти этой вкладки.', 'Общий случай сохраняется локально в этом браузере. Статус сохранения показан в PsyDraft; передача в сеть не выполняется.')
+    compass = inject_before_body_close(compass, '<script>\n' + receiver + '\n</script>')
     navigation = (SRC / 'embedded-navigation.js').read_text(encoding='utf-8')
     def local_navigation(document):
         document = document.replace('href="#', 'href="about:srcdoc#')
-        return document.replace('</body>', '<script>\n' + navigation + '\n</script></body>', 1)
+        return inject_before_body_close(document, '<script>\n' + navigation + '\n</script>')
     host, compass = local_navigation(host), local_navigation(compass)
     documents = json.dumps({'draft': host, 'compass': compass}, ensure_ascii=False).replace('<', r'\u003c').replace('\u2028', r'\u2028').replace('\u2029', r'\u2029')
     shell = (SRC / 'shell.html').read_text(encoding='utf-8').replace('__EMBEDDED_DOCUMENTS__', documents).replace('__DISCLAIMER__', disclaimer)

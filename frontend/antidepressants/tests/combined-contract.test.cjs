@@ -2,6 +2,7 @@ const fs=require('fs'),vm=require('vm'),assert=require('assert'),path=require('p
 const html=fs.readFileSync(path.join(__dirname,'..','antidepressant-assistant.html'),'utf8');
 const docs=JSON.parse(html.match(/<script type="application\/json" id="pd-embedded-documents">([\s\S]*?)<\/script>/)[1]);
 let currentWindow=null,queue=[],timers=[],assertions=0,nonce=0;
+const canonicalStorage=new Map();
 const decode=s=>s.replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
 const voidTags=new Set(['meta','link','input','br','hr','img']);
 function createDocument(markup){
@@ -12,6 +13,7 @@ function createDocument(markup){
   get innerHTML(){return this._html;}
   get selectedOptions(){return this.options.filter(x=>x.value===this.value);}
   setAttribute(k,v){this.attrs[k]=v;}
+  removeAttribute(k){delete this.attrs[k];}
   getAttribute(k){return this.attrs[k]??null;}
   hasAttribute(k){return k in this.attrs;}
   addEventListener(k,f){(this.listeners[k]??=[]).push(f);}
@@ -33,10 +35,10 @@ function createDocument(markup){
 }
 function makeWindow(doc,parent){const w={document:doc,parent:null,listeners:{},live:true,addEventListener(k,f){(this.listeners[k]??=[]).push(f);},matchMedia(){return {matches:true};},print(){},confirm(){return true;},postMessage(data){queue.push({dest:w,source:currentWindow,data});}};w.parent=parent||w;w.window=w;w.self=w;return w;}
 function withWindow(w,fn){const old=currentWindow;currentWindow=w;try{return fn();}finally{currentWindow=old;}}
-function context(w){const ctx={window:w,document:w.document,console,Blob,Event:class{constructor(type,options={}){this.type=type;this.bubbles=!!options.bubbles;}},URL:{createObjectURL(){return'blob:test';},revokeObjectURL(){}},crypto:{getRandomValues(a){for(let i=0;i<a.length;i++)a[i]=++nonce;return a;}},setTimeout(fn){timers.push({w,fn});return timers.length;},clearTimeout(){}};vm.createContext(ctx);w.ctx=ctx;return ctx;}
+function context(w){const ctx={window:w,document:w.document,console,Blob,localStorage:{getItem:key=>canonicalStorage.get(key)||null,setItem:(key,value)=>canonicalStorage.set(key,value),removeItem:key=>canonicalStorage.delete(key)},Event:class{constructor(type,options={}){this.type=type;this.bubbles=!!options.bubbles;}},URL:{createObjectURL(){return'blob:test';},revokeObjectURL(){}},crypto:{getRandomValues(a){for(let i=0;i<a.length;i++)a[i]=++nonce;return a;}},setTimeout(fn){timers.push({w,fn});return timers.length;},clearTimeout(){}};vm.createContext(ctx);w.ctx=ctx;return ctx;}
 function run(w,code){withWindow(w,()=>vm.runInContext(code,w.ctx));}
 const shellDoc=createDocument(html),shell=makeWindow(shellDoc);context(shell);shellDoc.getElementById('pd-embedded-documents').textContent=JSON.stringify(docs);
-for(const[id,kind]of[['pd-draft-frame','draft'],['pd-compass-frame','compass']]){const el=shellDoc.getElementById(id);Object.defineProperty(el,'srcdoc',{set(source){if(el.contentWindow)el.contentWindow.live=false;const w=makeWindow(createDocument(source),shell);context(w);el.contentWindow=w;const scripts=[...source.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map(x=>x[1]);if(kind==='compass')for(const script of scripts)run(w,script);else for(const script of scripts.slice(-2))run(w,script);}});}
+for(const[id,kind]of[['pd-draft-frame','draft'],['pd-compass-frame','compass']]){const el=shellDoc.getElementById(id);Object.defineProperty(el,'srcdoc',{set(source){if(el.contentWindow)el.contentWindow.live=false;const w=makeWindow(createDocument(source),shell);context(w);el.contentWindow=w;const scripts=[...source.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map(x=>x[1]);if(kind==='compass')for(const script of scripts)run(w,script);else{const state={caseId:'contract-case-'+(++nonce),extensions:{}};w.PsyCase={get:()=>state,isRestoring:false,registerAdapter(id,adapter){adapter.restore(state.extensions[id]);},setExtension(id,value){state.extensions[id]=value;}};for(const script of scripts.slice(-2))run(w,script);}}});}
 run(shell,[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].at(-1)[1]);
 function flush(){let count=0;while(queue.length||timers.length){if(++count>400)throw Error('Message loop');while(queue.length){const m=queue.shift();if(m.dest.live)withWindow(m.dest,()=>{for(const f of m.dest.listeners.message||[])f({source:m.source,data:m.data});});}const t=timers.splice(0);for(const x of t)if(x.w.live)withWindow(x.w,x.fn);}}
 flush();const win=kind=>shellDoc.getElementById('pd-'+kind+'-frame').contentWindow;const el=(kind,id)=>win(kind).document.getElementById(id);const code=(kind,s)=>withWindow(win(kind),()=>vm.runInContext(s,win(kind).ctx));
@@ -70,5 +72,7 @@ check('Severity preserved on switching',code('compass','state().severity')==='mo
 change('draft','pd-shared-age','42');change('draft','pd-source-confirmed',true);check('Identity change clears severity',code('compass','state().severity')==='');check('Identity change clears target',code('compass','state().targets.length')===0);
 const oldAge=code('compass','state().age');withWindow(shell,()=>win('compass').postMessage({channel:'psydraft-compass',token:'bad',type:'apply-source',snapshot:{profile:{age:'90'}}}));flush();check('Bad token ignored',code('compass','state().age')===oldAge);
 change('draft','pd-shared-age','38.5');check('Invalid incoming data suspends old recommendations',code('compass','window.lastResult.drugs.length')===0&&code('compass','state().confirmed')===false);check('Invalid incoming data clears severity',code('compass','state().severity')==='');
-const oldDraft=win('draft');withWindow(shell,()=>shellDoc.getElementById('pd-new-case').click());flush();check('New case reloads source',win('draft')!==oldDraft&&el('draft','pd-shared-age').value==='');check('New case clears compass',code('compass','state().age')===''&&code('compass','window.lastResult.drugs.length')===0);
+check('Invalid incoming data persists the safely cleared compass profile',win('draft').PsyCase.get().extensions.compass.profile.age===''&&win('draft').PsyCase.get().extensions.compass.profile.severity==='');
+change('draft','pd-shared-age','38');check('Returning to the earlier valid source reapplies its data',code('compass','state().age')==='38'&&code('compass','state().dx')==='mdd');
+const oldDraft=win('draft');withWindow(shell,()=>shellDoc.getElementById('pd-new-case').click());flush();check('New case waits for in-page confirmation',win('draft')===oldDraft&&!shellDoc.getElementById('pd-reset-overlay').hidden);withWindow(shell,()=>shellDoc.getElementById('pd-reset-cancel').click());check('Cancellation preserves both documents',win('draft')===oldDraft);withWindow(shell,()=>{shellDoc.getElementById('pd-new-case').click();shellDoc.getElementById('pd-reset-confirm').click();});flush();check('New case reloads source',win('draft')!==oldDraft&&el('draft','pd-shared-age').value==='');check('New case clears compass',code('compass','state().age')===''&&code('compass','window.lastResult.drugs.length')===0);
 console.log(JSON.stringify({integrationAssertions:assertions,passed:true,note:'DOM and asynchronous message simulation; not browser rendering'},null,2));

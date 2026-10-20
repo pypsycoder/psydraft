@@ -9,8 +9,10 @@
     let tabs;
     let observer;
     let closeConfirmation = null;
+    let closePrintPreview = null;
     let confirmationId = 0;
     const itemNodes = new Map();
+    const comparisonBaselines = new Map();
 
     function element(tag, className, text) {
         const el = document.createElement(tag);
@@ -561,6 +563,69 @@
         return typeof S.store.history === 'function' ? S.store.history(activeId) : [];
     }
 
+    function renderComparison(a, history) {
+        const container = element('div', 'scales-comparison');
+        container.appendChild(element('h4', '', 'Сравнение оценок'));
+        const select = element('select');
+        const snapshotKey = snapshot => snapshot.snapshotId || snapshot.id + ':' + (snapshot.archivedAt || snapshot.updatedAt || '');
+        history.forEach(snapshot => {
+            const stamp = snapshot.archivedAt || snapshot.updatedAt;
+            const date = stamp ? new Date(stamp) : null;
+            const time = date && Number.isFinite(date.getTime()) ? date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '';
+            const suffix = (snapshot.snapshotId || snapshot.id || '').slice(-6);
+            const option = element('option', '', formattedDate(snapshot.date) + (time ? ' · ' + time : '') + (suffix ? ' · ' + suffix : ''));
+            option.value = snapshotKey(snapshot);
+            select.appendChild(option);
+        });
+        let key = comparisonBaselines.get(a.scaleId);
+        if (!history.some(snapshot => snapshotKey(snapshot) === key)) {
+            const latest = history.slice().reverse().find(snapshot => snapshot.id !== a.id) || history[history.length - 1];
+            key = snapshotKey(latest);
+        }
+        comparisonBaselines.set(a.scaleId, key);
+        select.value = key;
+        container.appendChild(field('Сравнить текущую оценку с сохранённой', select));
+        const output = element('div', 'scales-comparison-output');
+        container.appendChild(output);
+        function updateComparison() {
+            const baseline = history.find(snapshot => snapshotKey(snapshot) === select.value);
+            comparisonBaselines.set(a.scaleId, select.value);
+            const comparison = S.compareAssessments(a, baseline);
+            output.replaceChildren();
+            (comparison.reasons || []).forEach(reason => output.appendChild(element('p', 'scales-comparison-reason', reason)));
+            if (comparison.comparable) {
+                const scroll = element('div', 'scales-comparison-table-wrap');
+                const table = element('table', 'scales-comparison-table');
+                table.appendChild(element('caption', '', 'Динамика относительно оценки от ' + formattedDate(baseline.date)));
+                const head = element('thead');
+                const titles = element('tr');
+                ['Показатель', 'Ранее', 'Сейчас', 'Разность'].forEach(text => {
+                    const th = element('th', '', text);
+                    th.scope = 'col';
+                    titles.appendChild(th);
+                });
+                head.appendChild(titles);
+                const body = element('tbody');
+                (comparison.rows || []).forEach(row => {
+                    const tr = element('tr');
+                    const label = element('th', '', row.label);
+                    label.scope = 'row';
+                    tr.appendChild(label);
+                    const score = value => value === null || value === undefined ? '—' : String(value) + (row.kind === 'score' && row.max !== undefined ? '/' + row.max : '');
+                    tr.append(element('td', '', score(row.previous)), element('td', '', score(row.current)), element('td', '', row.delta === null || row.delta === undefined ? '—' : (row.delta > 0 ? '+' : '') + row.delta));
+                    body.appendChild(tr);
+                });
+                table.append(head, body);
+                scroll.appendChild(table);
+                output.appendChild(scroll);
+            }
+            (comparison.notices || []).forEach(notice => output.appendChild(element('p', 'scales-note', notice)));
+        }
+        select.addEventListener('change', updateComparison);
+        updateComparison();
+        return container;
+    }
+
     function refreshHistory(a) {
         const target = panel.querySelector('#scales-history');
         if (!target) return;
@@ -573,12 +638,16 @@
             const result = snapshot.results || S.evaluate(snapshot);
             const entry = element('li');
             entry.appendChild(element('strong', '', formattedDate(snapshot.date) + ' · ' + (snapshot.period || '')));
-            entry.appendChild(element('p', '', scoreText(result)));
+            entry.appendChild(element('p', '', snapshot.scaleId === 'cssrs' && result.complete && typeof S.resultText === 'function' ? S.resultText(snapshot, result) : scoreText(result)));
             Object.values(result.subscales || {}).forEach(score => entry.appendChild(element('p', 'scales-note', score.label + ': ' + score.value + (score.max === undefined ? '' : '/' + score.max))));
             if (snapshot.clinicianComment) entry.appendChild(element('p', '', snapshot.clinicianComment));
             list.appendChild(entry);
         });
         target.appendChild(list);
+        if (typeof S.compareAssessments === 'function') {
+            target.appendChild(renderComparison(a, history));
+            return;
+        }
         const latest = history[history.length - 1];
         const currentResult = S.evaluate(a);
         const previous = latest.results || S.evaluate(latest);
@@ -613,19 +682,29 @@
         return value === true ? 'Да' : value === false ? 'Нет' : String(value);
     }
 
-    function printAssessment() {
-        if (typeof window.print !== 'function') { message('Печать не поддерживается этим браузером.'); return; }
-        const previous = document.getElementById('scales-print-root');
-        if (previous) previous.remove();
-        const a = S.store.get(activeId);
-        const def = definition(a);
-        const result = S.evaluate(a);
+    const PRINT_SHEET_CSS = `
+.scales-print-sheet { color: #111; font: 11pt/1.4 Arial, sans-serif; overflow: visible; overflow-wrap: anywhere; }
+.scales-print-sheet h1 { font-size: 18pt; margin: 0 0 10pt; }
+.scales-print-sheet h2 { font-size: 13pt; margin: 16pt 0 6pt; break-after: avoid; page-break-after: avoid; }
+.scales-print-sheet h3 { font-size: 11pt; margin: 10pt 0 4pt; break-after: avoid; page-break-after: avoid; }
+.scales-print-sheet p { margin: 4pt 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.scales-print-sheet article { border-top: 1px solid #aaa; margin-top: 8pt; padding-top: 6pt; break-inside: auto; page-break-inside: auto; overflow: visible; }
+.scales-print-sheet .scales-print-meta { font-size: 9pt; }
+@media print {
+    @page { margin: 16mm; }
+    .scales-print-sheet { max-width: none; margin: 0; padding: 0; }
+}
+`;
+
+    S.buildPrintSheet = function (a, def, result) {
+        def = def || S.getDefinition(a.scaleId);
+        result = result || S.evaluate(a);
         const root = element('div');
-        root.id = 'scales-print-root';
+        root.className = 'scales-print-sheet';
         root.appendChild(element('h1', '', def.name + (def.title ? ' — ' + def.title : '')));
         root.appendChild(element('p', 'scales-print-meta', 'PSYDRAFT · Дата оценки: ' + formattedDate(a.date) + ' · ' + (a.period || def.period || '')));
-        root.appendChild(element('p', 'scales-print-meta', 'Версия: ' + (def.version || '') + ' · Русский перевод: ' + (def.translationVersion || 'не подтверждён')));
-        root.appendChild(element('p', 'scales-print-meta', 'Источник: ' + sourceText(def.source)));
+        root.appendChild(element('p', 'scales-print-meta', 'Версия: ' + (a.scaleVersion || def.version || '') + ' · Русский перевод: ' + (a.translationVersion || def.translationVersion || 'не подтверждён')));
+        root.appendChild(element('p', 'scales-print-meta', 'Источник: ' + sourceText(a.source || def.source)));
         if (def.mode === 'scores') {
             root.appendChild(element('p', 'scales-print-meta', 'Версия внешнего бланка: ' + (a.externalFormVersion || 'не указана')));
             root.appendChild(element('p', 'scales-print-meta', 'Версия использованного русского перевода: ' + (a.externalTranslationVersion || 'не указана')));
@@ -650,7 +729,10 @@
             if (item.instruction) article.appendChild(element('p', '', item.instruction));
             let skipText = 'Пропущено по алгоритму выбранной формы';
             if (def.mode === 'cssrs' && ((['q3', 'q4', 'q5'].includes(item.id) && typeof (a.answers || {}).q2 !== 'boolean') || (item.id === 'q6recent' && typeof (a.answers || {}).q6 !== 'boolean'))) skipText = 'Переход ещё не определён — предшествующий вопрос не оценён';
-            article.appendChild(element('p', '', 'Ответ: ' + (visible.has(item.id) ? answerLabel(item, (a.answers || {})[item.id]) : skipText)));
+            const answer = (a.answers || {})[item.id];
+            const response = visible.has(item.id) ? answerLabel(item, answer) :
+                def.mode === 'cssrs' && answer === true ? 'Да (ранее положительный ответ; требуется клинический пересмотр)' : skipText;
+            article.appendChild(element('p', '', 'Ответ: ' + response));
             const selected = (item.anchors || []).find(anchor => anchor.value === (a.answers || {})[item.id]);
             if (selected) article.appendChild(element('p', '', 'Критерий: ' + (selected.label || '') + (selected.description ? '\n' + selected.description : '')));
             if ((a.itemComments || {})[item.id]) article.appendChild(element('p', '', 'Комментарий: ' + a.itemComments[item.id]));
@@ -667,13 +749,149 @@
             if (a[key]) { root.appendChild(element('h2', '', label)); root.appendChild(element('p', '', a[key])); }
         });
         if (a.reportOverride) root.appendChild(element('p', 'scales-print-meta', 'Оценочный лист показывает рассчитанные результаты. Ручная редакция блока заключения хранится отдельно.'));
-        document.body.appendChild(root);
-        document.body.classList.add('scales-printing');
-        const cleanup = () => { document.body.classList.remove('scales-printing'); root.remove(); };
-        window.addEventListener('afterprint', cleanup, { once: true });
-        window.focus();
-        try { window.print(); }
-        catch (error) { cleanup(); window.removeEventListener('afterprint', cleanup); message('Не удалось открыть печать.'); }
+        return root;
+    };
+
+    function serializePrintSheet(sheet, title) {
+        return '<!DOCTYPE html>\n<html lang="ru"><head><meta charset="utf-8">' +
+            '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+            '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; base-uri \'none\'; form-action \'none\'">' +
+            '<title>' + S.escapeHTML(title) + '</title><style>' + PRINT_SHEET_CSS +
+            '\nbody { margin: 0; padding: 24px; background: white; } .scales-print-sheet { max-width: 190mm; margin: 0 auto; } @media print { body { padding: 0; } }' +
+            '</style></head><body>' + sheet.outerHTML + '</body></html>';
+    }
+
+    S.printSheetHTML = function (assessment, def, result) {
+        def = def || S.getDefinition(assessment.scaleId);
+        return serializePrintSheet(S.buildPrintSheet(assessment, def, result), def.name + ' — ' + (assessment.date || 'Оценочный лист'));
+    };
+
+    function downloadPrintSheet(sheet, def, date) {
+        const html = serializePrintSheet(sheet, def.name + ' — ' + (date || 'Оценочный лист'));
+        const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
+        const link = element('a');
+        link.href = url;
+        link.download = 'PSYDRAFT-' + def.name.replace(/[^a-z0-9-]/gi, '') + '-' + (date || 'assessment') + '.html';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    S.showPrintPreview = function (assessment, def, result) {
+        if (closeConfirmation) closeConfirmation(false);
+        if (closePrintPreview) closePrintPreview();
+        def = def || S.getDefinition(assessment.scaleId);
+        const sheet = S.buildPrintSheet(assessment, def, result);
+        const date = assessment.date;
+        const trigger = document.activeElement;
+        const dialog = element('dialog', 'scales-print-preview');
+        dialog.setAttribute('role', 'dialog');
+        dialog.setAttribute('aria-modal', 'true');
+        dialog.setAttribute('aria-labelledby', 'scales-print-preview-title');
+        const heading = element('h2', '', 'Оценочный лист — ' + def.name);
+        heading.id = 'scales-print-preview-title';
+        const header = element('div', 'scales-print-preview-header');
+        const actions = element('div', 'scales-print-preview-actions');
+        const status = element('p', 'scales-print-preview-status', 'Проверьте лист перед печатью или сохраните его в отдельный HTML-файл.');
+        status.setAttribute('role', 'status');
+        const content = element('div', 'scales-print-preview-content');
+        content.tabIndex = 0;
+        content.setAttribute('role', 'document');
+        content.setAttribute('aria-label', 'Заполненный оценочный лист');
+        content.appendChild(sheet);
+        const style = element('style', '', PRINT_SHEET_CSS);
+        let host = dialog;
+        let fallback = false;
+        let closed = false;
+        let cleanPrint = null;
+        const background = [];
+        const close = button('Закрыть', finish);
+        const save = button('Сохранить HTML', () => {
+            downloadPrintSheet(sheet, def, date);
+            status.textContent = 'Оценочный лист сохранён в отдельный HTML-файл.';
+        });
+        const print = button('Печать', () => {
+            if (typeof window.print !== 'function') { status.textContent = 'Печать недоступна. Сохраните HTML-файл и откройте его в другом браузере.'; return; }
+            if (cleanPrint) return;
+            const oldRoot = document.getElementById('scales-print-root');
+            if (oldRoot) oldRoot.remove();
+            const root = element('div');
+            root.id = 'scales-print-root';
+            root.appendChild(sheet.cloneNode(true));
+            document.body.appendChild(root);
+            document.body.classList.add('scales-printing');
+            print.disabled = true;
+            const cleanup = () => {
+                document.body.classList.remove('scales-printing');
+                root.remove();
+                window.removeEventListener('afterprint', cleanup);
+                print.disabled = false;
+                cleanPrint = null;
+            };
+            cleanPrint = cleanup;
+            window.addEventListener('afterprint', cleanup, { once: true });
+            try { window.focus(); window.print(); }
+            catch (error) { status.textContent = 'Не удалось открыть печать. Можно сохранить оценочный лист в HTML.'; }
+            finally { cleanup(); }
+        });
+        print.classList.remove('btn-secondary');
+        actions.append(print, save, close);
+        header.append(heading, actions, status);
+        dialog.append(style, header, content);
+        document.body.appendChild(dialog);
+        function retainFocus(event) { if (fallback && !dialog.contains(event.target)) close.focus(); }
+        function finish() {
+            if (closed) return;
+            closed = true;
+            if (cleanPrint) cleanPrint();
+            closePrintPreview = null;
+            document.removeEventListener('focusin', retainFocus, true);
+            if (!fallback && dialog.open && typeof dialog.close === 'function') dialog.close();
+            host.remove();
+            background.forEach(([node, inert, hidden]) => {
+                node.inert = inert;
+                if (hidden === null) node.removeAttribute('aria-hidden'); else node.setAttribute('aria-hidden', hidden);
+            });
+            if (trigger && trigger.isConnected && typeof trigger.focus === 'function') trigger.focus();
+            else if (panel && panel.isConnected) panel.focus();
+        }
+        closePrintPreview = finish;
+        dialog.addEventListener('cancel', event => { event.preventDefault(); finish(); });
+        dialog.addEventListener('close', finish);
+        dialog.addEventListener('keydown', event => {
+            if (event.key === 'Escape') { event.preventDefault(); finish(); }
+            else if (event.key === 'Tab') {
+                const first = print.disabled ? save : print;
+                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); content.focus(); }
+                else if (!event.shiftKey && document.activeElement === content) { event.preventDefault(); first.focus(); }
+            }
+        });
+        try {
+            if (typeof dialog.showModal !== 'function') throw new Error('Dialog API unavailable');
+            dialog.showModal();
+        } catch (error) {
+            fallback = true;
+            dialog.classList.add('scales-print-preview--fallback');
+            dialog.setAttribute('open', '');
+            host = element('div', 'scales-confirm-backdrop');
+            dialog.replaceWith(host);
+            host.appendChild(dialog);
+            Array.from(document.body.children).forEach(node => {
+                if (node === host) return;
+                background.push([node, node.inert, node.getAttribute('aria-hidden')]);
+                node.inert = true;
+                node.setAttribute('aria-hidden', 'true');
+            });
+            document.addEventListener('focusin', retainFocus, true);
+        }
+        close.focus();
+        return dialog;
+    };
+
+    function printAssessment() {
+        const assessment = S.store.get(activeId);
+        S.showPrintPreview(assessment, definition(assessment), S.evaluate(assessment));
     }
 
     S.init = function () {
@@ -715,9 +933,11 @@
         }
         if (window.location.hash === '#section-scales') open();
         document.addEventListener('psydraft:case-reset', () => {
+            if (closePrintPreview) closePrintPreview();
             opened = false;
             activeId = null;
             itemNodes.clear();
+            comparisonBaselines.clear();
             panel.replaceChildren(element('p', 'small-note', 'Новый случай. Выберите шкалу, чтобы начать отдельную оценку.'));
             tabs.querySelectorAll('[role="tab"]').forEach((tab, index) => {
                 tab.setAttribute('aria-selected', 'false');

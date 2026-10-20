@@ -72,6 +72,8 @@
             }
             const comment = block.querySelector('[data-scale-report-comment]');
             if (comment) assessment.reportComment = comment.innerText !== undefined ? comment.innerText.trim() : comment.textContent.trim();
+            const clinicianComment = block.querySelector('[data-scale-clinician-comment]');
+            if (clinicianComment) assessment.clinicianComment = clinicianComment.innerText !== undefined ? clinicianComment.innerText.trim() : clinicianComment.textContent.trim();
         });
     }
 
@@ -95,7 +97,8 @@
             }
             let html = '<div data-scale-report="' + esc(definition.id) + '" data-assessment-id="' + esc(assessment.id) + '">' +
                 '<div data-scale-calculated data-scale-fingerprint="' + esc(key) + '" data-content-signature="' + signature(calculated) + '">' + calculated + '</div>';
-            if (assessment.clinicianComment) html += '<div>Комментарий к оценке: ' + esc(assessment.clinicianComment).replace(/\n/g, '<br>') + '</div>';
+            if (assessment.clinicianComment) html += '<div><span contenteditable="false">Комментарий к оценке: </span>' +
+                '<span data-scale-clinician-comment>' + esc(assessment.clinicianComment).replace(/\n/g, '<br>') + '</span></div>';
             html += '<div data-scale-report-comment aria-label="Независимый комментарий врача к результатам ' + esc(definition.name) + '">' +
                 esc(assessment.reportComment || '').replace(/\n/g, '<br>') + '</div></div>';
             blocks.push(html);

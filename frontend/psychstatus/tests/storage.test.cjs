@@ -43,6 +43,7 @@ function setup(stored, options = {}) {
     };
     const context = vm.createContext({
         console, document, Date, Math, Object, JSON, Number, String, Set, Map,
+        PsyCaseStorageProvider: options.provider || null,
         Event: class Event { constructor(type) { this.type = type; } },
         CustomEvent: class CustomEvent { constructor(type, init) { this.type = type; this.detail = init.detail; } },
         setTimeout: () => 1, clearTimeout: () => {},
@@ -298,4 +299,215 @@ test('restored revision history freezes valid snapshots and flags damaged histor
     assert.ok(Object.isFrozen(restored.answerRevisionHistory[0].previousAnswers));
     assert.ok(restored.pendingRevision.recoveryRequired);
     assert.equal(app.S.evaluate(restored).complete, false);
+});
+
+test('direct clinical and independent report comments survive recalculation and escape markup', () => {
+    const app = setup();
+    app.api.init();
+    const state = app.api.get();
+    const a = complete(app.S, 'bnss', state.caseId, 2);
+    a.clinicianComment = 'Исходная запись';
+    state.scales.assessments.bnss = a;
+    const clinician = { innerText: 'Авторская <оценка>\nВторая строка' };
+    const independent = { innerText: 'Независимое дополнение' };
+    const block = {
+        dataset: { scaleReport: 'bnss', assessmentId: a.id },
+        querySelector: selector => selector === '[data-scale-clinician-comment]' ? clinician : selector === '[data-scale-report-comment]' ? independent : null
+    };
+    app.editors[1].querySelectorAll = selector => selector === '[data-scale-report]' ? [block] : [];
+    app.S.captureReportEdits();
+    assert.equal(a.clinicianComment, clinician.innerText);
+    assert.equal(a.reportComment, independent.innerText);
+    app.S.store.update('bnss', assessment => { assessment.answers.B1 = 3; });
+    const html = app.S.buildReportHTML();
+    assert.match(html, /27\/78/);
+    assert.match(html, /data-scale-clinician-comment/);
+    assert.match(html, /Авторская &lt;оценка&gt;<br>Вторая строка/);
+    assert.match(html, /Независимое дополнение/);
+    assert.ok(!html.includes('Исходная запись'));
+});
+
+test('calculated report override survives comment edits and invalidates after answer changes', () => {
+    const app = setup();
+    app.api.init();
+    const state = app.api.get();
+    const a = complete(app.S, 'bnss', state.caseId, 2);
+    state.scales.assessments.bnss = a;
+    const html = app.S.buildReportHTML();
+    const encoded = html.match(/data-scale-fingerprint="([^"]+)"/)[1];
+    const fingerprint = encoded.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+    a.reportOverride = { html: 'Авторская редакция рассчитанного текста', fingerprint };
+    a.clinicianComment = 'Новый клинический комментарий';
+    a.reportComment = 'Независимый комментарий';
+    assert.match(app.S.buildReportHTML(), /Авторская редакция рассчитанного текста/);
+    a.answers.B1 = 3;
+    const changed = app.S.buildReportHTML();
+    assert.ok(!changed.includes('Авторская редакция рассчитанного текста'));
+    assert.match(changed, /27\/78/);
+    assert.match(changed, /Новый клинический комментарий/);
+    assert.match(changed, /Независимый комментарий/);
+    assert.equal(a.reportOverride, null);
+});
+
+function rendererHarness(app) {
+    class Node {
+        constructor(tag) {
+            this.tagName = tag.toUpperCase(); this.children = []; this.parentNode = null;
+            this.dataset = {}; this.style = {}; this.attributes = {}; this.ownText = ''; this.listeners = {};
+            const classes = new Set();
+            this.classList = { add: value => classes.add(value), remove: value => classes.delete(value), contains: value => classes.has(value) };
+        }
+        set textContent(value) { this.ownText = String(value); this.children = []; }
+        get textContent() { return this.ownText + this.children.map(child => child.textContent).join(' '); }
+        appendChild(node) { this.children.push(node); node.parentNode = this; return node; }
+        append(...nodes) { nodes.forEach(node => this.appendChild(node)); }
+        replaceChildren(...nodes) { this.children = []; this.ownText = ''; this.append(...nodes); }
+        setAttribute(name, value) { this.attributes[name] = value; }
+        getAttribute(name) { return this.attributes[name] === undefined ? null : this.attributes[name]; }
+        removeAttribute(name) { delete this.attributes[name]; }
+        addEventListener(name, callback) { (this.listeners[name] ||= []).push(callback); }
+        click() { (this.listeners.click || []).forEach(callback => callback({ target: this })); }
+        focus() { app.context.document.activeElement = this; }
+        showModal() { this.open = true; }
+        close() { this.open = false; (this.listeners.close || []).forEach(callback => callback()); }
+        cloneNode(deep) { const result = new Node(this.tagName); result.ownText = this.ownText; result.className = this.className; result.attributes = { ...this.attributes }; if (deep) this.children.forEach(child => result.appendChild(child.cloneNode(true))); return result; }
+        remove() { if (this.parentNode) this.parentNode.children = this.parentNode.children.filter(node => node !== this); this.parentNode = null; }
+        querySelector(selector) {
+            for (const child of this.children) {
+                if (selector.startsWith('#') && child.id === selector.slice(1)) return child;
+                const nested = child.querySelector(selector); if (nested) return nested;
+            }
+            return null;
+        }
+    }
+    const body = new Node('body');
+    const panel = new Node('div');
+    const history = new Node('details'); history.id = 'scales-history'; panel.appendChild(history);
+    const originalGet = app.context.document.getElementById;
+    app.context.document.getElementById = id => body.querySelector('#' + id) || originalGet(id);
+    app.context.document.createElement = tag => new Node(tag);
+    app.context.document.body = body;
+    app.context.document.removeEventListener = () => {};
+    app.context.removeEventListener = (name, callback) => { app.windowListeners[name] = (app.windowListeners[name] || []).filter(listener => listener !== callback); };
+    app.context.focus = () => {};
+    let prints = 0;
+    app.context.print = () => { prints++; };
+    // Expose private rendering entry points only inside this isolated test VM.
+    const code = fs.readFileSync(path.join(source, 'scales/renderer.js'), 'utf8').replace('    S.init = function () {',
+        '    S.__rendererTest = { history: refreshHistory, print: printAssessment, setContext(id, node) { activeId = id; panel = node; } };\n    S.init = function () {');
+    vm.runInContext(code, app.context, { filename: 'scales/renderer.js' });
+    app.S.__rendererTest.setContext('cssrs', panel);
+    return { body, history, render: app.S.__rendererTest, prints: () => prints };
+}
+
+test('C-SSRS snapshot history shows its prior severity and behavior after reload', () => {
+    const initial = setup();
+    initial.api.init();
+    const state = initial.api.get();
+    const snapshot = complete(initial.S, 'cssrs', state.caseId, false);
+    snapshot.answers.q2 = true; snapshot.answers.q4 = true; snapshot.answers.q6 = true; snapshot.answers.q6recent = true;
+    snapshot.results = initial.S.evaluate(snapshot);
+    state.scales.history.push(snapshot);
+    state.scales.assessments.cssrs = complete(initial.S, 'cssrs', state.caseId, false);
+    const app = setup(JSON.stringify(state));
+    app.api.init();
+    const dom = rendererHarness(app);
+    dom.render.history(app.api.get().scales.assessments.cssrs);
+    assert.match(dom.history.textContent, /Максимальная категория тяжести мыслей — 4/);
+    assert.match(dom.history.textContent, /суицидальном поведении за жизнь — положительный ответ/);
+    assert.match(dom.history.textContent, /поведение за последние 3 месяца — отмечено/);
+    assert.ok(!dom.history.textContent.includes('Общая сумма не применяется'));
+});
+
+test('detached print sheet preserves hidden positive C-SSRS answers without opening print UI', () => {
+    const app = setup();
+    app.api.init();
+    const state = app.api.get();
+    const a = complete(app.S, 'cssrs', state.caseId, false);
+    a.answers.q3 = true; a.answers.q6recent = true;
+    a.pendingRevision = { previousAnswers: { q2: true, q3: true, q6: true, q6recent: true }, changedItems: ['q2', 'q6'] };
+    state.scales.assessments.cssrs = a;
+    const dom = rendererHarness(app);
+    const sheet = app.S.buildPrintSheet(a);
+    assert.equal(dom.prints(), 0);
+    assert.ok(sheet);
+    for (const id of ['q3', 'q6recent']) {
+        const article = sheet.children.find(node => node.tagName === 'ARTICLE' && node.children[0].textContent.startsWith(id + '.'));
+        assert.match(article.textContent, /Ответ: Да \(ранее положительный ответ; требуется клинический пересмотр\)/);
+        assert.ok(!article.textContent.includes('Пропущено по алгоритму'));
+    }
+    assert.equal(dom.body.querySelector('#scales-print-root'), null);
+    assert.equal(dom.body.classList.contains('scales-printing'), false);
+});
+
+const tick = () => new Promise(resolve => setImmediate(resolve));
+
+test('parent storage queues latest state and marks saved only after acknowledgement using the last acknowledged raw version', async () => {
+    const requests = [];
+    const provider = { read: () => null, write: (text, expected) => new Promise(resolve => { requests.push({ text, expected, resolve }); }) };
+    const app = setup(undefined, { provider, blockRead: true, blockWrite: true });
+    app.api.init();
+    const status = app.nodes.find(node => node.id === 'case-storage-status');
+    assert.equal(status.dataset.state, 'saving');
+    await tick();
+    assert.equal(requests.length, 1);
+    assert.equal(requests[0].expected, null);
+    app.controls[0].value = 'Первое изменение'; app.api.save();
+    app.controls[0].value = 'Последнее изменение'; app.api.save();
+    await tick();
+    assert.equal(requests.length, 1);
+    assert.equal(status.dataset.state, 'saving');
+    requests[0].resolve({ ok: true });
+    await tick();
+    assert.equal(requests.length, 2);
+    assert.equal(requests[1].expected, requests[0].text);
+    assert.equal(JSON.parse(requests[1].text).formData.controls['id:complaints:0'].value, 'Последнее изменение');
+    assert.equal(status.dataset.state, 'saving');
+    requests[1].resolve({ ok: true });
+    await tick();
+    assert.equal(status.dataset.state, 'saved');
+    assert.equal(app.saved.size, 0);
+});
+
+test('parent storage conflict blocks queued stale saves and embedded new-case requests a shared reset', async () => {
+    const requests = []; let resets = 0;
+    const provider = {
+        read: () => null,
+        write: (text, expected) => new Promise(resolve => { requests.push({ text, expected, resolve }); }),
+        requestReset: () => { resets++; }
+    };
+    const app = setup(undefined, { provider });
+    app.api.init(); await tick();
+    const id = app.api.get().caseId;
+    app.controls[0].value = 'Устаревшие данные'; app.api.save();
+    requests[0].resolve({ ok: false, code: 'conflict' }); await tick();
+    app.api.save(); await tick();
+    assert.equal(requests.length, 1);
+    assert.match(app.nodes.find(node => node.id === 'case-storage-status').textContent, /изменён в другой вкладке/);
+    app.api.newCase();
+    assert.equal(resets, 1);
+    assert.equal(app.api.get().caseId, id);
+});
+
+test('registered case extensions restore before form controls while change handlers observe restoring state', () => {
+    const first = setup(); let courses = [{ drug: 'ser', dose: '50' }];
+    first.api.registerAdapter('compass-source', { capture: () => ({ courses }), restore: value => { courses = value?.courses || []; } });
+    first.api.init(); first.controls[0].value = 'Сохранённое поле'; first.api.save();
+    assert.equal(JSON.parse(first.saved.get('psydraft.case.v1')).extensions['compass-source'].courses[0].drug, 'ser');
+    const second = setup(first.saved.get('psydraft.case.v1')); let restoredCourses; const restoringFlags = [];
+    second.api.registerAdapter('compass-source', {
+        capture: () => ({ courses: restoredCourses }),
+        restore: value => { restoringFlags.push(second.api.isRestoring); restoredCourses = value?.courses || []; second.controls[0].value = 'Создание динамических полей'; }
+    });
+    second.controls[1].onchange = () => { restoringFlags.push(second.api.isRestoring); };
+    second.api.init();
+    assert.equal(restoredCourses[0].drug, 'ser');
+    assert.equal(second.controls[0].value, 'Сохранённое поле');
+    assert.ok(restoringFlags.every(Boolean));
+    assert.equal(second.api.isRestoring, false);
+    second.api.setExtension('compass', { profile: { severity: 'moderate', targets: ['insomnia'] } });
+    assert.equal(second.api.get().extensions.compass.profile.severity, 'moderate');
+    second.api.newCase();
+    assert.equal(restoredCourses.length, 0);
+    assert.equal(second.api.get().extensions.compass, undefined);
 });

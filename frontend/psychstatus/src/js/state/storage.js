@@ -10,6 +10,10 @@
     let recoveryNotice = '';
     let observedStorageText = null;
     let hasObservedStorage = false;
+    const provider = window.PsyCaseStorageProvider || null;
+    const adapters = new Map();
+    let queuedWriteText = null;
+    let writeInFlight = false;
 
     function clone(value) {
         return JSON.parse(JSON.stringify(value));
@@ -83,7 +87,7 @@
         const element = document.getElementById('case-storage-status');
         if (!element) return;
         element.textContent = message;
-        element.dataset.state = failed ? 'error' : 'saved';
+        element.dataset.state = failed === 'pending' ? 'saving' : failed === true ? 'error' : 'saved';
     }
 
     function normalizeState(value) {
@@ -100,6 +104,7 @@
         state.selectedRecommendations = isRecord(value.selectedRecommendations) ? value.selectedRecommendations : {};
         state.clarifyLabels = isRecord(value.clarifyLabels) ? value.clarifyLabels : {};
         state.reportHTML = typeof value.reportHTML === 'string' ? value.reportHTML : '';
+        state.extensions = isRecord(value.extensions) ? { ...value.extensions } : {};
         const scales = isRecord(value.scales) ? value.scales : {};
         state.scales = {
             assessments: isRecord(scales.assessments) ? scales.assessments : {},
@@ -124,7 +129,7 @@
 
     function readStorage() {
         try {
-            const text = window.localStorage.getItem(FORM_SCHEMA.storageKey);
+            const text = provider ? provider.read() : window.localStorage.getItem(FORM_SCHEMA.storageKey);
             if (!initialized) {
                 observedStorageText = text;
                 hasObservedStorage = true;
@@ -260,6 +265,11 @@
         restoring = true;
         try {
             restoreModels(state);
+            // Extensions create dynamic controls (for example, previous treatment courses).
+            adapters.forEach(function (adapter, id) {
+                const value = state.extensions[id];
+                adapter.restore(value === undefined ? undefined : clone(value));
+            });
             applyControls(state.formData);
             // Existing handlers own dependent visibility, enabled fields and summaries.
             controlEntries().forEach(function (entry) {
@@ -286,10 +296,58 @@
         if (typeof selectedRecs !== 'undefined') state.selectedRecommendations = clone(selectedRecs);
         if (typeof activeGroup !== 'undefined') state.recommendationGroup = activeGroup;
         if (typeof _checkedClarifyLabels !== 'undefined') state.clarifyLabels = clone(_checkedClarifyLabels);
+        adapters.forEach(function (adapter, id) { state.extensions[id] = clone(adapter.capture()); });
         const result = document.getElementById('result');
         state.reportHTML = result ? result.innerHTML : state.reportHTML;
         state.updatedAt = new Date().toISOString();
         return state;
+    }
+
+    function conflict() {
+        storageBlocked = true;
+        queuedWriteText = null;
+        storageIssue = 'Случай изменён в другой вкладке. Перезагрузите страницу, чтобы загрузить актуальные данные. Изменения этой вкладки не сохранены.';
+        status(storageIssue, true);
+    }
+
+    function sendQueuedWrite() {
+        if (!provider || writeInFlight || queuedWriteText === null || storageBlocked) return;
+        const text = queuedWriteText;
+        queuedWriteText = null;
+        if (hasObservedStorage && text === observedStorageText) {
+            storageIssue = '';
+            status('Случай сохранён в этом браузере', false);
+            return;
+        }
+        writeInFlight = true;
+        status('Сохранение случая…', 'pending');
+        Promise.resolve().then(function () {
+            return provider.write(text, hasObservedStorage ? observedStorageText : null);
+        }).then(function (reply) {
+            writeInFlight = false;
+            if (!reply || reply.ok !== true) {
+                if (reply && reply.code === 'conflict') conflict();
+                else {
+                    queuedWriteText = null;
+                    storageIssue = 'Автосохранение недоступно. Данные останутся только до закрытия страницы. Скопируйте заключение или экспортируйте оценочные листы.';
+                    status(storageIssue, true);
+                }
+                return;
+            }
+            observedStorageText = text;
+            hasObservedStorage = true;
+            storageIssue = '';
+            if (queuedWriteText !== null && queuedWriteText !== text) sendQueuedWrite();
+            else {
+                queuedWriteText = null;
+                status('Случай сохранён в этом браузере', false);
+            }
+        }).catch(function () {
+            writeInFlight = false;
+            queuedWriteText = null;
+            storageIssue = 'Автосохранение недоступно. Данные останутся только до закрытия страницы. Скопируйте заключение или экспортируйте оценочные листы.';
+            status(storageIssue, true);
+        });
     }
 
     function save() {
@@ -300,12 +358,15 @@
             status(storageIssue, true);
             return state;
         }
+        if (provider) {
+            queuedWriteText = JSON.stringify(state);
+            sendQueuedWrite();
+            return state;
+        }
         try {
             const storedText = window.localStorage.getItem(FORM_SCHEMA.storageKey);
             if ((hasObservedStorage && storedText !== observedStorageText) || (!hasObservedStorage && storedText !== null)) {
-                storageBlocked = true;
-                storageIssue = 'Случай изменён в другой вкладке. Перезагрузите страницу, чтобы загрузить актуальные данные. Изменения этой вкладки не сохранены.';
-                status(storageIssue, true);
+                conflict();
                 return state;
             }
             const text = JSON.stringify(state);
@@ -328,6 +389,10 @@
     }
 
     function newCase() {
+        if (provider && typeof provider.requestReset === 'function') {
+            provider.requestReset();
+            return get();
+        }
         if (pendingSave !== null) { clearTimeout(pendingSave); pendingSave = null; }
         currentState = createDefaultCase();
         currentState.formData = clone(initialForm || collectForm(true));
@@ -379,7 +444,31 @@
         return currentState;
     }
 
-    window.PsyCase = { get: get, save: save, init: init, newCase: newCase, cleanHTML: cleanHTML };
+    function registerAdapter(id, adapter) {
+        if (!/^[a-z][a-z0-9-]{0,63}$/.test(id) || !adapter || typeof adapter.capture !== 'function' || typeof adapter.restore !== 'function') {
+            throw new Error('Некорректный адаптер состояния случая.');
+        }
+        if (adapters.has(id)) throw new Error('Адаптер состояния уже зарегистрирован.');
+        adapters.set(id, adapter);
+        if (initialized) {
+            restoring = true;
+            try { adapter.restore(get().extensions[id]); }
+            finally { restoring = false; }
+        }
+    }
+
+    function setExtension(id, value) {
+        if (!/^[a-z][a-z0-9-]{0,63}$/.test(id) || adapters.has(id)) return false;
+        get().extensions[id] = clone(value);
+        save();
+        return true;
+    }
+
+    window.PsyCase = {
+        get: get, save: save, init: init, newCase: newCase, cleanHTML: cleanHTML,
+        registerAdapter: registerAdapter, setExtension: setExtension,
+        get isRestoring() { return restoring; }
+    };
     window.loadState = readStorage;
     window.saveState = function (state) {
         if (state) {
