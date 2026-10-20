@@ -19,6 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
         initEditorToolbar();
     }
 
+    // Restore after the legacy modules have created their dynamic form controls.
+    if (window.PsyCase) PsyCase.init();
+    if (window.PsyScales && typeof PsyScales.init === 'function') PsyScales.init();
+    if (window.PsyScales && typeof PsyScales.initReportAdapter === 'function') PsyScales.initReportAdapter();
+
     const printButton = document.getElementById('print-result');
     if (printButton) {
         printButton.addEventListener('click', () => {
@@ -32,5 +37,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Additional UI initialization can be placed here
 });

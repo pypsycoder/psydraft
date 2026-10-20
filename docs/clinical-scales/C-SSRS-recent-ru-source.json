@@ -1,0 +1,57 @@
+{
+  "instrument": "C-SSRS",
+  "form": "Screen Version - Recent",
+  "language": "ru",
+  "sourceStatus": "official-distributor-copy",
+  "sourceVersion": "No revision date printed on the Russian PDF",
+  "retrievedOn": "2026-10-20",
+  "pdfMetadataCreationDate": "2026-04-30T16:21:32Z",
+  "provenancePage": "https://cssrs.columbia.edu/the-columbia-scale-c-ssrs/translations/",
+  "officialLibrary": "https://www.dropbox.com/scl/fo/pkg1gwxxn1266rke8oite/AC2UFfOKCtefU-o9EEXP-yk?rlkey=4grouuqbchfa8obxlcb3msnpz&dl=0",
+  "sourceArchiveEntry": "C-SSRS Screener - Russian.pdf",
+  "sourceLocalFile": "C-SSRS-Screener-Russian-official.pdf",
+  "permissionPage": "https://cssrs.columbia.edu/the-columbia-scale-c-ssrs/cssrs-for-communities-and-healthcare/",
+  "sourceTitle": "КОЛУМБИЙСКАЯ ШКАЛА ОЦЕНКИ ТЯЖЕСТИ СУИЦИДА",
+  "timeframes": {
+    "q1to5": "Последний месяц",
+    "q6": "Когда-либо в течение жизни",
+    "q6recent": "Последние 3 месяца"
+  },
+  "instructionsVerbatim": {
+    "start": "Задайте вопросы 1 и 2",
+    "afterQ2": "ЕСЛИ ДА 2, Задайте вопросы 3, 4, 5 и 6. ЕСЛИ Нет, Задайте вопросы 6."
+  },
+  "questions": {
+    "q1": "Возникало ли у Вас желание умереть или заснуть и не просыпаться?",
+    "q2": "Думали ли Вы в самом деле о том, чтобы убить себя?",
+    "q3": "Думали ли Вы о том, как Вы могли бы это сделать?",
+    "q4": "Посещали ли Вас подобные мысли, и было ли у Вас какое-нибудь намерение действовать в соответствии с ними?",
+    "q5": "Начали ли Вы разрабатывать или уже разработали детальный план самоубийства? Намереваетесь ли Вы осуществить этот план?",
+    "q6": "Вы когда-нибудь что-нибудь делали, начинали что-то делать или готовились сделать что-нибудь, чтобы покончить с собой?",
+    "q6recent": "ЕСЛИ ДА, то было ли это в последние 3 месяца?"
+  },
+  "detailsVerbatim": {
+    "q3": "Пациент подтверждает, что его посещают мысли о самоубийстве и что в течение периода наблюдения он/она думал(-а) хотя бы об одном способе самоубийства. Данная ситуация отлична от такой, когда пациент разработал конкретный план: время, место или детали метода самоубийства (например, пациент думал о способе самоубийства, но не о конкретном плане). Сюда относятся люди, которые скажут: “Я думал(-а) о передозировке таблеток, но так и не построил(-а) конкретного плана о том, когда, где и как осуществить это…..и я бы никогда не довёл(-а) дело до конца”.",
+    "q4": "Активные мысли о самоубийстве при заявлении пациента о некотором намерении действовать в соответствии с этими мыслями, в отличие от подобного утверждения: “Такие мысли посещают меня, но я определенно не стану ничего предпринимать”.",
+    "q6": "Примеры: запаслись таблетками, приобрели пистолет, раздали ценные вещи, написали завещание или предсмертную записку, запаслись таблетками, но не проглотили их, держали пистолет, но передумали стрелять или его кто-то выхватил из вашей руки, поднялись на крышу, но не прыгнули; или принимали таблетки, пытались застрелиться, порезались, пытался повеситься и т. д."
+  },
+  "navigation": {
+    "alwaysRequired": ["q1", "q2", "q6"],
+    "ifQ2Yes": ["q3", "q4", "q5"],
+    "ifQ6Yes": ["q6recent"],
+    "ifQ2No": "q3, q4 and q5 are structurally skipped, never stored as patient denials"
+  },
+  "triageColorsVerifiedVisually": {
+    "low": ["q1=yes", "q2=yes"],
+    "moderate": ["q3=yes", "q6=yes and q6recent=no"],
+    "high": ["q4=yes", "q5=yes", "q6recent=yes"]
+  },
+  "implementationLimits": [
+    "This is the Recent screener, not the full C-SSRS clinical interview.",
+    "Do not add ideation intensity, distinct behavior types or NSSI under a claim that they are part of this screener.",
+    "Maximum ideation severity is a category 0 to 5, not a sum of yes answers.",
+    "Do not call triage output a definitive prediction of suicide or an automatic disposition decision.",
+    "Missing or unassessable answers never equal no.",
+    "Official Russian Since Last Contact/Visit was not found in the open screener library; do not silently relabel this Russian Recent form as a validated follow-up form."
+  ]
+}
