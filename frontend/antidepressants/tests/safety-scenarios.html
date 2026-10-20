@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Проверки безопасности ассистента</title>
+<style>body{margin:30px auto;padding:0 20px;max-width:1000px;font:16px/1.6 system-ui;background:#f2f2f7;color:#111}li{margin:5px 0}.fail{color:#9b2f35}.pass{color:#175e46}iframe{position:absolute;width:1px;height:1px;left:-9999px;border:0}</style>
+<h1>Регрессионные проверки безопасности</h1>
+<p>Запускать через локальный HTTP-сервер. Эти проверки не заменяют клиническую валидацию или ревизию российских инструкций.</p>
+<p id="status" role="status">Загрузка приложения…</p>
+<ol id="results"></ol>
+<iframe id="app" title="Ассистент для тестирования" src="../src/compass.html"></iframe>
+<script src="safety-scenarios.js"></script>
+<script src="../src/bridge-map.js"></script>
+<script src="bridge-scenarios.js"></script>
+<script>
+document.getElementById('app').addEventListener('load',()=>{
+  const status=document.getElementById('status');
+  try{
+    const app=document.getElementById('app').contentWindow;
+    const results=[...runSafetyScenarios(app),...runBridgeScenarios(mapPsyDraftSnapshot,app)];
+    const list=document.getElementById('results');
+    for(const result of results){const item=document.createElement('li');item.className=result.passed?'pass':'fail';item.textContent=(result.passed?'✓ ':'✗ ')+result.name;list.append(item);}
+    const failed=results.filter(x=>!x.passed).length;
+    status.textContent=`Проверок: ${results.length}; ошибок: ${failed}.`;
+    status.className=failed?'fail':'pass';
+    if(!app.document.getElementById('clinical-disclaimer'))throw Error('Отсутствует видимый дисклеймер');
+  }catch(error){status.className='fail';status.textContent='Не удалось выполнить проверки: '+error.message;}
+});
+</script>
+</html>

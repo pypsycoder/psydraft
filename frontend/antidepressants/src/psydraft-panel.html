@@ -1,0 +1,23 @@
+<div class="section-card" id="pd-compass-shared" style="margin-top:14px">
+ <h3>Данные для клинического компаса</h3>
+ <p style="color:#6e6e73;font-size:14px">Возраст и дополнительные клинические сведения вводятся здесь один раз. Диагноз, сон, аппетит и когнитивные жалобы берутся из разделов PsyDraft. В компасе выбираются тяжесть и главные мишени.</p>
+ <div class="subgroup-grid">
+  <div><label for="pd-shared-age">Возраст, лет</label><input id="pd-shared-age" type="number" min="0" max="120" step="1" placeholder="Не уточнён"></div>
+  <div><a href="#section-diagnosis">Заполнить диагноз</a> · <a href="#status-mood">Перейти к симптомам</a><p style="font-size:13px;color:#6e6e73">Нозология берётся только из раздела «Диагноз». При нескольких кодах основной диагноз укажите первым.</p></div>
+ </div>
+ <details><summary style="cursor:pointer;padding:12px 0;font-weight:600">Клинические ограничения и анамнез лечения</summary>
+  <div class="subgroup-grid">{{SAFETY_SELECTS}}</div>
+  <p style="font-size:14px;color:#6e6e73">Суицидальные планы, признаки кататонии и выбранные галлюцинации из статуса также учитываются. Отсутствие мании или психоза не выводится из незаполненных полей.</p>
+  <div id="pd-source-conditions"></div>
+  <div class="subgroup-grid">{{DETAIL_SELECTS}}</div>
+  <h4>Лекарства / взаимодействия</h4><div id="pd-source-medications"></div>
+  <h4>Другие стоп-сигналы</h4><div id="pd-source-red-flags"></div>
+  <h4>Приоритеты пациента</h4><div id="pd-source-priorities"></div>
+  <h4>Курсы антидепрессантов</h4>
+  <label for="pd-shared-historyStatus">Анамнез терапии</label>{{HISTORY_SELECT}}
+  <div id="pd-source-courses"></div><button type="button" id="pd-source-add-course">+ Добавить курс</button>
+  <p style="font-size:14px;color:#6e6e73">Доза, длительность и адекватность записываются структурированно. Текст раздела «Лечение у психиатра» не увеличивает число подтверждённых попыток автоматически.</p>
+ </details>
+ <label style="display:flex;gap:9px;margin-top:15px"><input type="checkbox" id="pd-source-confirmed">Диагноз, клинические ограничения, анамнез и список лекарств уточнены врачом; неотмеченные факторы действительно не выявлены.</label>
+ <div id="pd-source-transfer-note" style="color:#6e6e73;font-size:13px;margin-top:8px">Данные передаются между вкладками внутри этого файла, без сети.</div>
+</div>
