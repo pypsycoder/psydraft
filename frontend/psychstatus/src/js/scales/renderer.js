@@ -212,20 +212,24 @@
             return;
         }
         panel.appendChild(element('h3', 'scales-title', def.name + (def.title ? ' — ' + def.title : '')));
-        panel.appendChild(element('p', 'scales-meta', 'Версия: ' + (a.scaleVersion || def.version || 'не указана') + '. Русский перевод: ' + (a.translationVersion || def.translationVersion || 'не подтверждён')));
-        appendSource(panel, def);
-        if (def.notice) panel.appendChild(element('p', 'scales-notice', def.notice));
         const latest = S.getDefinition(activeId);
-        if (latest.version !== def.version) {
-            const legacy = element('div', 'scales-notice');
-            legacy.appendChild(element('p', '', 'Сохранена прежняя редакция оценки. Ответы и история не переименовываются в полное интервью. Для новой редакции начните отдельную оценку.'));
-            legacy.appendChild(button('Начать оценку по новой редакции', () => {
-                const start = () => { S.store.startCurrentVersion(activeId); render(); };
+        const isLegacy = latest.version !== def.version;
+        if (isLegacy) {
+            const legacy = element('div', 'scales-version-upgrade');
+            legacy.setAttribute('role', 'note');
+            legacy.appendChild(element('h4', '', activeId === 'bnss' ? 'Доступна полная BNSS из клинических рекомендаций' : 'Доступна новая редакция ' + latest.name));
+            legacy.appendChild(element('p', '', 'Сейчас открыта сохранённая оценка прежней редакции. Новая форма: ' + latest.version + '.'));
+            legacy.appendChild(element('p', '', 'Новая оценка начнётся с пустых ответов. Завершённая прежняя оценка останется в истории; замена незавершённого черновика потребует подтверждения.'));
+            legacy.appendChild(button(activeId === 'bnss' ? 'Открыть полную BNSS — новая оценка' : 'Начать оценку по новой редакции', () => {
+                const start = () => { S.store.startCurrentVersion(activeId); render(); panel.focus(); };
                 if (!S.evaluate(a).complete && hasDraftData(a, def)) S.confirmAction('Новая редакция начнётся с пустых ответов. Незавершённый текущий черновик и заметки будут очищены. Продолжить?', start);
                 else start();
             }));
             panel.appendChild(legacy);
         }
+        panel.appendChild(element('p', 'scales-meta', (isLegacy ? 'Сохранённая редакция: ' : 'Версия: ') + (a.scaleVersion || def.version || 'не указана') + '. Русский перевод: ' + (a.translationVersion || def.translationVersion || 'не подтверждён')));
+        appendSource(panel, def);
+        if (def.notice) panel.appendChild(element('p', 'scales-notice', (isLegacy ? 'Описание прежней редакции: ' : '') + def.notice));
         const instructions = [def.instruction, ...(def.instructions || []), ...(Array.isArray(def.sourceNotes) ? def.sourceNotes : def.sourceNotes ? [def.sourceNotes] : [])].filter(Boolean);
         if (instructions.length || def.sourceInterpretation) {
             const help = element('details', 'scales-instructions');

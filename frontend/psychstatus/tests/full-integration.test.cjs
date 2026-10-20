@@ -45,6 +45,67 @@ test('missing or unknown saved instrument versions cannot be promoted to a compl
     a.scaleVersion = ''; assert.equal(S.evaluate(a).complete, false); assert.equal(S.getDefinition('bnss', a), null);
     a.scaleVersion = 'unknown'; assert.equal(S.evaluate(a).complete, false);
 });
+function openLegacyBnss(complete) {
+    const app = appWithStore();
+    const legacy = Object.values(app.S.versions.bnss).find(def => def.mode === 'scores');
+    const assessment = app.S.createAssessment('bnss', 'full-case');
+    Object.assign(assessment, { scaleVersion: legacy.version, translationVersion: legacy.translationVersion,
+        source: legacy.source, period: legacy.period, clinicianComment: 'Комментарий прежней оценки' });
+    legacy.items.forEach(item => { assessment.answers[item.id] = complete ? 2 : null; });
+    if (!complete) assessment.answers.B1 = 0;
+    app.state.scales.assessments.bnss = assessment;
+    const panel = app.document.createElement('div'); panel.id = 'scales-panel';
+    const tabs = app.document.createElement('div'); tabs.id = 'scales-tabs';
+    app.document.body.append(panel, tabs); app.S.init();
+    tabs.children.find(tab => tab.dataset.scale === 'bnss').click();
+    return { ...app, assessment, legacy, panel };
+}
+test('saved completed legacy BNSS advertises the full edition before its old notice and upgrades to a separate blank assessment', () => {
+    const { S, state, assessment, legacy, panel } = openLegacyBnss(true);
+    assert.equal(S.evaluate(assessment).complete, true);
+    const saved = JSON.parse(JSON.stringify(assessment));
+    const upgrade = panel.querySelector('.scales-version-upgrade');
+    assert.ok(upgrade, 'the full edition must be discoverable while a saved legacy assessment is open');
+    assert.equal(panel.children.indexOf(upgrade), 1, 'the upgrade notice follows the scale title');
+    assert.ok(upgrade.textContent.includes(S.getDefinition('bnss').version));
+    const oldNotice = panel.children.find(node => node.textContent.endsWith(legacy.notice));
+    const savedVersion = panel.children.find(node => node.textContent.startsWith('Сохранённая редакция: '));
+    assert.ok(oldNotice); assert.ok(savedVersion);
+    assert.ok(panel.children.indexOf(upgrade) < panel.children.indexOf(oldNotice));
+    assert.ok(panel.children.indexOf(upgrade) < panel.children.indexOf(savedVersion));
+    const start = upgrade.querySelector('button');
+    assert.equal(start.textContent, 'Открыть полную BNSS — новая оценка');
+    start.click();
+    const current = state.scales.assessments.bnss;
+    assert.notEqual(current.id, saved.id);
+    assert.equal(current.scaleVersion, S.getDefinition('bnss').version);
+    assert.equal(S.getDefinition('bnss', current).mode, 'interview');
+    assert.ok(Object.values(current.answers).every(value => value === null));
+    assert.equal(current.clinicianComment, '');
+    const history = S.store.history('bnss');
+    assert.equal(history.length, 1);
+    assert.equal(history[0].id, saved.id);
+    assert.equal(history[0].scaleVersion, legacy.version);
+    assert.deepEqual(JSON.parse(JSON.stringify(history[0].answers)), saved.answers);
+    assert.equal(history[0].clinicianComment, saved.clinicianComment);
+    assert.equal(Object.isFrozen(history[0]), true);
+    assert.equal(panel.querySelector('.scales-version-upgrade'), null);
+});
+test('canceling an upgrade leaves an incomplete legacy BNSS answer and comment untouched', () => {
+    const { S, state, document, assessment, panel } = openLegacyBnss(false);
+    assert.equal(S.evaluate(assessment).complete, false);
+    const saved = JSON.stringify(assessment);
+    panel.querySelector('.scales-version-upgrade').querySelector('button').click();
+    const confirmation = document.querySelectorAll('.scales-confirmation')[0];
+    assert.ok(confirmation, 'a legacy draft must not be replaced without confirmation');
+    assert.equal(state.scales.assessments.bnss, assessment);
+    assert.equal(JSON.stringify(assessment), saved);
+    confirmation.querySelectorAll('button').find(button => button.textContent === 'Отмена').click();
+    assert.equal(document.querySelectorAll('.scales-confirmation').length, 0);
+    assert.equal(state.scales.assessments.bnss, assessment);
+    assert.equal(JSON.stringify(assessment), saved);
+    assert.equal(S.store.history('bnss').length, 0);
+});
 test('full C-SSRS keeps behavior independent of ideation and NSSI separate from attempts', () => {
     const { S } = setup({ full: true }); const a = negative(S);
     assert.equal(S.evaluate(S.createAssessment('cssrs', 'full-case')).intensityApplicable, null);

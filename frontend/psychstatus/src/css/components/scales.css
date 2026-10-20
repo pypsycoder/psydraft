@@ -6,6 +6,10 @@
 .scales-tabs [role="tab"]:focus-visible, .scales-module summary:focus-visible, .scales-module button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .scales-panel:focus { outline: none; }
 .scales-title { margin: 0 0 6px; font-size: 21px; }
+.scales-version-upgrade { background: #edf5ff; border: 1px solid #9fc8f7; border-radius: 10px; padding: 14px; margin: 12px 0 18px; color: #174b7d; font-size: 14px; }
+.scales-version-upgrade h4 { margin: 0 0 8px; font-size: 17px; }
+.scales-version-upgrade p { margin: 8px 0; }
+.scales-version-upgrade button { margin: 6px 0 0; font-size: 14px; }
 .scales-meta, .scales-note { color: var(--text-secondary); font-size: 13px; overflow-wrap: anywhere; }
 .scales-meta { margin: 5px 0; }
 .scales-meta a { color: #0064cd; }
