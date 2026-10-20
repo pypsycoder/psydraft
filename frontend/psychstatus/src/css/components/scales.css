@@ -28,7 +28,10 @@
 .scales-item-heading h5 { margin: 0; font-size: 15px; flex: 1 1 200px; }
 .scales-item-code { display: inline-block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-right: 8px; }
 .scales-item select { max-width: 340px; }
-.scales-question { white-space: pre-wrap; font-size: 15px; margin: 9px 0; }
+.scales-question { font-size: 15px; line-height: 1.6; margin: 12px 0; }
+.scales-question-section + .scales-question-section { margin-top: 16px; }
+.scales-question p { white-space: pre-line; margin: 3px 0; }
+.scales-question .scales-question-heading { margin-bottom: 6px; }
 .scales-item .scales-comment-label { margin-top: 12px; color: var(--text-secondary); font-size: 13px; font-weight: 500; }
 .scales-item--attention { border-left: 4px solid #ba7b17; }
 .scales-criteria { margin-top: 12px; border-top: 1px solid var(--border-card); padding-top: 8px; }

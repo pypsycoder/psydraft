@@ -387,6 +387,61 @@
         return control;
     }
 
+    // These are presentation boundaries from the source BNSS questions, not new interview text.
+    const BNSS_QUESTION_HEADINGS = [
+        'СОЦИАЛЬНАЯ АКТИВНОСТЬ:', 'ФИЗИЧЕСКИЕ ОЩУЩЕНИЯ:', 'ОТДЫХ И РАЗВЛЕЧЕНИЯ:', 'РАБОТА И УЧЕБА:',
+        'Вопросы для пациента.', 'Вопросы для пациента', 'Общие вопросы:', 'Работа и учеба:',
+        'Отдых и развлечения/хобби/времяпрепровождение:', 'Уход за собой :',
+        'Если пациент испытывал удовольствие от некоторых видов деятельности на прошлой неделе:',
+        'Если пациент не испытывал удовольствия от каких-либо видов деятельности на прошлой неделе:',
+        'Если ничего неприятного не случилось:', 'Если пациент социально активен:', 'Если пациент социально неактивен:',
+        'Если в настоящее время работает или учится:', 'Если в настоящее время не работает или не учится:',
+        'Если не работает или не учится:'
+    ];
+
+    function questionContent(item, def) {
+        const content = element('div', 'scales-question');
+        const text = item.question;
+        const headings = def.id === 'bnss' ? BNSS_QUESTION_HEADINGS : [];
+        let section = element('div', 'scales-question-section');
+        let cursor = 0;
+        function appendLines(part) {
+            if (!part.trim()) {
+                if (part) section.appendChild(document.createTextNode(part));
+                return;
+            }
+            // Keep the original text, including punctuation and whitespace, in the DOM.
+            const breaks = /\?[.!»”"')\]]*\s+|[.!][»”"')\]]*\s+(?=[А-ЯЁA-Z])/g;
+            let start = 0;
+            for (const match of part.matchAll(breaks)) {
+                const end = match.index + match[0].length;
+                section.appendChild(element('p', 'scales-question-line', part.slice(start, end)));
+                start = end;
+            }
+            if (start < part.length) section.appendChild(element('p', 'scales-question-line', part.slice(start)));
+        }
+        while (cursor < text.length) {
+            let next = -1;
+            let heading = '';
+            headings.forEach(title => {
+                const index = text.indexOf(title, cursor);
+                if (index !== -1 && (next === -1 || index < next || (index === next && title.length > heading.length))) {
+                    next = index; heading = title;
+                }
+            });
+            if (next === -1) { appendLines(text.slice(cursor)); break; }
+            appendLines(text.slice(cursor, next));
+            if (section.children.length) content.appendChild(section);
+            section = element('div', 'scales-question-section');
+            const title = element('p', 'scales-question-heading');
+            title.appendChild(element('strong', '', heading));
+            section.appendChild(title);
+            cursor = next + heading.length;
+        }
+        if (section.children.length) content.appendChild(section);
+        return content;
+    }
+
     function renderItem(item, a, def) {
         const block = element('article', 'scales-item');
         block.dataset.item = item.id;
@@ -400,7 +455,7 @@
         block.appendChild(heading);
         let question;
         if (item.question) {
-            question = element('p', 'scales-question', item.question);
+            question = questionContent(item, def);
             question.id = 'scales-question-' + activeId + '-' + item.id;
             block.appendChild(question);
         }
@@ -790,6 +845,10 @@
 .scales-print-sheet h2 { font-size: 13pt; margin: 16pt 0 6pt; break-after: avoid; page-break-after: avoid; }
 .scales-print-sheet h3 { font-size: 11pt; margin: 10pt 0 4pt; break-after: avoid; page-break-after: avoid; }
 .scales-print-sheet p { margin: 4pt 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.scales-print-sheet .scales-question { margin: 7pt 0; line-height: 1.55; }
+.scales-print-sheet .scales-question-section + .scales-question-section { margin-top: 10pt; }
+.scales-print-sheet .scales-question p { margin: 2pt 0; white-space: pre-line; }
+.scales-print-sheet .scales-question .scales-question-heading { margin-bottom: 4pt; break-after: avoid; page-break-after: avoid; }
 .scales-print-sheet article { border-top: 1px solid #aaa; margin-top: 8pt; padding-top: 6pt; break-inside: auto; page-break-inside: auto; overflow: visible; }
 .scales-print-sheet .scales-print-meta { font-size: 9pt; }
 @media print {
@@ -828,7 +887,7 @@
         (def.items || []).forEach(item => {
             const article = element('article');
             article.appendChild(element('h3', '', (def.mode === 'cssrs-full' ? '' : item.id + '. ') + item.label));
-            if (item.question) article.appendChild(element('p', '', item.question));
+            if (item.question) article.appendChild(questionContent(item, def));
             if (item.instruction) article.appendChild(element('p', '', item.instruction));
             let skipText = 'Пропущено по алгоритму выбранной формы';
             if (def.mode === 'cssrs' && ((['q3', 'q4', 'q5'].includes(item.id) && typeof (a.answers || {}).q2 !== 'boolean') || (item.id === 'q6recent' && typeof (a.answers || {}).q6 !== 'boolean'))) skipText = 'Переход ещё не определён — предшествующий вопрос не оценён';

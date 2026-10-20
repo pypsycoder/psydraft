@@ -77,7 +77,8 @@ test('long notes remain full length; print styles allow paragraphs and articles 
     assert.match(html, /article\s*\{[^}]*break-inside:\s*auto/);
     assert.match(html, /h3\s*\{[^}]*break-after:\s*avoid/);
     assert.match(html, /white-space:\s*pre-wrap/);
-    assert.doesNotMatch(html, /(?:max-)?height:\s*\d|overflow:\s*hidden|break-inside:\s*avoid/);
+    // Match complete CSS properties: line-height adjusts spacing without clipping text.
+    assert.doesNotMatch(html, /(?:^|[;{])\s*(?:(?:max-)?height:\s*\d|overflow:\s*hidden|(?:page-)?break-inside:\s*avoid)/);
 });
 
 test('preview opens without native print and exports the captured sheet even if assessment later changes', () => {
