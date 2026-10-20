@@ -9,7 +9,19 @@
         }));
     }
     S.evaluate = function (assessment) {
-        const def = assessment && S.getDefinition(assessment.scaleId);
+        const def = assessment && S.getDefinition(assessment.scaleId, assessment);
+        if (def && def.mode === 'basic-symptom-criteria') {
+            const criteria = S.evaluateBasicSymptomCriteria(assessment);
+            const metadata = S.validate(assessment);
+            criteria.complete = criteria.complete && metadata.complete;
+            criteria.errors = Array.from(new Set([...(criteria.errors || []), ...metadata.errors]));
+            const unassessed = criteria.errors.filter(error => /^Не оценён феномен /.test(error));
+            criteria.warnings = Array.from(new Set([...(criteria.warnings || []), ...criteria.errors.filter(error => !/^Не оценён феномен /.test(error))]));
+            if (unassessed.length) criteria.warnings.push('Не оценены феномены: ' + unassessed.length + '. Заполните пункты интервью; пустые ответы не считаются отсутствием симптомов.');
+            criteria.status = criteria.complete ? 'complete' : 'incomplete';
+            return { total: null, max: null, partialTotal: null, subscales: {}, domains: {}, ...criteria,
+                interpretation: 'Критериальная оценка COGDIS/COPER не заменяет полное интервью SPI-A и не устанавливает диагноз.' };
+        }
         const validity = S.validate(assessment);
         const result = Object.assign({}, validity, {
             status: validity.complete ? 'complete' : 'incomplete', total: null, max: null,
@@ -20,6 +32,8 @@
             result.status = 'preparation';
             result.cogdis = 'Недостаточно данных'; result.coper = 'Недостаточно данных';
             result.warnings.push('Недостаточно данных. Полное интервью и расчёт не подключены.');
+        } else if (def.mode === 'cssrs-full') {
+            Object.assign(result, S.scoreFullCssrs(assessment, def, validity));
         } else if (def.mode === 'cssrs') {
             const a = assessment.answers || {};
             const ideology = S.visibleItems(assessment).filter(item => /^q[1-5]$/.test(item.id));

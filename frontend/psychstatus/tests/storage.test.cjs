@@ -57,11 +57,41 @@ function setup(stored, options = {}) {
     context.window = context;
     vm.runInContext('let prescriptions = []; let rxNextId = 1; let rxEditingId = null; const selectedRecs = {}; let activeGroup = "sleep"; var _checkedClarifyLabels = {}; const autoMonitoringRecIds = new Set();', context);
     ['state/schema', 'state/defaults', 'state/storage', 'scales/registry', 'scales/definitions',
+        ...(options.full ? ['scales/full-bnss-sops', 'scales/full-cdss', 'scales/full-cssrs', 'scales/full-spia', 'scales/spia-criteria', 'scales/full-engine', 'scales/full-activate'] : []),
         'scales/validation', 'scales/scoring', 'scales/interpretation', 'scales/storage-adapter', 'scales/report-adapter'].forEach(name => {
         vm.runInContext(fs.readFileSync(path.join(source, name + '.js'), 'utf8'), context, { filename: name + '.js' });
     });
     return { context, api: context.PsyCase, S: context.PsyScales, saved, nodes, controls, editors, events, windowListeners };
 }
+
+test('full interview sources and legacy assessment versions survive storage and immutable snapshots', () => {
+    const first = setup(undefined, { full: true }); first.api.init();
+    const a = complete(first.S, 'bnss', first.api.get().caseId, 2);
+    first.api.get().scales.assessments.bnss = a;
+    first.S.store.snapshot('bnss'); first.api.save();
+    const second = setup(first.saved.get('psydraft.case.v1'), { full: true }); second.api.init();
+    assert.equal(second.api.get().scales.assessments.bnss.source.url, a.source.url);
+    assert.equal(second.S.store.history('bnss')[0].source.title, a.source.title);
+    assert.equal(Object.isFrozen(second.api.get().scales.history[0].source), true);
+    const damaged = JSON.parse(first.saved.get('psydraft.case.v1')); damaged.scales.assessments.bnss.scaleVersion = '';
+    const unknown = setup(JSON.stringify(damaged), { full: true }); unknown.api.init();
+    assert.equal(unknown.S.evaluate(unknown.api.get().scales.assessments.bnss).complete, false);
+    assert.equal(unknown.S.buildReportHTML(), '');
+    const html = second.S.buildReportHTML();
+    assert.match(html, /Редакция:/); assert.doesNotMatch(html, /полное интервью в приложении не проводилось/);
+    const legacy = setup(); legacy.api.init();
+    legacy.api.get().scales.assessments.bnss = complete(legacy.S, 'bnss', legacy.api.get().caseId, 2);
+    const oldVersion = legacy.api.get().scales.assessments.bnss.scaleVersion; legacy.api.save();
+    const upgraded = setup(legacy.saved.get('psydraft.case.v1'), { full: true }); upgraded.api.init();
+    const restored = upgraded.api.get().scales.assessments.bnss;
+    assert.equal(restored.scaleVersion, oldVersion);
+    assert.equal(upgraded.S.getDefinition('bnss', restored).mode, 'scores');
+    assert.match(upgraded.S.buildReportHTML(), /полное интервью в приложении не проводилось/);
+    upgraded.S.store.startCurrentVersion('bnss');
+    assert.equal(upgraded.S.store.history('bnss')[0].scaleVersion, oldVersion);
+    assert.equal(upgraded.S.getDefinition('bnss', upgraded.S.store.get('bnss')).mode, 'interview');
+    assert.equal(upgraded.S.evaluate(upgraded.S.store.get('bnss')).complete, false);
+});
 
 function complete(S, id, caseId, score = 0) {
     const assessment = S.createAssessment(id, caseId);

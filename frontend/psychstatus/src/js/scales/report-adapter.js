@@ -41,6 +41,7 @@
         const esc = S.escapeHTML;
         let html = '<strong>' + esc(definition.name) + '</strong> (' + esc(dateLabel(assessment.date)) +
             '; период: ' + esc(assessment.period) + '). ' + esc(S.resultText(assessment, result));
+        if (definition.mode !== 'scores') html += '<br>Редакция: ' + esc(assessment.scaleVersion) + '; перевод: ' + esc(assessment.translationVersion) + '.';
         if (definition.mode === 'scores') {
             html += ' Баллы зарегистрированы врачом по внешнему оценочному листу; полное интервью в приложении не проводилось.';
             html += '<br>Внешний инструмент: версия — ' + esc(assessment.externalFormVersion || 'не указана') +
@@ -82,9 +83,10 @@
         const caseId = root.PsyCase && root.PsyCase.get().caseId;
         const esc = S.escapeHTML;
         const blocks = [];
-        S.listDefinitions().forEach(function (definition) {
-            const assessment = current[definition.id];
-            if (!assessment || !assessment.opened || assessment.includeInReport === false ||
+        S.listDefinitions().forEach(function (currentDefinition) {
+            const assessment = current[currentDefinition.id];
+            const definition = assessment && S.getDefinition(currentDefinition.id, assessment);
+            if (!assessment || !definition || !assessment.opened || assessment.includeInReport === false ||
                 assessment.caseId !== caseId || definition.mode === 'preparation') return;
             const result = S.evaluate(assessment);
             if (!result.complete) return;

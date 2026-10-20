@@ -26,15 +26,18 @@
     function normalizeAssessment(value, id, caseId) {
         if (!isRecord(value) || value.caseId !== caseId || value.scaleId !== id ||
             typeof value.id !== 'string' || !value.id) return null;
-        const definition = window.PsyScales && PsyScales.getDefinition(id);
+        const definition = window.PsyScales && PsyScales.getDefinition(id, value);
         const result = { ...value };
         result.answers = isRecord(value.answers) ? value.answers : {};
         result.itemComments = isRecord(value.itemComments) ? value.itemComments : {};
         result.details = isRecord(value.details) ? value.details : {};
-        ['scaleName', 'scaleVersion', 'translationVersion', 'source', 'externalFormVersion', 'externalTranslationVersion', 'externalSource', 'date', 'period', 'clinicianComment',
+        ['scaleName', 'scaleVersion', 'translationVersion', 'externalFormVersion', 'externalTranslationVersion', 'externalSource', 'date', 'period', 'clinicianComment',
             'secondaryFactors', 'reportComment', 'updatedAt'].forEach(function (key) {
             result[key] = typeof value[key] === 'string' ? value[key] : '';
         });
+        result.source = typeof value.source === 'string' ? value.source : isRecord(value.source) &&
+            typeof value.source.title === 'string' && typeof value.source.url === 'string' && /^https:\/\//.test(value.source.url) ?
+            { title: value.source.title, url: value.source.url } : '';
         if (definition) {
             result.scaleName = definition.name;
             if (!result.scaleVersion) result.scaleVersion = definition.version;

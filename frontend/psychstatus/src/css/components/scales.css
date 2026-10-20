@@ -33,6 +33,12 @@
 .scales-criteria ul { padding-left: 20px; font-size: 14px; }
 .scales-item-details { margin-top: 12px; }
 .scales-item-details summary { cursor: pointer; font-size: 13px; color: var(--text-secondary); }
+.scales-instructions { margin: 14px 0; font-size: 14px; }
+.scales-instructions summary { cursor: pointer; color: #1764a8; }
+.scales-instructions p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.scales-basic-operands { display: grid; gap: 12px; margin-top: 14px; padding: 12px; border-radius: 9px; background: #f1f5fb; }
+.scales-basic-operands label { display: grid; gap: 7px; }
+.scales-item select, .scales-item input { box-sizing: border-box; max-width: 100%; }
 .scales-item-details .scales-fields { grid-template-columns: 1fr 1fr; margin-bottom: 0; }
 .scales-results { margin: 18px 0; padding: 16px; background: #f2f6fc; border: 1px solid #d4e0ef; border-radius: 12px; }
 .scales-results h4 { margin: 0 0 10px; font-size: 17px; }

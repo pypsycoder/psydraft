@@ -86,7 +86,7 @@ function setup(options = {}) {
         }
     });
     context.window = context;
-    ['registry', 'definitions', 'validation', 'scoring', 'interpretation', 'comparison', 'renderer'].forEach(name => {
+    ['registry', 'definitions', ...(options.full ? ['full-bnss-sops', 'full-cdss', 'full-cssrs', 'full-spia', 'spia-criteria', 'full-engine', 'full-activate'] : []), 'validation', 'scoring', 'interpretation', 'comparison', 'renderer'].forEach(name => {
         const filename = path.join(__dirname, '../../src/js/scales', name + '.js');
         vm.runInContext(fs.readFileSync(filename, 'utf8'), context, { filename: name + '.js' });
     });

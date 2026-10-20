@@ -205,15 +205,37 @@
         const a = S.store.get(activeId);
         const def = definition(a);
         if (!def) {
-            panel.appendChild(element('p', 'scales-warning', 'Определение шкалы недоступно.'));
+            panel.appendChild(element('p', 'scales-warning', 'Редакция сохранённой оценки не определена. Её ответы не выдаются за полное интервью и не включаются в заключение.'));
+            panel.appendChild(button('Начать новую оценку по текущей редакции', () => {
+                S.confirmAction('Начать новую оценку? Ответы неизвестной редакции и её заметки будут очищены; они не могут считаться завершённым интервью.', () => { S.store.startCurrentVersion(activeId); render(); });
+            }));
             return;
         }
         panel.appendChild(element('h3', 'scales-title', def.name + (def.title ? ' — ' + def.title : '')));
         panel.appendChild(element('p', 'scales-meta', 'Версия: ' + (a.scaleVersion || def.version || 'не указана') + '. Русский перевод: ' + (a.translationVersion || def.translationVersion || 'не подтверждён')));
         appendSource(panel, def);
         if (def.notice) panel.appendChild(element('p', 'scales-notice', def.notice));
+        const latest = S.getDefinition(activeId);
+        if (latest.version !== def.version) {
+            const legacy = element('div', 'scales-notice');
+            legacy.appendChild(element('p', '', 'Сохранена прежняя редакция оценки. Ответы и история не переименовываются в полное интервью. Для новой редакции начните отдельную оценку.'));
+            legacy.appendChild(button('Начать оценку по новой редакции', () => {
+                const start = () => { S.store.startCurrentVersion(activeId); render(); };
+                if (!S.evaluate(a).complete && hasDraftData(a, def)) S.confirmAction('Новая редакция начнётся с пустых ответов. Незавершённый текущий черновик и заметки будут очищены. Продолжить?', start);
+                else start();
+            }));
+            panel.appendChild(legacy);
+        }
+        const instructions = [def.instruction, ...(def.instructions || []), ...(Array.isArray(def.sourceNotes) ? def.sourceNotes : def.sourceNotes ? [def.sourceNotes] : [])].filter(Boolean);
+        if (instructions.length || def.sourceInterpretation) {
+            const help = element('details', 'scales-instructions');
+            help.appendChild(element('summary', '', 'Инструкция и примечания к источнику'));
+            instructions.forEach(text => help.appendChild(element('p', '', typeof text === 'string' ? text : text.text || JSON.stringify(text))));
+            if (def.sourceInterpretation) help.appendChild(element('p', '', def.sourceInterpretation));
+            panel.appendChild(help);
+        }
 
-        if (def.mode === 'cssrs') {
+        if (def.mode === 'cssrs' || def.mode === 'cssrs-full') {
             const variant = element('select');
             const forms = def.forms || [{ id: 'recent', label: 'Скрининг Recent — последний месяц', enabled: true }];
             forms.forEach(form => {
@@ -253,12 +275,18 @@
         const metadata = element('div', 'scales-fields');
         metadata.appendChild(field('Дата оценки', input('date', a.date, value => patch(current => { current.date = value; }))));
         const period = input('text', a.period || def.period, value => patch(current => { current.period = value; }));
-        if (def.mode === 'cssrs') {
+        if (!def.periodEditable && def.mode !== 'scores' && def.mode !== 'preparation') {
             period.readOnly = true;
             period.title = 'Временной интервал определяется выбранной официальной формой.';
         }
         metadata.appendChild(field('Временной интервал', period));
         panel.appendChild(metadata);
+        if (def.mode === 'basic-symptom-criteria') {
+            const periodConfirmed = element('input'); periodConfirmed.type = 'checkbox';
+            periodConfirmed.checked = (a.details || {}).basicSymptomPeriodConfirmed === true;
+            periodConfirmed.addEventListener('change', () => patch(current => { current.details.basicSymptomPeriodConfirmed = periodConfirmed.checked; }));
+            panel.appendChild(field(def.periodConfirmationLabel, periodConfirmed));
+        }
         if (def.mode === 'scores') {
             const externalStatus = element('p', 'scales-note');
             externalStatus.id = 'scales-external-status';
@@ -362,7 +390,8 @@
         const heading = element('div', 'scales-item-heading');
         const title = element('h5');
         title.id = 'scales-item-' + activeId + '-' + item.id;
-        title.append(element('span', 'scales-item-code', item.id), document.createTextNode(item.label && item.label !== item.id ? item.label : 'Оценка по оригинальному бланку'));
+        if (def.mode !== 'cssrs-full') title.appendChild(element('span', 'scales-item-code', item.id));
+        title.appendChild(document.createTextNode(item.label && item.label !== item.id ? item.label : 'Оценка по оригинальному бланку'));
         heading.appendChild(title);
         block.appendChild(heading);
         let question;
@@ -372,13 +401,22 @@
             block.appendChild(question);
         }
 
-        const select = element('select');
+        const typed = ['date', 'integer', 'text'].includes(item.type);
+        const select = element(typed ? 'input' : 'select');
+        if (typed) {
+            select.type = item.type === 'integer' ? 'number' : item.type;
+            if (item.type === 'integer') { select.min = item.min; select.max = item.max; select.step = 1; }
+            select.placeholder = item.optional ? 'Можно оставить неизвестным' : 'Не оценено';
+        }
         select.id = 'scales-answer-' + activeId + '-' + item.id;
         select.setAttribute('aria-labelledby', title.id + (question ? ' ' + question.id : ''));
         const empty = element('option', '', 'Не оценено');
         empty.value = '';
-        select.appendChild(empty);
-        const options = item.options || Array.from({ length: item.max - item.min + 1 }, (_, index) => ({ value: item.min + index, label: String(item.min + index) }));
+        if (!typed) select.appendChild(empty);
+        const options = typed ? [] : item.options || Array.from({ length: item.max - item.min + 1 }, (_, index) => {
+            const value = item.min + index, anchor = (item.anchors || []).find(entry => entry.value === value);
+            return { value, label: anchor ? value + ' — ' + anchor.label.slice(0, 95) : String(value) };
+        });
         options.forEach(option => {
             const entry = element('option', '', option.label === undefined ? String(option.value) : option.label);
             entry.value = String(option.value);
@@ -391,21 +429,24 @@
         }
         const value = (a.answers || {})[item.id];
         select.value = value === null || value === undefined ? '' : String(value);
-        select.addEventListener('change', () => {
+        select.addEventListener(typed ? 'input' : 'change', () => {
             const raw = select.value;
-            const value = raw === '' ? null : raw === 'true' ? true : raw === 'false' ? false : raw === 'unable' ? 'unable' : Number(raw);
+            const value = raw === '' ? null : ['date', 'text'].includes(item.type) ? raw : raw === 'true' ? true : raw === 'false' ? false : raw === 'unable' ? 'unable' : Number(raw);
             const current = patch(assessment => {
                 assessment.answers = assessment.answers || {};
                 assessment.answers[item.id] = value;
             });
             refreshItems(current, definition(current));
+            if (def.mode === 'basic-symptom-criteria') renderBasicOperands(block, item, current, def);
         });
         block.appendChild(select);
         const criteria = element('details', 'scales-criteria');
         criteria.appendChild(element('summary', '', 'Критерии оценки и инструкция'));
+        if (item.instruction) criteria.appendChild(element('p', '', item.instruction));
+        if (item.interviewKind === 'observation') block.appendChild(element('p', 'scales-note', 'Оценка по наблюдению врача в ходе интервью.'));
         if (item.anchors && item.anchors.length) {
             item.anchors.forEach(anchor => criteria.appendChild(element('p', '', anchor.value + ' — ' + (anchor.label || '') + (anchor.description ? '\n' + anchor.description : ''))));
-        } else {
+        } else if (!item.instruction) {
             criteria.appendChild(element('p', '', def.mode === 'scores' ? 'Введите оценку, полученную по разрешённому оригинальному интервью. Полные вопросы и оценочные якоря не включены до подтверждения прав на электронное использование.' : (item.instruction || 'Следуйте формулировке и переходам выбранной официальной формы. Ответ «Нет» отличается от неоценённого пункта.')));
         }
         block.appendChild(criteria);
@@ -415,6 +456,7 @@
         })));
         comment.className = 'scales-comment-label';
         block.appendChild(comment);
+        if (def.mode === 'basic-symptom-criteria') renderBasicOperands(block, item, a, def);
         if (activeId.toLowerCase() === 'sops') {
             const details = element('details', 'scales-item-details');
             details.appendChild(element('summary', '', 'Частота, начало, продолжительность и динамика'));
@@ -432,6 +474,35 @@
         return block;
     }
 
+    function renderBasicOperands(block, item, a, def) {
+        const old = block.querySelector('.scales-basic-operands');
+        const focusedId = old && old.contains(document.activeElement) ? document.activeElement.id : null;
+        if (old) old.remove();
+        const value = a.answers[item.id];
+        if (typeof value !== 'number' || value < 3 || value > 6) return;
+        const container = element('div', 'scales-basic-operands');
+        const details = ((a.details || {}).basicSymptoms || {})[item.id] || {};
+        const add = (key, label) => {
+            const control = element('select');
+            control.id = 'scales-basic-' + item.id + '-' + key;
+            [['', 'Не уточнено'], ['true', 'Да'], ['false', 'Нет']].forEach(([value, text]) => { const option = element('option', '', text); option.value = value; control.appendChild(option); });
+            control.value = typeof details[key] === 'boolean' ? String(details[key]) : '';
+            control.addEventListener('change', () => {
+                const current = patch(assessment => {
+                    const all = assessment.details.basicSymptoms ||= {};
+                    const current = all[item.id] ||= {};
+                    current[key] = control.value === '' ? null : control.value === 'true';
+                });
+                renderBasicOperands(block, item, current, def);
+            });
+            container.appendChild(field(label, control));
+        };
+        add('clinicallyConfirmed', def.clinicalConfirmationLabel);
+        if (details.clinicallyConfirmed === true && item.group !== 'cogdis-only') add('onset12Months', def.onsetLabel);
+        block.appendChild(container);
+        if (focusedId) { const control = document.getElementById(focusedId); if (control) control.focus(); }
+    }
+
     function refreshItems(a, def) {
         if (def.mode === 'preparation') return;
         const container = panel.querySelector('#scales-items');
@@ -441,7 +512,7 @@
             if (!ids.has(id)) { node.remove(); itemNodes.delete(id); }
         });
         const groups = def.groups && def.groups.length ? def.groups : [{ id: 'all', label: def.mode === 'cssrs' ? 'Скрининговые вопросы' : 'Оценки по пунктам', items: items.map(item => item.id) }];
-        groups.forEach(group => {
+        groups.forEach((group, groupIndex) => {
             const relevant = items.filter(item => item.group === group.id || (group.items || []).includes(item.id) || group.id === 'all');
             let section = container.querySelector('[data-group="' + group.id + '"]');
             if (!relevant.length) { if (section) section.remove(); return; }
@@ -449,7 +520,8 @@
                 section = element('section', 'scales-group');
                 section.dataset.group = group.id;
                 section.appendChild(element('h4', '', group.label));
-                container.appendChild(section);
+                const nextGroup = groups.slice(groupIndex + 1).map(next => container.querySelector('[data-group="' + next.id + '"]')).find(Boolean);
+                container.insertBefore(section, nextGroup || null);
             }
             relevant.forEach((item, index) => {
                 if (!itemNodes.has(item.id)) {
@@ -520,7 +592,7 @@
         statusLine.setAttribute('aria-live', 'polite');
         target.appendChild(statusLine);
         const grid = element('dl', 'scales-result-grid');
-        if (def.mode === 'scores') addScore(grid, result.complete ? (activeId.toLowerCase() === 'sops' ? 'Общая сумма (описательно)' : 'Суммарный балл') : 'Сумма оценённых пунктов', result.complete ? result.total : result.answered ? result.partialTotal : null, result.max, result.complete);
+        if (def.mode === 'scores' || def.mode === 'interview') addScore(grid, result.complete ? (activeId.toLowerCase() === 'sops' ? 'Общая сумма (описательно)' : 'Суммарный балл') : 'Сумма оценённых пунктов', result.complete ? result.total : result.answered ? result.partialTotal : null, result.max, result.complete);
         function currentValue(score, group) {
             if (score.complete) return score.value;
             const hasAnswer = group && group.items.some(id => {
@@ -540,6 +612,17 @@
             if (result.behavior === true) addScore(grid, 'Поведение за последние 3 месяца', result.recentBehavior === null ? null : result.recentBehavior ? 'Да' : 'Нет');
             target.appendChild(element('p', 'scales-note', 'Единая сумма суицидального риска не рассчитывается. Краткий скрининг не оценивает интенсивность мыслей и все типы поведения полной формы.'));
         }
+        if (def.mode === 'cssrs-full') {
+            addScore(grid, 'Максимальная категория тяжести мыслей за жизнь', result.severity, 5, result.complete);
+            addScore(grid, 'Интенсивность наиболее опасной идеи (отдельно)', result.intensityApplicable === false ? 'Не применяется' : result.intensityTotal, result.intensityApplicable === true ? 25 : null, result.complete);
+            addScore(grid, 'Суицидальное поведение за жизнь', result.behavior === null ? null : result.behavior ? 'Да' : 'Нет');
+            addScore(grid, 'Несуицидальные самоповреждения', result.nssi === null ? null : result.nssi ? 'Да' : 'Нет');
+            target.appendChild(element('p', 'scales-note', 'Тяжесть, интенсивность и виды поведения — разные показатели. Единого балла риска нет. Период и состав этой формы заданы приложением КР.'));
+        }
+        if (def.mode === 'basic-symptom-criteria') {
+            ['cogdis', 'coper'].forEach(key => addScore(grid, key.toUpperCase(), result[key].value === null || (!result.complete && result[key].value === false) ? null : result[key].value ? result.complete ? 'Критерии выполнены' : 'Предварительно набран; требуется завершить оценку' : 'Критерии не выполнены', null, result.complete));
+            target.appendChild(element('p', 'scales-note', 'Отображается критериальная оценка базисных симптомов; полное интервью SPI-A не проводилось.'));
+        }
         if (grid.children.length) target.appendChild(grid);
         if (activeId === 'sops') {
             const profile = element('div', 'scales-profile');
@@ -556,7 +639,7 @@
             });
             if (profile.children.length) target.appendChild(profile);
         }
-        if (def.mode === 'cssrs' && result.complete && typeof S.resultText === 'function') target.appendChild(element('p', 'scales-result-explanation', S.resultText(a, result)));
+        if (['cssrs', 'cssrs-full', 'basic-symptom-criteria'].includes(def.mode) && result.complete && typeof S.resultText === 'function') target.appendChild(element('p', 'scales-result-explanation', S.resultText(a, result)));
         (result.warnings || []).forEach(warning => target.appendChild(element('p', 'scales-warning', typeof warning === 'string' ? warning : warning.message || warning.text || 'Требуется внимание врача.')));
         if (result.requiresReview) {
             target.appendChild(button('Подтвердить пересмотр ранее положительных ответов', () => {
@@ -653,7 +736,7 @@
             const result = snapshot.results || S.evaluate(snapshot);
             const entry = element('li');
             entry.appendChild(element('strong', '', formattedDate(snapshot.date) + ' · ' + (snapshot.period || '')));
-            entry.appendChild(element('p', '', snapshot.scaleId === 'cssrs' && result.complete && typeof S.resultText === 'function' ? S.resultText(snapshot, result) : scoreText(result)));
+            entry.appendChild(element('p', '', ['cssrs', 'spi-a'].includes(snapshot.scaleId) && result.complete && typeof S.resultText === 'function' ? S.resultText(snapshot, result) : scoreText(result)));
             Object.values(result.subscales || {}).forEach(score => entry.appendChild(element('p', 'scales-note', score.label + ': ' + score.value + (score.max === undefined ? '' : '/' + score.max))));
             if (snapshot.clinicianComment) entry.appendChild(element('p', '', snapshot.clinicianComment));
             list.appendChild(entry);
@@ -712,7 +795,7 @@
 `;
 
     S.buildPrintSheet = function (a, def, result) {
-        def = def || S.getDefinition(a.scaleId);
+        def = def || S.getDefinition(a.scaleId, a);
         result = result || S.evaluate(a);
         const root = element('div');
         root.className = 'scales-print-sheet';
@@ -726,9 +809,10 @@
             root.appendChild(element('p', 'scales-print-meta', 'Источник использованного бланка: ' + (a.externalSource || 'не указан')));
         }
         if (def.notice) root.appendChild(element('p', '', def.notice));
+        [def.instruction, ...(def.instructions || []), ...(Array.isArray(def.sourceNotes) ? def.sourceNotes : [])].filter(Boolean).forEach(text => root.appendChild(element('p', '', typeof text === 'string' ? text : text.text || JSON.stringify(text))));
         root.appendChild(element('h2', '', 'Результаты: ' + (result.answered || 0) + '/' + (result.required || 0) + ' · ' + (result.complete ? 'Оценка завершена' : 'Оценка не завершена')));
-        if (def.mode === 'scores') root.appendChild(element('p', '', scoreText(result)));
-        if (def.mode === 'cssrs' && result.complete && typeof S.resultText === 'function') root.appendChild(element('p', '', S.resultText(a, result)));
+        if (def.mode === 'scores' || def.mode === 'interview') root.appendChild(element('p', '', scoreText(result)));
+        if (['cssrs', 'cssrs-full', 'basic-symptom-criteria'].includes(def.mode) && result.complete && typeof S.resultText === 'function') root.appendChild(element('p', '', S.resultText(a, result)));
         Object.values(result.subscales || {}).concat(Object.values(result.domains || {})).forEach(score => {
             if (score && typeof score === 'object') root.appendChild(element('p', '', score.label + ': ' + (score.value === null || score.value === undefined ? 'Недостаточно данных' : score.value + (score.max === undefined || score.max === null ? '' : '/' + score.max))));
         });
@@ -739,20 +823,27 @@
         const visible = new Set(visibleItems(a, def).map(item => item.id));
         (def.items || []).forEach(item => {
             const article = element('article');
-            article.appendChild(element('h3', '', item.id + '. ' + item.label));
+            article.appendChild(element('h3', '', (def.mode === 'cssrs-full' ? '' : item.id + '. ') + item.label));
             if (item.question) article.appendChild(element('p', '', item.question));
             if (item.instruction) article.appendChild(element('p', '', item.instruction));
             let skipText = 'Пропущено по алгоритму выбранной формы';
             if (def.mode === 'cssrs' && ((['q3', 'q4', 'q5'].includes(item.id) && typeof (a.answers || {}).q2 !== 'boolean') || (item.id === 'q6recent' && typeof (a.answers || {}).q6 !== 'boolean'))) skipText = 'Переход ещё не определён — предшествующий вопрос не оценён';
             const answer = (a.answers || {})[item.id];
-            const response = visible.has(item.id) ? answerLabel(item, answer) :
-                def.mode === 'cssrs' && answer === true ? 'Да (ранее положительный ответ; требуется клинический пересмотр)' : skipText;
+            const hiddenEvidence = (def.mode === 'cssrs' || def.mode === 'cssrs-full') && (answer === true || (typeof answer === 'number' && answer > 0));
+            const response = visible.has(item.id) ? item.optional && (answer === null || answer === undefined) ? 'Не указано (необязательное поле)' : answerLabel(item, answer) :
+                hiddenEvidence ? answerLabel(item, answer) + (answer === true ? ' (ранее положительный ответ; требуется клинический пересмотр)' : ' (ранее положительные сведения; требуется клинический пересмотр)') : skipText;
             article.appendChild(element('p', '', 'Ответ: ' + response));
             const selected = (item.anchors || []).find(anchor => anchor.value === (a.answers || {})[item.id]);
             if (selected) article.appendChild(element('p', '', 'Критерий: ' + (selected.label || '') + (selected.description ? '\n' + selected.description : '')));
             if ((a.itemComments || {})[item.id]) article.appendChild(element('p', '', 'Комментарий: ' + a.itemComments[item.id]));
             const details = (a.details || {})[item.id];
             if (details) [['frequency', 'Частота'], ['onset', 'Начало'], ['duration', 'Продолжительность'], ['dynamics', 'Динамика']].forEach(([key, label]) => { if (details[key]) article.appendChild(element('p', '', label + ': ' + details[key])); });
+            if (def.mode === 'basic-symptom-criteria' && typeof answer === 'number' && answer >= 3 && answer <= 6) {
+                const operands = ((a.details || {}).basicSymptoms || {})[item.id] || {};
+                [[def.clinicalConfirmationLabel, operands.clinicallyConfirmed], [def.onsetLabel, operands.onset12Months]].forEach(([label, value]) => {
+                    if (typeof value === 'boolean') article.appendChild(element('p', '', label + ': ' + (value ? 'Да' : 'Нет')));
+                });
+            }
             root.appendChild(article);
         });
         if (def.mode === 'preparation') {
@@ -777,7 +868,7 @@
     }
 
     S.printSheetHTML = function (assessment, def, result) {
-        def = def || S.getDefinition(assessment.scaleId);
+        def = def || S.getDefinition(assessment.scaleId, assessment);
         return serializePrintSheet(S.buildPrintSheet(assessment, def, result), def.name + ' — ' + (assessment.date || 'Оценочный лист'));
     };
 
@@ -796,7 +887,7 @@
     S.showPrintPreview = function (assessment, def, result) {
         if (closeConfirmation) closeConfirmation(false);
         if (closePrintPreview) closePrintPreview();
-        def = def || S.getDefinition(assessment.scaleId);
+        def = def || S.getDefinition(assessment.scaleId, assessment);
         const sheet = S.buildPrintSheet(assessment, def, result);
         const date = assessment.date;
         const trigger = document.activeElement;
