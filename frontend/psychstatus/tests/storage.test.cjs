@@ -511,3 +511,106 @@ test('registered case extensions restore before form controls while change handl
     assert.equal(restoredCourses.length, 0);
     assert.equal(second.api.get().extensions.compass, undefined);
 });
+
+test('refused standalone reset preserves the current patient and reports that a new case did not start', () => {
+    const app = setup(); app.api.init();
+    const id = app.api.get().caseId;
+    app.controls[0].value = 'Текущий пациент';
+    app.editors[1].innerHTML = '<p>Текущее заключение</p>';
+    app.api.get().scales.assessments.bnss = complete(app.S, 'bnss', id, 2);
+    app.api.save();
+    const oldRaw = app.saved.get('psydraft.case.v1');
+    const write = app.context.localStorage.setItem;
+    app.context.localStorage.setItem = () => { throw new Error('Storage denied'); };
+    app.context.localStorage.removeItem = () => { throw new Error('Reset must not remove the canonical key'); };
+    const eventCount = app.events.length;
+    app.api.newCase();
+    assert.equal(app.api.get().caseId, id);
+    assert.equal(app.controls[0].value, 'Текущий пациент');
+    assert.equal(app.editors[1].innerHTML, '<p>Текущее заключение</p>');
+    assert.equal(app.S.evaluate(app.api.get().scales.assessments.bnss).total, 26);
+    assert.equal(app.saved.get('psydraft.case.v1'), oldRaw);
+    assert.equal(app.events.length, eventCount);
+    assert.match(app.nodes.find(node => node.id === 'case-storage-status').textContent, /Новый случай не начат/);
+    app.context.localStorage.setItem = write;
+    app.api.newCase();
+    assert.notEqual(app.api.get().caseId, id);
+    const reloaded = setup(app.saved.get('psydraft.case.v1')); reloaded.api.init();
+    assert.equal(reloaded.api.get().caseId, app.api.get().caseId);
+    assert.equal(reloaded.controls[0].value, '');
+    assert.equal(Object.keys(reloaded.api.get().scales.assessments).length, 0);
+});
+
+test('standalone reset leaves a new empty canonical identity even if the following full save fails', () => {
+    const app = setup(); app.api.init();
+    const id = app.api.get().caseId;
+    app.controls[0].value = 'Предыдущий пациент'; app.api.save();
+    const write = app.context.localStorage.setItem; let writes = 0;
+    app.context.localStorage.setItem = (key, text) => { if (++writes > 1) throw new Error('Quota'); write(key, text); };
+    app.api.newCase();
+    const reset = JSON.parse(app.saved.get('psydraft.case.v1'));
+    assert.notEqual(reset.caseId, id);
+    assert.equal(reset.caseId, app.api.get().caseId);
+    assert.equal(reset.reportHTML, undefined);
+    assert.equal(Object.keys(reset.scales.assessments).length, 0);
+    const reloaded = setup(JSON.stringify(reset)); reloaded.api.init();
+    assert.equal(reloaded.api.get().caseId, reset.caseId);
+    assert.equal(reloaded.controls[0].value, '');
+});
+
+test('standalone reset rejects stale writers from both old cases and an originally empty canonical key', () => {
+    const active = setup(); active.api.init();
+    active.controls[0].value = 'Предыдущий пациент'; active.api.save();
+    const shared = active.saved;
+    const fromOld = setup(shared.get('psydraft.case.v1'));
+    fromOld.context.localStorage.getItem = key => shared.get(key) ?? null;
+    fromOld.context.localStorage.setItem = (key, value) => shared.set(key, value);
+    fromOld.api.init();
+    const fromNull = setup(undefined, { blockWrite: true }); fromNull.api.init();
+    fromNull.context.localStorage.getItem = key => shared.get(key) ?? null;
+    fromNull.context.localStorage.setItem = (key, value) => shared.set(key, value);
+    active.api.newCase();
+    const newRaw = shared.get('psydraft.case.v1');
+    for (const stale of [fromOld, fromNull]) {
+        stale.controls[0].value = 'Устаревший пациент'; stale.api.save();
+        assert.equal(shared.get('psydraft.case.v1'), newRaw);
+        assert.match(stale.nodes.find(node => node.id === 'case-storage-status').textContent, /изменён в другой вкладке/);
+    }
+});
+
+test('damaged prescriptions are skipped without coercing doses while valid prescriptions, fields and scales survive reload', () => {
+    const initial = setup(); initial.api.init();
+    const state = initial.api.get();
+    state.formData.controls['id:complaints:0'].value = 'Сохранённое поле';
+    state.scales.assessments.bnss = complete(initial.S, 'bnss', state.caseId, 2);
+    const valid = [
+        { id: 7, name: 'Назначение A', times: { утром: '50' } },
+        { id: 8, name: 'Назначение B', durationValue: '14', durationType: 'days', times: { вечером: '' }, comment: 'Авторский комментарий' }
+    ];
+    state.prescriptions = [
+        null, 42, 'scalar', [], {},
+        { id: 0, name: 'Нулевой ID', times: {} },
+        { id: '2', name: 'Строковый ID', times: {} },
+        { id: 3, name: 99, times: {} },
+        { id: 4, name: 'Некорректная карта доз', times: [] },
+        { id: 5, name: 'Числовая доза', times: { утром: 50 } },
+        { id: 6, name: 'Объект вместо дозы', times: { утром: { dose: 10 } } },
+        ...valid
+    ];
+    state.prescriptionEditingId = 5;
+    state.prescriptionNextId = 1;
+    const app = setup(JSON.stringify(state));
+    assert.doesNotThrow(() => app.api.init());
+    assert.deepEqual(JSON.parse(JSON.stringify(app.api.get().prescriptions)), valid);
+    assert.equal(app.api.get().prescriptionEditingId, null);
+    assert.equal(vm.runInContext('rxNextId', app.context), 9);
+    assert.equal(app.controls[0].value, 'Сохранённое поле');
+    assert.equal(app.S.evaluate(app.api.get().scales.assessments.bnss).total, 26);
+    assert.match(app.nodes.find(node => node.id === 'case-storage-status').textContent, /Повреждённые назначения не загружены.*Перепроверьте назначения/);
+    assert.doesNotThrow(() => app.api.save());
+    const reloaded = setup(app.saved.get('psydraft.case.v1'));
+    assert.doesNotThrow(() => reloaded.api.init());
+    assert.deepEqual(JSON.parse(JSON.stringify(reloaded.api.get().prescriptions)), valid);
+    assert.equal(reloaded.controls[0].value, 'Сохранённое поле');
+    assert.equal(reloaded.S.evaluate(reloaded.api.get().scales.assessments.bnss).total, 26);
+});

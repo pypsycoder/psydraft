@@ -90,7 +90,7 @@ function setup(options = {}) {
         const filename = path.join(__dirname, '../../src/js/scales', name + '.js');
         vm.runInContext(fs.readFileSync(filename, 'utf8'), context, { filename: name + '.js' });
     });
-    return { S: context.PsyScales, document, trigger, descendants, blobs, prints: () => prints, windowListeners };
+    return { S: context.PsyScales, context, document, trigger, descendants, blobs, prints: () => prints, windowListeners };
 }
 
 function completeAssessment(S, id, value) {

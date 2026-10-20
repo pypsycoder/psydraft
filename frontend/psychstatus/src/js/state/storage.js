@@ -100,7 +100,15 @@
             controls: isRecord(form.controls) ? form.controls : {},
             editors: isRecord(form.editors) ? form.editors : {}
         };
-        state.prescriptions = Array.isArray(value.prescriptions) ? value.prescriptions : [];
+        const prescriptionRecords = Array.isArray(value.prescriptions) ? value.prescriptions : [];
+        state.prescriptions = prescriptionRecords.filter(function (prescription) {
+            return isRecord(prescription) && typeof prescription.id === 'number' && Number.isFinite(prescription.id) && prescription.id > 0 &&
+                typeof prescription.name === 'string' && isRecord(prescription.times) &&
+                Object.values(prescription.times).every(function (dose) { return typeof dose === 'string'; });
+        });
+        const damagedPrescriptions = state.prescriptions.length !== prescriptionRecords.length ||
+            (value.prescriptions !== undefined && !Array.isArray(value.prescriptions));
+        state.prescriptionEditingId = state.prescriptions.some(function (prescription) { return prescription.id === value.prescriptionEditingId; }) ? value.prescriptionEditingId : null;
         state.selectedRecommendations = isRecord(value.selectedRecommendations) ? value.selectedRecommendations : {};
         state.clarifyLabels = isRecord(value.clarifyLabels) ? value.clarifyLabels : {};
         state.reportHTML = typeof value.reportHTML === 'string' ? value.reportHTML : '';
@@ -123,6 +131,10 @@
         }).filter(Boolean).map(freeze);
         if (excluded || state.scales.history.length !== historyCount) {
             recoveryNotice = 'Случай восстановлен. Некорректные оценки и записи другого случая не загружены; проверьте результаты шкал.';
+        }
+        if (damagedPrescriptions) {
+            const notice = 'Повреждённые назначения не загружены. Перепроверьте назначения и восстановите их по первичным данным.';
+            recoveryNotice = recoveryNotice ? recoveryNotice + ' ' + notice : 'Случай восстановлен. ' + notice;
         }
         return state;
     }
@@ -382,8 +394,10 @@
         return state;
     }
 
-    function scheduleSave() {
+    function scheduleSave(event) {
         if (restoring || !initialized) return;
+        // Confirmation actions save their models explicitly; a failed reset status must remain visible.
+        if (event && event.type === 'click' && event.target && event.target.closest('#new-case, .scales-confirmation')) return;
         if (pendingSave !== null) clearTimeout(pendingSave);
         pendingSave = setTimeout(save, 150);
     }
@@ -394,7 +408,25 @@
             return get();
         }
         if (pendingSave !== null) { clearTimeout(pendingSave); pendingSave = null; }
-        currentState = createDefaultCase();
+        const nextState = createDefaultCase();
+        const resetRaw = JSON.stringify({
+            schemaVersion: nextState.schemaVersion, caseId: nextState.caseId,
+            scales: { assessments: {}, history: [] }, extensions: {}
+        });
+        // Persist the new identity before changing the visible patient. No empty-key interval permits stale writes.
+        try {
+            window.localStorage.setItem(FORM_SCHEMA.storageKey, resetRaw);
+        } catch (error) {
+            storageIssue = 'Не удалось сохранить новый случай. Новый случай не начат; данные текущего пациента не изменены. Проверьте настройки хранения браузера.';
+            status(storageIssue, true);
+            return get();
+        }
+        observedStorageText = resetRaw;
+        hasObservedStorage = true;
+        storageBlocked = false;
+        storageIssue = '';
+        recoveryNotice = '';
+        currentState = nextState;
         currentState.formData = clone(initialForm || collectForm(true));
         restoreForm(currentState);
         const results = document.getElementById('nosology-results');
@@ -403,15 +435,6 @@
             const element = document.getElementById(id);
             if (element) { element.textContent = ''; if (id === 'rx-monitoring-notice') element.style.display = 'none'; }
         });
-        // Remove the previous patient first, even if a later write exceeds browser quota.
-        try {
-            window.localStorage.removeItem(FORM_SCHEMA.storageKey);
-            observedStorageText = null;
-            hasObservedStorage = true;
-        } catch (error) { /* save reports the storage failure */ }
-        storageBlocked = false;
-        storageIssue = '';
-        recoveryNotice = '';
         document.dispatchEvent(new CustomEvent('psydraft:case-reset', { detail: { caseId: currentState.caseId } }));
         save();
         return currentState;

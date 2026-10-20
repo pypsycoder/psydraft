@@ -136,6 +136,20 @@
         return typeof S.visibleItems === 'function' ? S.visibleItems(assessment) : (def.items || []);
     }
 
+    function hasDraftData(assessment, def) {
+        function hasValue(value) {
+            if (value === null || value === undefined) return false;
+            if (typeof value === 'string') return value.trim().length > 0;
+            if (typeof value === 'object') return Object.values(value).some(hasValue);
+            return true; // An explicit zero or false is an assessed answer.
+        }
+        if (hasValue(assessment.answers) || hasValue(assessment.itemComments) || hasValue(assessment.details)) return true;
+        if (['clinicianComment', 'reportComment', 'secondaryFactors', 'externalFormVersion', 'externalTranslationVersion', 'externalSource'].some(key => hasValue(assessment[key]))) return true;
+        if (assessment.reportOverride && hasValue(assessment.reportOverride.html)) return true;
+        const defaultPeriod = assessment.form === 'followup' ? 'После последнего визита' : def.period;
+        return assessment.date !== S.localDate() || assessment.period !== defaultPeriod;
+    }
+
     function patch(updater) {
         S.store.update(activeId, updater);
         const assessment = S.store.get(activeId);
@@ -218,7 +232,7 @@
                     variant.value = previous.form || 'recent';
                     return;
                 }
-                const hasData = Object.values(previous.answers || {}).some(value => value !== null && value !== undefined);
+                const hasData = hasDraftData(previous, def);
                 const changeForm = () => {
                     if (typeof S.store.setForm === 'function') S.store.setForm(activeId, next);
                     else {
@@ -230,7 +244,7 @@
                 };
                 if (hasData) {
                     variant.value = previous.form || 'recent';
-                    S.confirmAction('Сменить форму? Будет открыта новая оценка с другим временным интервалом. Полная текущая оценка сохранится в истории; незавершённые ответы будут очищены.', changeForm);
+                    S.confirmAction('Сменить форму? Будет открыта новая оценка с другим временным интервалом. Полная текущая оценка сохранится в истории; незавершённые ответы и заметки будут очищены.', changeForm);
                 } else changeForm();
             });
             panel.appendChild(field('Форма C-SSRS', variant));
@@ -304,12 +318,13 @@
         }, 'scales-snapshot'));
         actions.appendChild(button('Новая оценка', () => {
             const current = S.store.get(activeId);
+            const wasComplete = S.evaluate(current).complete;
             const startNew = () => {
                 S.store.newAssessment(activeId);
                 render();
-                message('Открыта новая оценка. Завершённая предыдущая оценка сохранена в истории.');
+                message(wasComplete ? 'Открыта новая оценка. Завершённая предыдущая оценка сохранена в истории.' : 'Открыта новая оценка. Предыдущий незавершённый черновик очищен.');
             };
-            if (!S.evaluate(current).complete && Object.values(current.answers || {}).some(value => value !== null && value !== undefined)) S.confirmAction('Начать новую оценку? Незавершённые ответы текущей шкалы будут очищены.', startNew);
+            if (!wasComplete && hasDraftData(current, def)) S.confirmAction('Начать новую оценку? Незавершённые ответы и заметки текущей шкалы будут очищены и не сохранятся в истории.', startNew);
             else startNew();
         }));
         actions.appendChild(button('Распечатать', printAssessment));

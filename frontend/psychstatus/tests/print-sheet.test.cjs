@@ -1,6 +1,9 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
 const { setup, completeAssessment: complete } = require('./helpers/scale-dom.cjs');
 
 test('BNSS sheet contains all 13 answers, totals, six subscales, both domains, and source metadata', () => {
@@ -176,4 +179,78 @@ test('comparison shows incompatibility reasons and C-SSRS categories without num
     assert.ok(rows.every(row => row.children[3].textContent === '—'));
     assert.match(comparison.textContent, /Прежние положительные сведения сохраняют клиническую значимость/);
     assert.doesNotMatch(comparison.querySelector('table').textContent, /Суммарный балл/);
+});
+
+function draftEditor(scaleId) {
+    const app = setup();
+    const state = { caseId: 'draft-test', scales: { assessments: {}, history: [] } };
+    app.context.PsyCase = { get: () => state, save() {} };
+    vm.runInContext(fs.readFileSync(path.join(__dirname, '../src/js/scales/storage-adapter.js'), 'utf8'), app.context);
+    const panel = app.document.createElement('div'); panel.id = 'scales-panel';
+    const tabs = app.document.createElement('div'); tabs.id = 'scales-tabs';
+    const status = app.document.createElement('p'); status.id = 'scales-action-status';
+    app.document.body.append(panel, tabs, status);
+    app.S.init(); tabs.children.find(tab => tab.dataset.scale === scaleId).click();
+    const action = name => app.descendants(app.document.body).find(node => node.tagName === 'BUTTON' && node.textContent === name);
+    return { ...app, state, panel, status, action };
+}
+
+test('SPI-A note-only draft survives cancel and is discarded only after explicit confirmation', () => {
+    const app = draftEditor('spi-a');
+    const label = app.descendants(app.panel).find(node => node.tagName === 'LABEL' && node.textContent === 'Когнитивные переживания');
+    label.children[0].value = 'Учебные подробные заметки'; label.children[0].dispatch('input');
+    const id = app.S.store.get('spi-a').id;
+    app.action('Новая оценка').click();
+    let dialog = app.descendants(app.document.body).find(node => node.tagName === 'DIALOG');
+    assert.ok(dialog); assert.match(dialog.textContent, /ответы и заметки/);
+    app.action('Отмена').click();
+    assert.equal(app.S.store.get('spi-a').id, id);
+    assert.equal(app.S.store.get('spi-a').details.preparation.cognitive, 'Учебные подробные заметки');
+    app.action('Новая оценка').click(); app.action('Подтвердить').click();
+    assert.notEqual(app.S.store.get('spi-a').id, id);
+    assert.equal(Object.keys(app.S.store.get('spi-a').details).length, 0);
+    assert.equal(app.state.scales.history.length, 0);
+    assert.doesNotMatch(app.status.textContent, /сохранена в истории/);
+});
+
+test('numeric comment-only drafts require confirmation and an untouched empty draft does not', () => {
+    const app = draftEditor('bnss');
+    const label = app.descendants(app.panel).find(node => node.tagName === 'LABEL' && node.textContent === 'Клинический комментарий врача');
+    label.children[0].value = 'Комментарий без оценённых пунктов'; label.children[0].dispatch('input');
+    const id = app.S.store.get('bnss').id;
+    app.action('Новая оценка').click();
+    assert.ok(app.action('Отмена'));
+    app.action('Отмена').click();
+    assert.equal(app.S.store.get('bnss').clinicianComment, 'Комментарий без оценённых пунктов');
+    assert.equal(app.S.store.get('bnss').id, id);
+    app.action('Новая оценка').click(); app.action('Подтвердить').click();
+    assert.equal(app.S.store.get('bnss').clinicianComment, '');
+    const emptyId = app.S.store.get('bnss').id;
+    app.action('Новая оценка').click();
+    assert.notEqual(app.S.store.get('bnss').id, emptyId);
+    assert.equal(app.descendants(app.document.body).some(node => node.tagName === 'DIALOG'), false);
+});
+
+test('metadata, item comments, temporal notes and explicit zero/false prevent silently replacing a draft', () => {
+    const scenarios = [
+        ['bnss', a => { a.answers.B1 = 0; }],
+        ['cssrs', a => { a.answers.q1 = false; }],
+        ['sops', a => { a.details.P1 = { frequency: 'Еженедельно' }; }],
+        ['bnss', a => { a.itemComments.B1 = 'Заметка'; }],
+        ['bnss', a => { a.reportComment = 'Комментарий к заключению'; }],
+        ['bnss', a => { a.secondaryFactors = 'Седация'; }],
+        ['bnss', a => { a.externalFormVersion = 'Учебная версия'; }],
+        ['bnss', a => { a.externalTranslationVersion = 'Учебный перевод'; }],
+        ['bnss', a => { a.externalSource = 'Учебный источник'; }],
+        ['bnss', a => { a.date = '1900-01-01'; }],
+        ['bnss', a => { a.period = 'Уточнённый период'; }]
+    ];
+    scenarios.forEach(([id, mutate]) => {
+        const app = draftEditor(id); app.S.store.update(id, mutate);
+        const before = JSON.stringify(app.S.store.get(id));
+        app.action('Новая оценка').click();
+        assert.ok(app.action('Отмена'), id + ': confirmation is required');
+        app.action('Отмена').click();
+        assert.equal(JSON.stringify(app.S.store.get(id)), before);
+    });
 });
