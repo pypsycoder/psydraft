@@ -1,0 +1,85 @@
+{
+  "auditDate": "2026-10-20",
+  "active": false,
+  "purpose": "Source research metadata only; not a runnable form definition or permission to activate a candidate",
+  "currentRussiaTranslationInventory": {
+    "officialReferrer": "https://cssrs.columbia.edu/the-columbia-scale-c-ssrs/translations/",
+    "archiveDownload": "https://www.dropbox.com/sh/on5cu56vpwz4iv5/AACTAodA_-Z1tBajt2rSElxqa?dl=1",
+    "entry": "Available Translations 9-5-2026.docx",
+    "printedUpdatedDate": "9/5/26",
+    "bytes": 50505,
+    "sha256": "a0a5bfaf87fc1805caad5d2da5ee48a1b8ab3ba763d524b93772c4a750723aa1",
+    "country": "Russia",
+    "language": "Russian",
+    "currentAdultSourceVersion": "AU5.1",
+    "currentAdultForms": ["Baseline", "Baseline-Screening", "Screening", "Since Last Visit"],
+    "evidence": "Green bold X markers (00B050), interpreted using the inventory legend and source-version table",
+    "fullFormDocumentsIncluded": false,
+    "supportsPublicRedistributionOfForms": false
+  },
+  "archivedFullRussianCandidate": {
+    "active": false,
+    "originalMirrorUrl": "http://rncpg.org/wp-content/uploads/2019/04/C-SSRS.pdf",
+    "retrievedUrl": "https://web.archive.org/web/20251118202807id_/http://rncpg.org/wp-content/uploads/2019/04/C-SSRS.pdf",
+    "archiveTimestamp": "20251118202807",
+    "bytes": 390843,
+    "sha256": "d1e49906a0f0713da075c1f0021174d12ade5d15ec7cd5ca6ca3ec2e337bf8d3",
+    "pages": 3,
+    "sourceForm": "Baseline/Screening",
+    "printedSourceRevision": "14/01/2009",
+    "printedTranslationCountry": "Israel",
+    "printedLanguage": "Russian",
+    "printedTranslationVersionDate": "06 Sep 13",
+    "printedTranslator": "Mapi",
+    "printedDocumentId": "ID7707",
+    "printedDocumentFilename": "C-SSRS-BaselineScreening_AU5.0_rus-IL.doc",
+    "printedCopyright": "© 2008 The Research Foundation for Mental Hygiene, Inc.",
+    "pdfCreationDate": "2019-04-15T15:07:04+03:00",
+    "titlePageVisuallyInspected": true,
+    "textLayerExtracted": true,
+    "exactDocumentAndExtractionStorage": "Task temporary directory outside repository; not included in public Git payload",
+    "provenanceStatus": "Mirror document bearing Mapi identifiers; not independently certified byte-identical to a currently distributed developer original",
+    "activationBlockers": [
+      "AU5.0 rus-IL is not current AU5.1 rus-RU",
+      "Country-specific validated translation must not silently be relabelled",
+      "Public redistribution of this historical translated document has not separately been established",
+      "No matching original Russian Since Last Visit document obtained",
+      "Clinical interview acceptance not performed"
+    ],
+    "structure": {
+      "page1": ["title", "authors", "training disclaimer", "copyright", "translation identifiers"],
+      "page2": ["ideation categories 1-5", "lifetime worst-point column", "recent X months column", "intensity for lifetime and recent"],
+      "page3": ["behavior lifetime and recent X years", "actual attempt", "NSSI", "interrupted attempt", "self-interrupted attempt", "preparatory acts", "behavior summary", "actual and potential lethality of actual attempts"]
+    },
+    "rulesSummary": {
+      "alwaysAskIdeation": [1, 2],
+      "ask345When": "question2=yes",
+      "askIntensityWhen": "question1=yes OR question2=yes",
+      "alwaysAskAllBehaviorTypes": true,
+      "intensityItemRanges": {"frequency": [1, 5], "duration": [1, 5], "controllability": [0, 5], "deterrents": [0, 5], "reasons": [0, 5]},
+      "actualLethalityRange": [0, 5],
+      "potentialLethalityRange": [0, 2],
+      "potentialLethalityWhen": "actual attempt exists AND actual lethality=0",
+      "baselineLethalityAttemptColumns": ["most recent", "most lethal", "initial/first"]
+    }
+  },
+  "bekhterevCandidate": {
+    "source": "https://bekhterev.ru/wp-content/uploads/2025/11/behterev-2025_web.pdf",
+    "officialAuthorRecord": "https://pureportal.spbu.ru/ru/publications/-------columbia-suicide-severity-rating-scale-cssrs(4547bd96-8ebf-4b25-9c09-6d863901aa85).html",
+    "officialMirror": "https://pure.spbu.ru/admin/files/temp/perm-temp-fbe07947-91f3-4c83-be64-2fcac2ef1b64/8_2025.pdf?mimetype=application/pdf",
+    "chapterPrintedPages": [203, 222],
+    "appendix1": "Authors' adapted form; not an original developer translation",
+    "appendix2": "Authors describe original full protocol and short screening from developer site; image-only tables not yet inspected",
+    "localBookDownloaded": false,
+    "exactInstrumentVersionVerified": false,
+    "fullBookRedistributionAllowedByCssrsGrant": false
+  },
+  "officialEnglishComparators": [
+    "https://cssrs.columbia.edu/wp-content/uploads/C-SSRS-Full-Lifetime-Recent-2026.pdf",
+    "https://cssrs.columbia.edu/wp-content/uploads/C-SSRS-Full-Since-Last-Contact-2026.pdf",
+    "https://cssrs.columbia.edu/wp-content/uploads/C-SSRS-Baseline-Screening_AU5.1_eng-USori-2026.pdf",
+    "https://cssrs.columbia.edu/wp-content/uploads/ScoringandDataAnalysisGuide-for-Clinical-Trials-1-1.pdf"
+  ],
+  "clinicalEhrPermissionSource": "https://cssrs.columbia.edu/the-columbia-scale-c-ssrs/cssrs-for-communities-and-healthcare/",
+  "countrySpecificValidationSource": "https://cssrs.columbia.edu/the-columbia-scale-c-ssrs/translations/"
+}

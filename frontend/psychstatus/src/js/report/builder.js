@@ -1,4 +1,7 @@
 function generateText() {
+        if (window.PsyScales && typeof PsyScales.captureReportEdits === 'function') {
+            PsyScales.captureReportEdits();
+        }
         // Общие части
         const complaints = document.getElementById('complaints').value.trim();
         const anamnesis = document.getElementById('anamnesis').value.trim();
@@ -280,9 +283,13 @@ function generateText() {
             }
         }
 
+        // Managed scale results live inside the existing report, before diagnosis.
+        text += '<div data-psychometrics-slot>' +
+            (window.PsyScales && typeof PsyScales.buildReportHTML === 'function' ? PsyScales.buildReportHTML() : '') + '</div>';
+
         // Диагноз
         const diagnosisHtml = diagnosis ? diagnosis.replace(/\n/g, '<br>') : '&nbsp;';
-        text += '<br><strong>Диагноз (МКБ-10):</strong>' + diagnosisHtml + '<br><br>';
+        text += '<br><strong data-diagnosis-anchor>Диагноз (МКБ-10):</strong>' + diagnosisHtml + '<br><br>';
 
         // Рекомендации
         const recHtml = recommendations ? recommendations.replace(/\n/g, '<br>') : '&nbsp;';
@@ -293,6 +300,7 @@ function generateText() {
         text += '<br><strong>Препараты:</strong><br>' + prescHtml + '<br>';
 
         document.getElementById('result').innerHTML = text;
+        if (window.PsyCase) PsyCase.save();
     }
 
     function copyResult() {

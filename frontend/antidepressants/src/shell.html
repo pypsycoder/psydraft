@@ -3,29 +3,74 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; frame-src 'self' about:; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <title>PsyDraft · Клинический компас</title>
 <style>html,body{height:100%;margin:0;background:#f2f2f7;color:#111;font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}.pd-shell{height:100dvh;display:flex;flex-direction:column}.pd-shell-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid #e5e5ea;background:#fff}.pd-shell-brand{font-weight:700}.pd-shell-tabs{display:flex;gap:5px;flex:1}.pd-shell button{font:inherit;cursor:pointer;border:1px solid #ced0d8;border-radius:9px;padding:8px 12px;background:white;color:#111}.pd-shell button[aria-selected=true]{background:#0064d1;color:white;border-color:#0064d1}.pd-shell button:focus-visible{outline:3px solid #007aff;outline-offset:2px}.pd-shell-status{font-size:12px;color:#6e6e73;max-width:350px}.pd-module{flex:1;min-height:0;display:flex}.pd-module[hidden]{display:none}.pd-module iframe{width:100%;height:100%;border:0;background:#f2f2f7}.pd-shell-warning{padding:9px 16px;background:#ffebed;color:#9b2f35;border-bottom:1px solid #ecced2;font-size:13px;line-height:1.45}.pd-loading{padding:24px}@media(max-width:650px){.pd-shell-bar{padding:8px;gap:8px}.pd-shell-brand{display:none}.pd-shell-status{width:100%;max-width:none}.pd-shell button{font-size:14px}.pd-shell-tabs{min-width:260px}}@media print{.pd-shell-bar{display:none}.pd-shell,.pd-module{height:auto}iframe{height:100vh}}</style>
+<style>.pd-reset-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:rgba(16,28,45,.45)}.pd-reset-overlay[hidden]{display:none}.pd-reset-dialog{width:min(500px,100%);max-height:calc(100vh - 40px);overflow:auto;border:1px solid #ced0d8;border-radius:16px;padding:24px;background:white;box-shadow:0 20px 70px rgba(0,0,0,.24)}.pd-reset-dialog h2{font-size:20px;margin:0 0 12px}.pd-reset-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}.pd-reset-actions button{font:inherit;padding:10px 16px;border:1px solid #ced0d8;border-radius:9px;background:white;cursor:pointer}.pd-reset-actions button:focus-visible{outline:3px solid #007aff;outline-offset:3px}@media print{.pd-reset-overlay{display:none!important}}</style>
 </head><body><main class="pd-shell">
 <header class="pd-shell-bar"><span class="pd-shell-brand">PsyDraft</span><nav class="pd-shell-tabs" role="tablist" aria-label="Инструменты"><button id="pd-tab-draft" type="button" role="tab" aria-selected="true" aria-controls="pd-panel-draft">PsyDraft</button><button id="pd-tab-compass" type="button" role="tab" aria-selected="false" aria-controls="pd-panel-compass" tabindex="-1">Клинический компас</button></nav><span id="pd-shell-status" class="pd-shell-status" role="status">Загрузка инструментов…</span><button type="button" id="pd-new-case">Новый случай</button></header>
 <div class="pd-shell-warning" role="note">__DISCLAIMER__</div>
 <section id="pd-panel-draft" role="tabpanel" aria-labelledby="pd-tab-draft" class="pd-module"><iframe id="pd-draft-frame" title="PsyDraft — структурированный осмотр" sandbox="allow-scripts allow-modals allow-downloads allow-popups allow-popups-to-escape-sandbox"></iframe></section>
 <section id="pd-panel-compass" role="tabpanel" aria-labelledby="pd-tab-compass" class="pd-module" hidden><iframe id="pd-compass-frame" title="Клинический компас — выбор опций" sandbox="allow-scripts allow-modals allow-downloads allow-popups allow-popups-to-escape-sandbox"></iframe></section>
 </main>
+<div id="pd-reset-overlay" class="pd-reset-overlay" hidden><section class="pd-reset-dialog" role="dialog" aria-modal="true" aria-labelledby="pd-reset-title" aria-describedby="pd-reset-description"><h2 id="pd-reset-title">Начать новый случай?</h2><p id="pd-reset-description">Все данные текущего пациента, оценки шкал, история обследований и профиль компаса будут очищены.</p><div class="pd-reset-actions"><button type="button" id="pd-reset-cancel">Отмена</button><button type="button" id="pd-reset-confirm">Подтвердить</button></div></section></div>
 <script type="application/json" id="pd-embedded-documents">__EMBEDDED_DOCUMENTS__</script>
 <script>
 (() => {
  'use strict';
  const documents=JSON.parse(document.getElementById('pd-embedded-documents').textContent);
  const draft=document.getElementById('pd-draft-frame'),compass=document.getElementById('pd-compass-frame'),status=document.getElementById('pd-shell-status');
+ const caseKey='psydraft.case.v1';
  let token='',sourceReady=false,compassReady=false,snapshot=null,active='draft',revision=-1;
+ let currentCaseId='',compassState=null,compassRestored=false,storageError='',clinicalStatus='Загрузка инструментов…';
+ function showStatus(text){if(text)clinicalStatus=text;status.textContent=storageError||clinicalStatus;}
+ function safeJSON(value){return JSON.stringify(value).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');}
+ function readSeed(){try{return {raw:localStorage.getItem(caseKey),error:null};}catch(error){return {raw:null,error:'Хранение браузера недоступно'};}}
  function request(force=false){if(sourceReady)draft.contentWindow.postMessage({channel:'psydraft-compass',token,type:'request-source',force},'*');}
  function switchTab(which){active=which;for(const name of ['draft','compass']){const on=which===name;document.getElementById('pd-panel-'+name).hidden=!on;const tab=document.getElementById('pd-tab-'+name);tab.setAttribute('aria-selected',String(on));tab.tabIndex=on?0:-1;}if(which==='compass')request();}
- function start(){const bytes=new Uint32Array(4);crypto.getRandomValues(bytes);token=Array.from(bytes,x=>x.toString(16)).join('-');sourceReady=false;compassReady=false;snapshot=null;revision=-1;status.textContent='Загрузка инструментов…';draft.srcdoc=documents.draft.replaceAll('__PD_SESSION_TOKEN__',token);compass.srcdoc=documents.compass.replaceAll('__PD_SESSION_TOKEN__',token);switchTab('draft');}
+ function applyCompass(force=false){if(!compassReady||!sourceReady||!snapshot)return;if(!compassRestored){compass.contentWindow.postMessage({channel:'psydraft-compass',token,type:'restore-case',caseId:currentCaseId,value:compassState},'*');compassRestored=true;}compass.contentWindow.postMessage({channel:'psydraft-compass',token,type:'apply-source',caseId:currentCaseId,snapshot,force},'*');}
+ function start(seed=readSeed()){
+  const bytes=new Uint32Array(4);crypto.getRandomValues(bytes);token=Array.from(bytes,x=>x.toString(16)).join('-');
+  sourceReady=false;compassReady=false;snapshot=null;revision=-1;currentCaseId='';compassState=null;compassRestored=false;storageError=seed.error?'Автосохранение недоступно. Проверьте настройки хранения браузера.':'';showStatus('Загрузка инструментов…');
+  draft.srcdoc=documents.draft.replaceAll('__PD_SESSION_TOKEN__',token).replace('__PD_CASE_SEED__',()=>safeJSON(seed));
+  compass.srcdoc=documents.compass.replaceAll('__PD_SESSION_TOKEN__',token);switchTab('draft');
+ }
+ function storeCase(message){
+  if(!Number.isInteger(message.requestId))return;
+  const reply={channel:'psydraft-compass',token,type:'case-storage-ack',requestId:message.requestId,ok:false,code:'invalid'};
+  try{
+   if(typeof message.text!=='string'||!(message.expected===null||typeof message.expected==='string'))throw new Error('Invalid request');
+   const value=JSON.parse(message.text);
+   if(!value||value.schemaVersion!==1||typeof value.caseId!=='string'||!value.caseId||(currentCaseId&&value.caseId!==currentCaseId))throw new Error('Invalid case');
+   if(localStorage.getItem(caseKey)!==message.expected){reply.code='conflict';storageError='Случай изменён в другой вкладке. Перезагрузите страницу; изменения этой вкладки не сохранены.';}
+   else{localStorage.setItem(caseKey,message.text);reply.ok=true;reply.code=null;storageError='';}
+  }catch(error){if(reply.code!=='conflict'){reply.code='storage';storageError='Автосохранение недоступно. Данные останутся только до закрытия страницы.';}}
+  showStatus();draft.contentWindow.postMessage(reply,'*');
+ }
+ const resetOverlay=document.getElementById('pd-reset-overlay'),resetCancel=document.getElementById('pd-reset-cancel'),resetConfirm=document.getElementById('pd-reset-confirm'),shellMain=document.querySelector('.pd-shell');
+ function closeReset(){resetOverlay.hidden=true;shellMain.inert=false;shellMain.removeAttribute('aria-hidden');document.getElementById('pd-new-case').focus();}
+ function confirmReset(){if(!resetOverlay.hidden)return;resetOverlay.hidden=false;shellMain.inert=true;shellMain.setAttribute('aria-hidden','true');resetCancel.focus();}
+ resetCancel.onclick=closeReset;
+ resetConfirm.onclick=()=>{closeReset();try{const bytes=new Uint32Array(4);crypto.getRandomValues(bytes);const raw=JSON.stringify({schemaVersion:1,caseId:'case-'+Array.from(bytes,x=>x.toString(16)).join('-'),scales:{assessments:{},history:[]},extensions:{}});localStorage.setItem(caseKey,raw);start({raw,error:null});}catch(error){storageError='Не удалось очистить сохранённый случай. Новый случай не начат; проверьте настройки хранения браузера.';showStatus();}};
+ resetOverlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeReset();}else if(event.key==='Tab'){if(event.shiftKey&&document.activeElement===resetCancel){event.preventDefault();resetConfirm.focus();}else if(!event.shiftKey&&document.activeElement===resetConfirm){event.preventDefault();resetCancel.focus();}}});
  window.addEventListener('message',e=>{const m=e.data;if(!m||m.channel!=='psydraft-compass'||m.token!==token)return;
-  if(e.source===draft.contentWindow){if(m.type==='source-ready'){sourceReady=true;request();}if(m.type==='source-snapshot'&&Number.isInteger(m.revision)&&m.revision>=revision){revision=m.revision;snapshot=m.snapshot;if(compassReady)compass.contentWindow.postMessage({channel:'psydraft-compass',token,type:'apply-source',snapshot,force:m.force===true},'*');}}
-  if(e.source===compass.contentWindow){if(m.type==='compass-ready'){compassReady=true;if(snapshot)compass.contentWindow.postMessage({channel:'psydraft-compass',token,type:'apply-source',snapshot},'*');else request();}if(m.type==='refresh-source')request(true);if(m.type==='open-source'){switchTab('draft');draft.contentWindow.postMessage({channel:'psydraft-compass',token,type:'focus-source'},'*');}if(m.type==='compass-error')status.textContent='Исправьте исходные данные PsyDraft · список опций приостановлен';if(m.type==='compass-imported'||m.type==='compass-state')status.textContent=m.missing?'Данные перенесены · осталось уточнить: '+m.missing:m.type==='compass-state'&&m.targets?'Профиль готов · решение принимает врач':'Данные перенесены · выберите главные мишени';}
+  if(e.source===draft.contentWindow){
+   if(m.type==='case-storage-write')storeCase(m);
+   if(m.type==='case-reset-request')confirmReset();
+   if(m.type==='source-ready'&&typeof m.caseId==='string'&&m.caseId){sourceReady=true;currentCaseId=m.caseId;compassState=m.compassState||null;request();}
+   if(m.type==='source-snapshot'&&m.caseId===currentCaseId&&Number.isInteger(m.revision)&&m.revision>=revision){revision=m.revision;snapshot=m.snapshot;applyCompass(m.force===true);}
+  }
+  if(e.source===compass.contentWindow){
+   if(m.type==='compass-ready'){compassReady=true;if(snapshot)applyCompass();else request();}
+   if(m.type==='refresh-source')request(true);
+   if(m.type==='open-source'){switchTab('draft');draft.contentWindow.postMessage({channel:'psydraft-compass',token,type:'focus-source'},'*');}
+   if(m.type==='compass-error')showStatus('Исправьте исходные данные PsyDraft · список опций приостановлен');
+   if((m.type==='compass-imported'||m.type==='compass-state')&&m.caseId===currentCaseId){
+    if(m.profileState&&sourceReady){compassState=m.profileState;draft.contentWindow.postMessage({channel:'psydraft-compass',token,type:'case-extension-update',caseId:currentCaseId,id:'compass',value:compassState},'*');}
+    showStatus(m.missing?'Данные перенесены · осталось уточнить: '+m.missing:m.type==='compass-state'&&m.targets?'Профиль готов · решение принимает врач':'Данные перенесены · выберите главные мишени');
+   }
+  }
  });
  for(const name of ['draft','compass'])document.getElementById('pd-tab-'+name).onclick=()=>switchTab(name);
  document.querySelector('.pd-shell-tabs').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const which=e.key==='Home'?'draft':e.key==='End'?'compass':active==='draft'?'compass':'draft';switchTab(which);document.getElementById('pd-tab-'+which).focus();});
- document.getElementById('pd-new-case').onclick=()=>{if(window.confirm('Очистить данные в обеих вкладках и начать новый случай?'))start();};
+ document.getElementById('pd-new-case').onclick=confirmReset;
  start();
 })();
 </script></body></html>
